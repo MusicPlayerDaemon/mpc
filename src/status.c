@@ -77,6 +77,10 @@ void print_status (mpd_Connection *conn)
 				status->totalTime,'%');
 	}
 
+	if(status->updatingDb) {
+		printf("Updating DB ...\n");
+	}
+
 	if(status->volume!=MPD_STATUS_NO_VOLUME) {
 		printf("volume:%3i%c   ",status->volume,'%');
 	}

@@ -508,6 +508,7 @@ mpd_Status * mpd_getStatus(mpd_Connection * connection) {
 	status->channels = 0;
 	status->crossfade = -1;
 	status->error = NULL;
+	status->updatingDb = 0;
 
 	mpd_getNextReturnElement(connection);
 	if(connection->error) {
@@ -569,6 +570,9 @@ mpd_Status * mpd_getStatus(mpd_Connection * connection) {
 		}
 		else if(strcmp(re->name,"xfade")==0) {
 			status->crossfade = atoi(re->value);
+		}
+		else if(strcmp(re->name,"updating_db")==0) {
+			status->updatingDb = atoi(re->value);
 		}
 		else if(strcmp(re->name,"audio")==0) {
 			char * tok;

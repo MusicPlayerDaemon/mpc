@@ -135,6 +135,8 @@ typedef struct mpd_Status {
 	int bits;
 	/* audio channels */
 	int channels;
+	/* 1 if mpd is updating, 0 otherwise */
+	int updatingDb;
 	/* error */
 	char * error;
 } mpd_Status;
@@ -326,9 +328,6 @@ char * mpd_getNextAlbum(mpd_Connection * connection);
  */
 void mpd_sendListCommand(mpd_Connection * connection, int table, 
 		const char * arg1);
-
-void mpd_sendListAlbumsCommand(mpd_Connection * connection, 
-		const char * artist);
 
 /* SIMPLE COMMANDS */
 
