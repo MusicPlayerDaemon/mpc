@@ -43,10 +43,9 @@ if test x$enable_iconv = xyes; then
     		ICONV_CFLAGS="-I$includedir"
   	fi
 
-	oldcflags=$CFLAGS
-	oldlibs=$LIBS
 	CFLAGS="$CFLAGS $ICONV_CFLAGS"
 	LIBS="$LIBS $ICONV_LIBS"
+	CPPFLAGS=$CFLAGS
 	AC_CHECK_HEADER(iconv.h,,[CFLAGS=$oldcflags;enable_iconv=no])
 	if test x$enable_iconv = xyes; then
 		AC_CHECK_LIB(iconv,iconv_open,,LIBS=$oldlibs)
