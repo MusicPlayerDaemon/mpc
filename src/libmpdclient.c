@@ -1117,8 +1117,19 @@ void mpd_sendSeekCommand(mpd_Connection * connection, int song, int time) {
 	free(string);
 }
 
-void mpd_sendUpdateCommand(mpd_Connection * connection) {
+int mpd_sendUpdateCommand(mpd_Connection * connection) {
+	char * jobid;
+	int ret = 0;
+
         mpd_executeCommand(connection,"update\n");
+
+	jobid = mpd_getNextReturnElementNamed(connection,"updating_db");
+	if(jobid) {
+		ret = atoi(jobid);
+		free(jobid);
+	}
+
+	return ret;
 }
 
 void mpd_sendPrevCommand(mpd_Connection * connection) {
