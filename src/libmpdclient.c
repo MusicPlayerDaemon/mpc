@@ -579,7 +579,6 @@ mpd_Status * mpd_getStatus(mpd_Connection * connection) {
 	status->error = NULL;
 	status->updatingDb = 0;
 
-	mpd_getNextReturnElement(connection);
 	if(connection->error) {
 		free(status);
 		return NULL;

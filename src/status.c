@@ -31,6 +31,16 @@ void print_status (mpd_Connection *conn)
 {
 	mpd_Status * status;
 	mpd_InfoEntity * entity;
+
+	mpd_sendCommandListOkBegin(conn);
+	printErrorAndExit(conn);
+	mpd_sendStatusCommand(conn);
+	printErrorAndExit(conn);
+	mpd_sendCurrentCommand(conn);
+	printErrorAndExit(conn);
+	mpd_sendCommandListEnd(conn);
+	printErrorAndExit(conn);
+
 	status = mpd_getStatus(conn);
 	printErrorAndExit(conn);
 
@@ -38,10 +48,10 @@ void print_status (mpd_Connection *conn)
 			status->state == MPD_STATUS_STATE_PAUSE) 
 	{
 		float perc;
-			
-		mpd_sendPlaylistInfoCommand(conn,status->song);
-		printErrorAndExit(conn);
 
+		mpd_nextListOkCommand(conn);
+		printErrorAndExit(conn);
+			
 		while((entity = mpd_getNextInfoEntity(conn))) {
 			mpd_Song * song = entity->info.song;
 			
