@@ -1,5 +1,5 @@
 0.10.1 (2004/3/7)
-1) gcc<3 compiler fixes
+1) gcc<3 compiler fixes (Mark Reidel)
 
 0.10.0 (2004/3/4)
 1) UTF-8 Support
