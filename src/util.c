@@ -187,6 +187,25 @@ char * appendToString(char * dest, const char * src, int len) {
 	return dest;
 }
 
+char * skipFormatting(char * p) {
+	int stack = 0;
+		
+	while (*p != '\0') {
+		if(*p == '[') stack++;
+		else if(stack) {
+			if(*p == ']') stack--;
+		}
+		else {
+			if(*p == '&' || *p == '|' || *p == ']') {
+				break;
+			}
+		}
+		++p;
+	}
+
+	return p;
+}
+
 /* this is a little ugly... */
 char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 {
@@ -209,22 +228,7 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 				}
 			}
 			else {
-				int stack = 0;
-			
-				while (*p != '\0') {
-					if(*p == '[') stack++;
-					else if(stack) {
-						if(*p == ']') stack--;
-					}
-					else {
-						if(*p == '&' || *p == '|' ||
-								*p == ']') 
-						{
-							break;
-						}
-					}
-					++p;
-				}
+				p = skipFormatting(p);
 			}
 			continue;
 		}
@@ -232,26 +236,7 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 		if (p[0] == '&') {
 			++p;
 			if(found == 0) {
-				int stack = 0;
-			
-				if(ret) {
-					free(ret);
-					ret = NULL;
-				}
-				while (*p != '\0') {
-					if(*p == '[') stack++;
-					else if(stack) {
-						if(*p == ']') stack--;
-					}
-					else {
-						if(*p == '&' || *p == '|' ||
-								*p == ']') 
-						{
-							break;
-						}
-					}
-					++p;
-				}
+				p = skipFormatting(p);
 			}
 			else {
 				found = 0;
