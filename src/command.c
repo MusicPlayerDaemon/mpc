@@ -68,6 +68,21 @@ SIMPLE_CMD(cmd_update, mpd_sendUpdateCommand, 1)
 SIMPLE_ONEARG_CMD(cmd_save, mpd_sendSaveCommand, 0)
 SIMPLE_ONEARG_CMD(cmd_rm, mpd_sendRmCommand, 0)
 
+static mpd_Status * getStatus(mpd_Connection * conn) {
+	mpd_Status * ret;
+
+	mpd_sendStatusCommand(conn);
+	printErrorAndExit(conn);
+
+	ret = mpd_getStatus(conn);
+	printErrorAndExit(conn);
+
+	mpd_finishCommand(conn);
+	printErrorAndExit(conn);
+
+	return ret;
+}
+
 int isUrl(char * s) {
 	char * t;
 
@@ -176,8 +191,8 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 	char * songsToDel;
 	mpd_Status * status;
 
-	status = mpd_getStatus(conn);
-	my_finishCommand(conn);
+	status = getStatus(conn);
+
 	plLength = status->playlistLength;
 
 	songsToDel = malloc(plLength);
@@ -249,7 +264,7 @@ int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 /* TODO: absolute seek times (normalperson) */
 int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 {
-	mpd_Status * status = mpd_getStatus(conn);
+	mpd_Status * status;
 	char * arg = argv[0];
 	char * test;
 	int seekchange;
@@ -259,7 +274,8 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 	int seekto;
         int rel = 0;
 
-	my_finishCommand(conn);
+	status = getStatus(conn);
+	
 	if(status->state==MPD_STATUS_STATE_STOP)
 		DIE("not currently playing\n");
 
@@ -297,9 +313,12 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 	if(seekto > status->totalTime)
 		DIE("seek amount would seek past the end of the song\n");
 
-	mpd_sendSeekCommand(conn,status->song,seekto);
+	mpd_sendSeekIdCommand(conn,status->songid,seekto);
+	printErrorAndExit(conn);
 	my_finishCommand(conn);
+	printErrorAndExit(conn);
 	mpd_freeStatus(status);
+	printErrorAndExit(conn);
 	return 1;
 }
 
@@ -564,8 +583,9 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
                 if(!parse_int_value_change(argv[0], &ch))
 			DIE("\"%s\" is not an integer\n", argv[0]);
 	} else {
-		mpd_Status *status = mpd_getStatus(conn);
-		my_finishCommand(conn);
+		mpd_Status *status;
+
+		status = mpd_getStatus(conn);
 
 		printf("volume:%3i%c   \n",status->volume,'%');
 
@@ -602,15 +622,16 @@ int cmd_repeat ( int argc, char ** argv, mpd_Connection * conn )
 	}
 	else {
 		mpd_Status * status;
-		status = mpd_getStatus(conn);
-		my_finishCommand(conn);
+		status = getStatus(conn);
 		mode = !status->repeat;
 		mpd_freeStatus(status);
 	}
 
 
 	mpd_sendRepeatCommand(conn,mode);
+	printErrorAndExit(conn);
 	my_finishCommand(conn);
+	printErrorAndExit(conn);
 
 	return 1;
 }
@@ -627,7 +648,6 @@ int cmd_random ( int argc, char ** argv, mpd_Connection * conn )
 	else {
 		mpd_Status * status;
 		status = mpd_getStatus(conn);
-		my_finishCommand(conn);
 		mode = !status->random;
 		mpd_freeStatus(status);
 	}
@@ -650,12 +670,13 @@ int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn )
 		my_finishCommand(conn);
 	}
 	else {
-		mpd_Status * status = mpd_getStatus(conn);
-		my_finishCommand(conn);
+		mpd_Status * status;
+		status = getStatus(conn);
 
 		printf("crossfade: %i\n",status->crossfade);
 
 		mpd_freeStatus(status);
+		printErrorAndExit(conn);
 	}
 	return 0;
 
