@@ -71,7 +71,7 @@ struct _mpc_table {
 	{"random", 0, 1, 0, cmd_random,"<on|off>", "Toggle random mode, or specify state"},
 	{"search", 2, -1, 3, cmd_search, "<type> <queries>",	"Search for a song"},
 	{"crossfade", 0, 1, 0, cmd_crossfade,"[sec]","Set and display crossfade settings"},
-	{"update", 0, -1, 1, cmd_update,	"", "Scans music directory for updates"},
+	{"update", 0, -1, 2, cmd_update,	"", "Scans music directory for updates"},
 	{"version", 0, 0, 0, cmd_version,"", "Reports version of MPD"},
 	/*  loadtab, lstab, and tab used for completion-scripting only */
 	{"loadtab",0, 1, 0, cmd_loadtab,"<directory>",}, 
