@@ -392,7 +392,7 @@ void mpd_sendPlayIdCommand(mpd_Connection * connection, int songNum);
 
 void mpd_sendStopCommand(mpd_Connection * connection);
 
-void mpd_sendPauseCommand(mpd_Connection * connection);
+void mpd_sendPauseCommand(mpd_Connection * connection, int pauseMode);
 
 void mpd_sendNextCommand(mpd_Connection * connection);
 

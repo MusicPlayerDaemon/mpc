@@ -59,7 +59,6 @@ static void my_finishCommand(mpd_Connection * conn) {
 }
 
 SIMPLE_CMD(cmd_next, mpd_sendNextCommand, 1)
-SIMPLE_CMD(cmd_pause, mpd_sendPauseCommand, 1)
 SIMPLE_CMD(cmd_prev, mpd_sendPrevCommand, 1)
 SIMPLE_CMD(cmd_stop, mpd_sendStopCommand, 1)
 SIMPLE_CMD(cmd_clear, mpd_sendClearCommand, 1)
@@ -581,6 +580,14 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 		mpd_sendSetvolCommand(conn,ch.value);
 
 	my_finishCommand(conn);
+	return 1;
+}
+
+int cmd_pause ( int argc, char ** argv, mpd_Connection * conn )
+{
+	mpd_sendPauseCommand(conn,1);
+	my_finishCommand(conn);
+
 	return 1;
 }
 

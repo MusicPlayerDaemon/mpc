@@ -1218,8 +1218,11 @@ void mpd_sendStopCommand(mpd_Connection * connection) {
 	mpd_executeCommand(connection,"stop\n");
 }
 
-void mpd_sendPauseCommand(mpd_Connection * connection) {
-	mpd_executeCommand(connection,"pause\n");
+void mpd_sendPauseCommand(mpd_Connection * connection, int pauseMode) {
+	char * string = malloc(strlen("pause")+25);
+	sprintf(string,"pause \"%i\"\n",pauseMode);
+	mpd_executeCommand(connection,string);
+	free(string);
 }
 
 void mpd_sendNextCommand(mpd_Connection * connection) {
