@@ -26,6 +26,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <sys/param.h>
 
 void printErrorAndExit(mpd_Connection * conn)
 {
