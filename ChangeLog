@@ -3,6 +3,8 @@
 2) Crossfade Support
 3) Password Support
 4) Cleanup/rewrite by normalperson
+5) Add seek by second support by mackstann
+6) More command.c cleanup by mackstann
 
 0.9.2 (2003/10/31)
 1) Updated libmpdclient, much more efficient thanks to tw-nym
