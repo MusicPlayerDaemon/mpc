@@ -1,0 +1,90 @@
+.TH "Music Player Command" 1
+.SH NAME
+mpc \- Program for controlling Music Player Daemon (MPD)
+.SH SYNOPSIS
+.B mpc
+[<command> <arguments>]
+.SH DESCRIPTION
+mpc is a client for MPD, the Music Player Daemon. mpc connects to a MPD running on a machine on the local network and controls this according to commands and arguments passed to it. If no arguments are passed, current status is given. 
+
+By default, mpc connects to localhost:2100. This can be changed either at compile-time, or by exporting the MPD_HOST and MPD_PORT environment variables.
+
+$ export MPD_HOST=localhost && export MPD_PORT=2100
+
+To use a password with mpd, set MPD_HOST to password@host.
+
+$ export MPD_HOST=password@localhost
+
+Read more about MPD on http://www.musicpd.org
+.SH COMMANDS 
+.TP
+.B add <song>
+Adds a song from the music database to the playlist. Use 'mpc add ""' to add all. Can also read input from pipes.
+.TP
+.B clear
+Empties playlist.
+.TP
+.B del <song>
+Removes a song from the playlist. Can also read input from pipes.
+.TP
+.B listall [<song>]
+Lists <song> from playlist. If no <song> is specified, lists all songs.
+.TP
+.B load <file>
+Loads <file> as playlist.
+.TP
+.B ls [<directory>]
+Lists all files/folders in <directory>. If no <directory> is specified, lists all files in music directory.
+.TP
+.B lsplaylists
+Lists available playlists.
+.TP 
+.B move <from> <to>
+Moves song at position <from> to the postion <to> in the playlist.
+.TP
+.B next
+Starts playing next song on playlist.
+.TP
+.B pause
+Pauses playing.
+.TP
+.B play <number>
+Starts playing the song-number specified. If none is specified, plays number 1.
+.TP
+.B playlist
+Prints entire playlist.
+.TP
+.B prev
+Starts playing previous song.
+.TP
+.B random
+Toggle random mode if state ("on" or "off") is not specified.
+.TP
+.B repeat [<state>]
+Toggle repeat mode if state ("on" or "off") is not specified.
+.TP
+.B rm <file>
+Deletes a specific playlist.
+.TP
+.B save <file>
+Saves playlist as <file>.
+.TP
+.B seek <percentage>
+Seeks to the spot specified for the current file, in terms of percent time (0-100).
+.TP
+.B shuffle
+Shuffles all songs on the playlist.
+.TP
+.B stop
+Stops playing.
+.TP
+.B update 
+Scans music directory for updates.
+.TP
+.B version
+Reports the version of MPD.
+.TP
+.B volume <value>
+Sets the volume to <value> (0-100).
+.SH SEE ALSO
+mpd(1)

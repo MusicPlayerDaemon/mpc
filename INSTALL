@@ -1,0 +1,117 @@
+                       Music Player Command (mpc) - INSTALL
+
+
+Requirements
+------------
+
+Music Player Daemon (MPD) running on the local network.
+
+
+Download
+--------
+
+Get the latest release from of mpc from http://www.musicpd.org
+
+
+Compile
+-------
+
+1) unzip and untar the archive
+
+$ tar zxvf mpc-x.x.x.tar.gz
+
+2) change to directory created
+
+$ cd mpc-x.x.x
+
+3) Run configure script (this will determine what dependencies you have and write the Makefile)
+
+$ ./configure
+
+4) Compile
+
+$ make
+
+
+Install (Optional)
+-------
+
+$ su -c "make install"
+
+
+Run
+---
+
+As default, mpc connects to localhost:2100, but otherwise can be specified by changing the MPD_HOST and MPD_PORT environment variables. This is mostly done by:
+
+$ export MPD_HOST=<host/ip>
+$ export MPD_PORT=1337
+
+mpc reads specified arguments to act upon:
+
+$ mpc
+Displays current playing song and MPD settings
+
+$ mpc play [<number>]
+Starts playing the song-number specified. If none is specified, plays number 1.
+
+$ mpc stop
+Stops playing
+
+$ mpc pause
+Pauses playing
+
+$ mpc next
+Starts playing next song on playlist
+
+$ mpc prev
+Starts playing previous song
+
+$ mpc shuffle
+Shuffles all songs on the playlist
+
+$ mpc add <song>
+Adds a song from the music database to the playlist. Use 'mpc add ""' to add all. Can also read input from pipes.
+
+$ mpc del <song>
+Removes a song from the playlist. Can also read input from pipes.
+
+$ mpc clear
+Empties playlist
+
+$ mpc playlist
+Prints entire playlist
+
+$ mpc volume <value>
+Sets the volume to <value> (0-100)
+
+$ mpc ls [<directory>]
+Lists all files/folders in <directory>. If no <directory> is specified, lists all files in music directory.
+
+$ mpc listall [<song>]
+Lists <song> from playlist. If no <song> is specified, lists all songs.
+
+$ mpc lsplaylists
+Lists available playlists
+
+$ mpc load <file>
+Loads <file> as playlist
+
+$ mpc save <file>
+Saves the playlist to <file>
+
+$ mpc rm <file>
+Deletes a specific playlist
+
+
+Bash-completion
+---------------
+
+If you want to be able to tab-complete the commands for mpc, you can copy the contents of mpc-bashrc to your own ~/.bashrc .
+
+
+Using mpc
+---------
+
+To use mpc, you should run MPD on a machine. You can download MPD at 
+http://www.musicpd.org .

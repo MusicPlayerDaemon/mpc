@@ -1,0 +1,13 @@
+Source: mpc
+Section: sound
+Priority: optional
+Maintainer: Warren Dukes (aka shank) <shank@mercury.chem.pitt.edu>
+Build-Depends: debhelper (>> 4.0.0), cdbs
+Standards-Version: 3.5.8
+
+Package: mpc
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: A command line tool to interface MPD
+ MPC, music player command, is a command line tool to interface MPD, music
+ player daemon.

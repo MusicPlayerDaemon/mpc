@@ -1,0 +1,39 @@
+# put this in your bashrc for bash tab completion with mpc
+# $ cat mpc-bashrc >> ~/.bashrc
+
+#export MPD_HOST="127.0.0.1"
+#export MPD_PORT="2100"
+
+ _mpdadd_complete_func ()
+{
+	x=1;
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	first=${COMP_WORDS[1]}
+	hold="";
+	case "$first" in
+		add) 
+		hold=`mpc tab ${cur}`;
+		COMPREPLY=($(compgen -W "${hold}"))
+		return 0
+		;;
+		ls)
+		hold=`mpc lstab ${cur}`;
+		COMPREPLY=($(compgen -W "${hold}"))
+		return 0
+		;;
+		load)
+		hold=`mpc loadtab ${cur}`;
+		COMPREPLY=($(compgen -W "${hold}"))
+		return 0
+		;;
+		repeat)
+		COMPREPLY=($(compgen -W "0 1" ${cur}))
+		return 0
+		;;
+		*)
+		COMPREPLY=($(compgen -W "play clear add pause status next prev shuffle stop volume playlist ls listall lsplaylists load save rm seek" ${cur}))
+		return 0
+		;;
+	esac
+}
+complete -F _mpdadd_complete_func mpc
