@@ -80,8 +80,8 @@ Saves playlist as <file>.
 .B search <table> <pattern>
 Searches for songs that match the pattern, where table is "artist", "album", "title", or "filename".
 .TP
-.B seek <percentage>
-Seeks to the spot specified for the current file, in terms of percent time (0-100).
+.B seek <[+-]num[s]>
+Seeks within the current song in the specified manner.  If a "+" or "-" is used, the seek is done relative to the current song position.  If an "s" is present after the number, then the number indicates seconds; otherwise, it indicates a percentage of the song's length.
 .TP
 .B shuffle
 Shuffles all songs on the playlist.
