@@ -132,7 +132,7 @@ mpd_Connection * setup_connection ()
 	if(iport<0 || *test!='\0') {
 		fprintf(stderr,"MPD_PORT \"%s\" is not a positive integer\n",
 				port);
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 
 	parse_password(host, &password_len, &parsed_len);
@@ -157,7 +157,7 @@ void print_status_and_exit ()
 	print_status(conn);
 	mpd_closeConnection(conn);
 	fclose(stdout);
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 /* check arguments to see if they are valid */
@@ -184,7 +184,7 @@ char ** check_args (int idx, int * argc, char ** argv)
 	||	(-1!=mpc_table[idx].max && (*argc)>mpc_table[idx].max) ) {
 		fprintf(stderr,"usage: %s %s %s\n", argv[0], mpc_table[idx].command,
 			mpc_table[idx].usage);
-			exit (-1);
+			exit (EXIT_FAILURE);
 	}
 	return array;
 }
@@ -213,7 +213,7 @@ int main(int argc, char ** argv)
 			
 			mpd_closeConnection(conn);
 			fclose(stdout);
-			return ret;
+			return EXIT_SUCCESS;
 		} else if (mpc_table[i].help) {
 			int tmp = strlen(mpc_table[i].command) + strlen(mpc_table[i].usage);
 			helplen = (tmp > helplen) ? tmp : helplen;
@@ -221,6 +221,6 @@ int main(int argc, char ** argv)
 	}
 	print_help(helplen,argv[0],argv[1]);
 	fclose(stdout);
-	return ret;
+	return EXIT_SUCCESS;
 }
 

@@ -32,7 +32,7 @@ void printErrorAndExit(mpd_Connection * conn)
 {
 	if(conn->error) {
 		fprintf(stderr,"error: %s\n",fromUtf8(conn->errorStr));
-		exit(-1);
+		exit(EXIT_FAILURE);
 	}
 }
 
