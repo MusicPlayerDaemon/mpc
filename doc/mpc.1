@@ -7,9 +7,9 @@ mpc \- Program for controlling Music Player Daemon (MPD)
 .SH DESCRIPTION
 mpc is a client for MPD, the Music Player Daemon. mpc connects to a MPD running on a machine on the local network and controls this according to commands and arguments passed to it. If no arguments are passed, current status is given. 
 
-By default, mpc connects to localhost:2100. This can be changed either at compile-time, or by exporting the MPD_HOST and MPD_PORT environment variables.
+By default, mpc connects to localhost:6600. This can be changed either at compile-time, or by exporting the MPD_HOST and MPD_PORT environment variables.
 
-$ export MPD_HOST=localhost && export MPD_PORT=2100
+$ export MPD_HOST=localhost && export MPD_PORT=6600
 
 To use a password with mpd, set MPD_HOST to password@host.
 
