@@ -227,6 +227,7 @@ int main(int argc, char ** argv)
 			if (0>mpc_table[i].pipe)
 				free_pipe_array(argc,array);
 			
+			free(array);
 			mpd_closeConnection(conn);
 			fclose(stdout);
 			return EXIT_SUCCESS;

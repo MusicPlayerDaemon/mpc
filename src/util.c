@@ -71,7 +71,6 @@ void free_pipe_array (int max, char ** array)
 {
 	int i;
 	for ( i=0 ;i<max; ++i) free(array[i]);
-	free(array);
 }
 
 int get_boolean (const char * arg)

@@ -176,6 +176,7 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 
 	/* clean up */
 	free(lists);
+	free(arglens);
 	return 0;
 }
 
