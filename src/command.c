@@ -121,8 +121,9 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 				if(len<arglens[i]) continue;
 				ret = strncmp(argv[i],dup,
 						arglens[i]);
-				if(ret==0 && (dup[arglens[i]]=='\0' || 
-						dup[arglens[i]]=='/')) 
+				if(ret==0 && (argv[i][arglens[i]-1] == '/' ||
+						dup[arglens[i]] == '\0' || 
+						dup[arglens[i]] == '/')) 
 				{
 					insertInListWithoutKey(
 							lists[i],
