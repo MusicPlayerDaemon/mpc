@@ -1,3 +1,7 @@
+0.10.2 (2004/3/27)
+1) Fix bug in searching
+2) Fix bug with crossfade
+
 0.10.1 (2004/3/7)
 1) gcc<3 compiler fixes (Mark Reidel)
 

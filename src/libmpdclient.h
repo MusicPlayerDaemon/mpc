@@ -20,7 +20,6 @@
 #ifndef LIBMPDCLIENT_H
 #define LIBMPDCLIENT_H
 
-#include <sys/param.h>
 #include <sys/time.h>
 
 #define MPD_BUFFER_MAX_LENGTH	50000
@@ -376,8 +375,6 @@ void mpd_sendSetvolCommand(mpd_Connection * connection, int volumeChange);
 void mpd_sendVolumeCommand(mpd_Connection * connection, int volumeChange);
 
 void mpd_sendCrossfadeCommand(mpd_Connection * connection, int seconds);
-
-int mpd_getCrossfade(mpd_Connection * connection);
 
 void mpd_sendUpdateCommand(mpd_Connection * connection);
 
