@@ -312,8 +312,8 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 		{
 			if (song->time != MPD_SONG_NO_TIME) {
 				char s[10];
-				snprintf(s, 9, "%d:%d", song->time / 60, 
-						song->time % 60 + 1);
+				snprintf(s, 9, "%d:%02d", song->time / 60, 
+						song->time % 60);
 				/* nasty hack to use static buffer */
 				temp = fromUtf8(s);
 			}
