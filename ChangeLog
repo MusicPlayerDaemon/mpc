@@ -1,3 +1,9 @@
+0.11.0 (2004/6/17)
+1) Add support for adding streams
+2) Make add command more robust
+3) Add --format option (thanks to danb)
+4) Support for new update command
+
 0.10.3 (2004/4/1)
 1) Forgot to enable iconv support
 
