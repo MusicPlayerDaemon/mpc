@@ -256,6 +256,36 @@ int cmd_outputs( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
+int cmd_enable( int argc, char ** argv, mpd_Connection * conn )
+{
+	int arg;
+
+        if(!parse_int(argv[0], &arg) || arg<=0) {
+		DIE("Not a positive integer\n");
+	} else {
+		mpd_sendEnableOutputCommand( conn, (arg-1) );
+	}
+
+	mpd_finishCommand(conn);
+	// put interesting output info here
+	return 0;
+}
+
+int cmd_disable( int argc, char ** argv, mpd_Connection * conn )
+{
+	int arg;
+
+        if(!parse_int(argv[0], &arg) || arg<=0) {
+		DIE("Not a positive integer\n");
+	} else {
+		mpd_sendDisableOutputCommand( conn, (arg-1) );
+	}
+	
+	mpd_finishCommand(conn);
+	//put interesting output info here
+	return 0;
+}
+
 int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 {
 	int song;
