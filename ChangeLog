@@ -1,4 +1,4 @@
-0.11.0 (2004/6/17)
+0.11.0 (2004/6/18)
 1) Add support for adding streams
 2) Make add command more robust
 3) Add --format option (thanks to danb)
