@@ -209,8 +209,36 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 				}
 			}
 			else {
-				/* advance till ']' || '\0' */
-				while(*p != ']' && *p != '\0') ++p;
+				while(*p != ']' && *p != '\0' && *p != '|'
+						&& *p != '&' && *p != '[') 
+				{
+					/*if(*p == '%' && p[1] != '\0') {
+						++p;
+					}*/
+					++p;
+				}
+			}
+			continue;
+		}
+		
+		if (p[0] == '&') {
+			++p;
+			if(!found) {
+				if(ret) {
+					free(ret);
+					ret = NULL;
+				}
+				while(*p != ']' && *p != '\0' && *p != '|'
+						&& *p != '&' && *p != '[') 
+				{
+					/*if(*p == '%' && p[1] != '\0') {
+						++p;
+					}*/
+					++p;
+				}
+			}
+			else {
+				found = 0;
 			}
 			continue;
 		}
@@ -325,6 +353,8 @@ void print_formatted_song (mpd_Song * song, const char * format)
 	}
 }
 
+#define DEFAULT_FORMAT "%name%: &[%artist% - ][%title%]|%name%|[%artist% - ][%title%]|%file%"
+
 void pretty_print_song (mpd_Song * song)
 {
 	/* was a format string specified? */
@@ -335,7 +365,6 @@ void pretty_print_song (mpd_Song * song)
 	/* just do something pretty */
 	else
 	{
-		print_formatted_song(song, "[[%name%: ][%artist - ][%title]]|"
-						"%file%");
+		print_formatted_song(song, DEFAULT_FORMAT);
 	}
 }
