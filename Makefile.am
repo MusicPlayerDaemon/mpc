@@ -1,3 +1,5 @@
+AUTOMAKE_OPTIONS = foreign 1.6
+
 SUBDIRS = doc src
 pkgdata_DATA =
 docdir = $(prefix)/share/doc/$(PACKAGE)
