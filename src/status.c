@@ -36,7 +36,7 @@ void print_status (mpd_Connection *conn)
 	printErrorAndExit(conn);
 	mpd_sendStatusCommand(conn);
 	printErrorAndExit(conn);
-	mpd_sendCurrentCommand(conn);
+	mpd_sendCurrentSongCommand(conn);
 	printErrorAndExit(conn);
 	mpd_sendCommandListEnd(conn);
 	printErrorAndExit(conn);
