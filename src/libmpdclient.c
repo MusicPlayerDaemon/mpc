@@ -52,6 +52,10 @@
 #endif
 #endif
 
+#ifndef MSG_DONTWAIT
+#define MSG_DONTWAIT 0
+#endif
+
 #define COMMAND_LIST	1
 #define COMMAND_LIST_OK	2
 
@@ -345,7 +349,12 @@ void mpd_executeCommand(mpd_Connection * connection, char * command) {
 	while((ret = select(connection->sock+1,NULL,&fds,NULL,&tv)==1) || 
 			(ret==-1 && errno==EINTR)) {
 		ret = send(connection->sock,commandPtr,commandLen,
+#ifdef WIN32
+			   ioctlsocket(connection->sock, commandLen, commandPtr));
+#endif
+#ifndef WIN32
 				MSG_DONTWAIT);
+#endif
 		if(ret<=0)
 		{
 			if(ret==EAGAIN || ret==EINTR) continue;
@@ -428,7 +437,12 @@ void mpd_getNextReturnElement(mpd_Connection * connection) {
 			readed = recv(connection->sock,
 				connection->buffer+connection->buflen,
 				MPD_BUFFER_MAX_LENGTH-connection->buflen,
+#ifdef WIN32
+			   ioctlsocket(connection->sock, commandLen, commandPtr));
+#endif
+#ifndef WIN32
 				MSG_DONTWAIT);
+#endif
 			if(readed<0 && (errno==EAGAIN || errno==EINTR)) {
 				continue;
 			}

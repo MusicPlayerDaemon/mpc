@@ -356,6 +356,9 @@ void mpd_sendCurrentSongCommand(mpd_Connection * connection);
 /* songNum of -1, means to display the whole list */
 void mpd_sendPlaylistInfoCommand(mpd_Connection * connection, int songNum);
 
+/* songId of -1, means to display the whole list */
+void mpd_sendPlaylistIdCommand(mpd_Connection * connection, int songId);
+
 /* use this to get the changes in the playlist since version _playlist_ */
 void mpd_sendPlChangesCommand(mpd_Connection * connection, long long playlist);
 
