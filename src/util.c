@@ -200,10 +200,28 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 	/* we won't mess up format, we promise... */
 	for (p = (char *)format; *p != '\0'; )
 	{
+		if (p[0] == '|') {
+			++p;
+			if(!found) {
+				if(ret) {
+					free(ret);
+					ret = NULL;
+				}
+			}
+			else {
+				/* advance till ']' || '\0' */
+				while(*p != ']' && *p != '\0') ++p;
+			}
+			continue;
+		}
+		
 		if (p[0] == '[')
 		{
 			temp = songToFormatedString(song, p+1, &p);
-			if(temp) ret = appendToString(ret, temp, strlen(temp));
+			if(temp) {
+				ret = appendToString(ret, temp, strlen(temp));
+				found = 1;
+			}
 			continue;
 		}
 
@@ -313,12 +331,7 @@ void pretty_print_song (mpd_Song * song)
 	/* just do something pretty */
 	else
 	{
-		if (song->artist && song->title && strlen(song->artist) &&
-				strlen(song->title))
-			printf("%s - %s", fromUtf8(song->artist), fromUtf8(song->title));
-		else if (song->title && strlen(song->title))
-			printf("%s", fromUtf8(song->title));
-		else
-			printf("%s", fromUtf8(song->file));
+		print_formatted_song(song, "[[%name%: ][%artist - ][%title]]|"
+						"%file%");
 	}
 }
