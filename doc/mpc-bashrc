@@ -35,7 +35,11 @@
 		return 0
 		;;
 		ls)
-		hold=`mpc lstab ${cur}`;
+                if [ "x$cur" = "x" ]; then
+                        hold=`mpc ls`;
+                else
+		        hold=`mpc lstab ${cur}`;
+                fi
 		COMPREPLY=($(compgen -W "${hold}" | sed "$scrub"))
 		return 0
 		;;
@@ -43,8 +47,12 @@
 		COMPREPLY=($(compgen -W "album artist title filename" "${cur}"))
 		return 0
 		;;
-		load|rm)
-		hold=`mpc loadtab ${cur}`;
+		load|save|rm)
+                if [ "x$cur" = "x" ]; then
+                        hold=`mpc lsplaylists`;
+                else
+		        hold=`mpc loadtab ${cur}`;
+                fi
 		COMPREPLY=($(compgen -W "${hold}" | sed "$scrub"))
 		return 0
 		;;
