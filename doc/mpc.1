@@ -2,8 +2,7 @@
 .SH "NAME"
 mpc \- Program for controlling Music Player Daemon (MPD)
 .SH "SYNOPSIS"
-.B mpc
-[<command> <arguments>]
+mpc [<command> <arguments>]
 .SH "DESCRIPTION"
 mpc is a client for MPD, the Music Player Daemon. mpc connects to a MPD running on a machine on the local network and controls MPD according to commands and arguments passed to it. If no arguments are passed, current status is given. 
 
@@ -65,7 +64,7 @@ Prints entire playlist.
 .B prev
 Starts playing previous song.
 .TP
-.B random
+.B random [<state>]
 Toggle random mode if state ("on" or "off") is not specified.
 .TP
 .B repeat [<state>]
@@ -89,6 +88,9 @@ Shuffles all songs on the playlist.
 .TP
 .B stop
 Stops playing.
+.TP
+.B toggle
+Toggles between play and pause. If stopped starts playing. Does not support start playing at song number (use play).
 .TP
 .B update [<path>]
 Scans music directory for updates if no <path> is specified.  If one or more <path>'s are specified, scans only those path's for updates.  Can take input from a pipe.

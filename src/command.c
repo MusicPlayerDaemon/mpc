@@ -281,6 +281,19 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
+int cmd_toggle( int argc, char ** argv, mpd_Connection * conn )
+{
+	mpd_Status * status;
+	status = getStatus(conn);
+
+	if(status->state==MPD_STATUS_STATE_PLAY) {
+		cmd_pause(0,0,conn);
+	} else {
+		cmd_play(0,0,conn);
+	}
+	return 1;
+}
+
 int cmd_outputs( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_OutputEntity * output;
