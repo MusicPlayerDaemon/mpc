@@ -1,3 +1,6 @@
+0.10.3 (2004/4/1)
+1) Forgot to enable iconv support
+
 0.10.2 (2004/3/25)
 1) Fix bug in searching
 2) Fix bug with crossfade
