@@ -86,8 +86,8 @@ void print_help (int max, char * progname, char * command)
 {
 	int i;
 
-	if (! strcmp(command,"help"))
-		fprintf(stderr,"unknown command \"%s\"\n",command);
+	if(command && strcmp(command,"help"))
+			fprintf(stderr,"unknown command \"%s\"\n",command);
 	fprintf(stderr,"Usage: %s <command> [command args]...\n"
 		"mpc version: "VERSION"\n",progname);
 	fprintf(stderr,	"%s %*s  Displays status\n",progname,max," ");
@@ -199,7 +199,10 @@ int main(int argc, char ** argv)
 	int ret = 0;
 	setLocaleCharset();
 
-	parse_options(&argc, argv);
+	if(parse_options(&argc, argv) < 0) {
+		print_help(helplen,argv[0],NULL);
+		exit(EXIT_FAILURE);
+	}
 
 	if (argc==1)
 		print_status_and_exit ();

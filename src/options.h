@@ -32,6 +32,6 @@ struct mpc_option
 extern struct mpc_option mpc_options [];
 
 struct mpc_option * get_option (char option[]);
-void parse_options (int * argc_p, char ** argv);
+int parse_options (int * argc_p, char ** argv);
 
 #endif /* OPTIONS_H */	

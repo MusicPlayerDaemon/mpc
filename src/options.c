@@ -70,7 +70,7 @@ void remove_index (int index, char ** arr, int * size)
 
 /* check and extract options from argv (between argv[0] and the first command
    argument, since other locations could be ambiguous) */
-void parse_options (int * argc_p, char ** argv)
+int parse_options (int * argc_p, char ** argv)
 {
 	int i;
 	struct mpc_option * option;
@@ -82,7 +82,7 @@ void parse_options (int * argc_p, char ** argv)
 		{
 			/* quit parsing on the first "--" */
 			if (strcmp(argv[i], "--") == 0)
-				return;
+				return 0;
 
 			/* strip the prefix from our option and try to look it up */
 			option = get_option(argv[i] + 2);
@@ -104,14 +104,14 @@ void parse_options (int * argc_p, char ** argv)
 					{
 						fprintf(stderr, "Option %s expects a value\n",
 								argv[i]);
-						exit(EXIT_FAILURE);
+						return -1;
 					}
 				}
 			}
 			else
 			{
 				fprintf(stderr, "Invalid option: %s\n", argv[i]);
-				exit(EXIT_FAILURE);
+				return -1;
 			}
 
 			/* remove the i-th element from argv */
@@ -123,4 +123,6 @@ void parse_options (int * argc_p, char ** argv)
 			++i;
 		}
 	}
+
+	return 0;
 }
