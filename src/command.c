@@ -33,18 +33,22 @@
 
 #define DIE(args...) do { fprintf(stderr, ##args); return -1; } while(0)
 
-#define SIMPLE_CMD(funcname, libmpdclient_funcname) \
-int funcname ( int argc, char ** argv, mpd_Connection * conn ) { \
+#define SIMPLE_CMD(funcname, libmpdclient_funcname, ret) \
+int funcname ( int argc, char ** argv, mpd_Connection * conn) { \
         libmpdclient_funcname(conn); \
+	printErrorAndExit(conn); \
         my_finishCommand(conn); \
-        return 1; \
+	printErrorAndExit(conn); \
+        return ret; \
 }
 
-#define SIMPLE_ONEARG_CMD(funcname, libmpdclient_funcname) \
-int funcname ( int argc, char ** argv, mpd_Connection * conn ) { \
+#define SIMPLE_ONEARG_CMD(funcname, libmpdclient_funcname, ret) \
+int funcname ( int argc, char ** argv, mpd_Connection * conn) { \
         libmpdclient_funcname(conn, toUtf8(argv[0])); \
+	printErrorAndExit(conn); \
         my_finishCommand(conn); \
-        return 1; \
+	printErrorAndExit(conn); \
+        return ret; \
 }
 
 static void my_finishCommand(mpd_Connection * conn) {
@@ -53,16 +57,17 @@ static void my_finishCommand(mpd_Connection * conn) {
 	printErrorAndExit(conn);
 }
 
-SIMPLE_CMD(cmd_next, mpd_sendNextCommand)
-SIMPLE_CMD(cmd_pause, mpd_sendPauseCommand)
-SIMPLE_CMD(cmd_prev, mpd_sendPrevCommand)
-SIMPLE_CMD(cmd_stop, mpd_sendStopCommand)
-SIMPLE_CMD(cmd_clear, mpd_sendClearCommand)
-SIMPLE_CMD(cmd_shuffle, mpd_sendShuffleCommand)
-SIMPLE_CMD(cmd_update, mpd_sendUpdateCommand)
+SIMPLE_CMD(cmd_next, mpd_sendNextCommand, 1)
+SIMPLE_CMD(cmd_pause, mpd_sendPauseCommand, 1)
+SIMPLE_CMD(cmd_prev, mpd_sendPrevCommand, 1)
+SIMPLE_CMD(cmd_stop, mpd_sendStopCommand, 1)
+SIMPLE_CMD(cmd_clear, mpd_sendClearCommand, 1)
+SIMPLE_CMD(cmd_shuffle, mpd_sendShuffleCommand, 1)
+SIMPLE_CMD(cmd_update, mpd_sendUpdateCommand, 1)
 
-SIMPLE_ONEARG_CMD(cmd_save, mpd_sendSaveCommand)
-SIMPLE_ONEARG_CMD(cmd_rm, mpd_sendRmCommand)
+SIMPLE_ONEARG_CMD(cmd_save, mpd_sendSaveCommand, 0)
+SIMPLE_ONEARG_CMD(cmd_rm, mpd_sendRmCommand, 0)
+SIMPLE_ONEARG_CMD(cmd_addurl, mpd_sendAddCommand, 0)
 
 int cmd_add (int argc, char ** argv, mpd_Connection * conn ) 
 {

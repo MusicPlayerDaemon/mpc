@@ -46,6 +46,7 @@ struct _mpc_table {
 	char * help;		/* NULL means they won't be shown in help */
 } mpc_table [] = {
 	{"add", 0, -1, 1, cmd_add,"<filename>","Add a song to the current playlist" },
+	{"addurl", 1, 1, 0, cmd_addurl,"<url>", "Add a stream to the current playlist" },
 	{"del", 0, -1, 1, cmd_del,"<playlist #>","Remove a song from the current playlist" },
 	{"play", 0, -1, 2, cmd_play,"<number>","Start playing at <number> (default: 1)" },
 	{"next", 0, 0, 0, cmd_next, "","Play the next song in the current playlist"},
