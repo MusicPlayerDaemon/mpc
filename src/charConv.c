@@ -64,10 +64,10 @@ int setCharSetConversion(char * to, char * from) {
 char * convStrDup(char * string) {
 #ifdef HAVE_ICONV
 	char buffer[BUFFER_SIZE];
-	int inleft = strlen(string);
+	size_t inleft = strlen(string);
 	char * ret;
-	int outleft;
-	int retlen = 0;
+	size_t outleft;
+	size_t retlen = 0;
 	size_t err;
 	char * bufferPtr;
 
@@ -86,7 +86,7 @@ char * convStrDup(char * string) {
 		}
 
 		ret = realloc(ret,retlen+BUFFER_SIZE-outleft+1);
-		strncpy(&(ret[retlen]),buffer,BUFFER_SIZE-outleft);
+		memcpy(ret+retlen,buffer,BUFFER_SIZE-outleft);
 		retlen+=BUFFER_SIZE-outleft;
 		ret[retlen] = '\0';
 	}
