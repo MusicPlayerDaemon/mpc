@@ -614,6 +614,8 @@ mpd_Stats * mpd_getStats(mpd_Connection * connection) {
 	stats->numberOfSongs = 0;
 	stats->uptime = 0;
 	stats->dbUpdateTime = 0;
+	stats->playTime = 0;
+	stats->dbPlayTime = 0;
 
 	mpd_getNextReturnElement(connection);
 	if(connection->error) {
@@ -636,6 +638,12 @@ mpd_Stats * mpd_getStats(mpd_Connection * connection) {
 		}
 		else if(strcmp(re->name,"db_update")==0) {
 			stats->dbUpdateTime = strtol(re->value,NULL,10);
+		}
+		else if(strcmp(re->name,"playtime")==0) {
+			stats->playTime = strtol(re->value,NULL,10);
+		}
+		else if(strcmp(re->name,"db_playtime")==0) {
+			stats->dbPlayTime = strtol(re->value,NULL,10);
 		}
 
 		mpd_getNextReturnElement(connection);
