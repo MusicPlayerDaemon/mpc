@@ -222,8 +222,8 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 			if(readed<=0) {
 				snprintf(connection->errorStr,MPD_BUFFER_MAX_LENGTH,
 					"problems getting a response from"
-					" \"%s\" on port %i",host,
-					port);
+					" \"%s\" on port %i : %s",host,
+					port, strerror(errno));
 				connection->error = MPD_ERROR_NORESPONSE;
 				return connection;
 			}
