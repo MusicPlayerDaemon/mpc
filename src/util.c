@@ -354,7 +354,7 @@ void print_formatted_song (mpd_Song * song, const char * format)
 	}
 }
 
-#define DEFAULT_FORMAT "[%name%: &[%artist% - ]%title%]|%name%|[[%artist% - ]%title%]|%file%"
+#define DEFAULT_FORMAT "[%name%: &[%artist% - ]%title%]|%name%|[%artist% - ]%title%|%file%"
 
 void pretty_print_song (mpd_Song * song)
 {
