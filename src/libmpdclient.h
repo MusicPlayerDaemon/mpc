@@ -136,7 +136,7 @@ typedef struct mpd_Status {
 	int state;
 	/* crossfade setting in seconds */
 	int crossfade;
-	/* if in PLAY or PAUSE state, this is the number of the currently
+	/* if in PLAY or PAUSE state, this is the position of the currently
 	 * playing song in the playlist, beginning with 0
 	 */
 	int song;
@@ -214,9 +214,9 @@ typedef struct _mpd_Song {
 	char * name;
 	/* length of song in seconds, check that it is not MPD_SONG_NO_TIME  */
 	int time;
-	/* if plchanges or playlistinfo used, is the number of the song in
+	/* if plchanges or playlistinfo used, is the position of the song in
 	 * the playlist */
-	int num;
+	int pos;
 	int id;
 } mpd_Song;
 

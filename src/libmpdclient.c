@@ -755,7 +755,7 @@ void mpd_initSong(mpd_Song * song) {
 	song->title = NULL;
 	song->name = NULL;
 	song->time = MPD_SONG_NO_TIME;
-	song->num = MPD_SONG_NO_NUM;
+	song->pos = MPD_SONG_NO_NUM;
 	song->id = MPD_SONG_NO_ID;
 }
 
@@ -791,7 +791,7 @@ mpd_Song * mpd_songDup(mpd_Song * song) {
 	if(song->track) ret->track = strdup(song->track);
 	if(song->name) ret->name = strdup(song->name);
 	ret->time = song->time;
-	ret->num = song->num;
+	ret->pos = song->pos;
 	ret->id = song->id;
 
 	return ret;
@@ -967,9 +967,9 @@ mpd_InfoEntity * mpd_getNextInfoEntity(mpd_Connection * connection) {
 					strcmp(re->name,"Time")==0) {
 				entity->info.song->time = atoi(re->value);
 			}
-			else if(entity->info.song->num==MPD_SONG_NO_NUM &&
-					strcmp(re->name,"Num")==0) {
-				entity->info.song->num = atoi(re->value);
+			else if(entity->info.song->pos==MPD_SONG_NO_NUM &&
+					strcmp(re->name,"Pos")==0) {
+				entity->info.song->pos = atoi(re->value);
 			}
 			else if(entity->info.song->id==MPD_SONG_NO_ID &&
 					strcmp(re->name,"Id")==0) {
@@ -1015,9 +1015,9 @@ char * mpd_getNextAlbum(mpd_Connection * connection) {
 	return mpd_getNextReturnElementNamed(connection,"Album");
 }
 
-void mpd_sendPlaylistInfoCommand(mpd_Connection * connection, int songNum) {
+void mpd_sendPlaylistInfoCommand(mpd_Connection * connection, int songPos) {
 	char * string = malloc(strlen("playlistinfo")+25);
-	sprintf(string,"playlistinfo \"%i\"\n",songNum);
+	sprintf(string,"playlistinfo \"%i\"\n",songPos);
 	mpd_sendInfoCommand(connection,string);
 	free(string);
 }
@@ -1145,9 +1145,9 @@ void mpd_sendAddCommand(mpd_Connection * connection, const char * file) {
 	free(sFile);
 }
 
-void mpd_sendDeleteCommand(mpd_Connection * connection, int songNum) {
+void mpd_sendDeleteCommand(mpd_Connection * connection, int songPos) {
 	char * string = malloc(strlen("delete")+25);
-	sprintf(string,"delete \"%i\"\n",songNum);
+	sprintf(string,"delete \"%i\"\n",songPos);
 	mpd_sendInfoCommand(connection,string);
 	free(string);
 }
@@ -1194,9 +1194,9 @@ void mpd_sendClearCommand(mpd_Connection * connection) {
 	mpd_executeCommand(connection,"clear\n");
 }
 
-void mpd_sendPlayCommand(mpd_Connection * connection, int songNum) {
+void mpd_sendPlayCommand(mpd_Connection * connection, int songPos) {
 	char * string = malloc(strlen("play")+25);
-	sprintf(string,"play \"%i\"\n",songNum);
+	sprintf(string,"play \"%i\"\n",songPos);
 	mpd_sendInfoCommand(connection,string);
 	free(string);
 }
