@@ -1,5 +1,5 @@
 /* libmpdclient
-   (c)2003-2004 by Warren Dukes (shank@mercury.chem.pitt.edu)
+   (c)2003-2004 by Warren Dukes (warren.dukes@gmail.com)
    This project's homepage is: http://www.musicpd.org
   
    Redistribution and use in source and binary forms, with or without
