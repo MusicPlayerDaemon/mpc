@@ -101,7 +101,7 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 	int err;
 	struct hostent * he;
 	struct sockaddr * dest;
-#ifdef MPD_HAVE_SOCKLEN_T
+#ifdef HAVE_SOCKLEN_T
 	socklen_t destlen;
 #else
 	int destlen;
