@@ -1,5 +1,5 @@
 /* mpc
- * (c) 2003-2005 by normalperson and Warren Dukes (shank@mercury.chem.pitt.edu)
+ * (c) 2003-2005 by normalperson and Warren Dukes (warren.dukes@gmail.com)
  *              and Daniel Brown (danb@cs.utexas.edu)
  * This project's homepage is: http://www.musicpd.org
  *
