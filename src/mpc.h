@@ -31,7 +31,7 @@
 #endif /* DEFAULT_HOST */
 
 #ifndef DEFAULT_PORT
-#  define DEFAULT_PORT "2100"
+#  define DEFAULT_PORT "6600"
 #endif /* DEFAULT_PORT */
 
 #ifndef MIN_COLUMNS
