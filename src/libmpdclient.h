@@ -44,12 +44,14 @@
 #define MPD_ACK_ERROR_PASSWORD			3
 #define MPD_ACK_ERROR_PERMISSION		4
 #define MPD_ACK_ERROR_UNKNOWN_CMD		5
-#define MPD_ACK_ERROR_NO_EXIST			6
-#define MPD_ACK_ERROR_PLAYLIST_MAX		7
-#define MPD_ACK_ERROR_SYSTEM			8
-#define MPD_ACK_ERROR_PLAYLIST_LOAD		9
-#define MPD_ACK_ERROR_UPDATE_ALREADY		10
-#define MPD_ACK_ERROR_PLAYER_SYNC		11
+
+#define MPD_ACK_ERROR_NO_EXIST			50
+#define MPD_ACK_ERROR_PLAYLIST_MAX		51
+#define MPD_ACK_ERROR_SYSTEM			52
+#define MPD_ACK_ERROR_PLAYLIST_LOAD		53
+#define MPD_ACK_ERROR_UPDATE_ALREADY		54
+#define MPD_ACK_ERROR_PLAYER_SYNC		55
+#define MPD_ACK_ERROR_EXIST			56
 
 #ifdef __cplusplus
 extern "C" {
@@ -136,10 +138,12 @@ typedef struct mpd_Status {
 	int state;
 	/* crossfade setting in seconds */
 	int crossfade;
-	/* if in PLAY or PAUSE state, this is the position of the currently
+	/* if a song is currently selected (always the case when state is
+	 * PLAY or PAUSE), this is the position of the currently
 	 * playing song in the playlist, beginning with 0
 	 */
 	int song;
+	/* Song ID of the currently selected song */
 	int songid;
 	/* time in seconds that have elapsed in the currently playing/paused
 	 * song
@@ -165,6 +169,7 @@ void mpd_sendStatusCommand(mpd_Connection * connection);
 
 /* mpd_getStatus
  * returns status info, be sure to free it with mpd_freeStatus()
+ * call this after mpd_sendStatusCommand()
  */
 mpd_Status * mpd_getStatus(mpd_Connection * connection);
 
@@ -214,9 +219,10 @@ typedef struct _mpd_Song {
 	char * name;
 	/* length of song in seconds, check that it is not MPD_SONG_NO_TIME  */
 	int time;
-	/* if plchanges or playlistinfo used, is the position of the song in
-	 * the playlist */
+	/* if plchanges/playlistinfo/playlistid used, is the position of the 
+	 * song in the playlist */
 	int pos;
+	/* song id for a song in the playlist */
 	int id;
 } mpd_Song;
 
@@ -327,6 +333,8 @@ void mpd_freeInfoEntity(mpd_InfoEntity * entity);
 /* use this function to loop over after calling Info/Listall functions */
 mpd_InfoEntity * mpd_getNextInfoEntity(mpd_Connection * connection);
 
+/* fetches the currently seeletect song (the song referenced by status->song
+ * and status->songid*/
 void mpd_sendCurrentSongCommand(mpd_Connection * connection);
 
 /* songNum of -1, means to display the whole list */
@@ -335,10 +343,14 @@ void mpd_sendPlaylistInfoCommand(mpd_Connection * connection, int songNum);
 /* use this to get the changes in the playlist since version _playlist_ */
 void mpd_sendPlChangesCommand(mpd_Connection * connection, long long playlist);
 
+/* recursivel fetches all songs/dir/playlists in "dir* (no metadata is 
+ * returned) */
 void mpd_sendListallCommand(mpd_Connection * connection, const char * dir);
 
+/* same as sendListallCommand, but also metadata is returned */
 void mpd_sendListallInfoCommand(mpd_Connection * connection, const char * dir);
 
+/* non-recursive version of ListallInfo */
 void mpd_sendLsInfoCommand(mpd_Connection * connection, const char * dir);
 
 #define MPD_TABLE_ARTIST	0
@@ -442,6 +454,9 @@ void mpd_sendCommandListOkBegin(mpd_Connection * connection);
 
 void mpd_sendCommandListEnd(mpd_Connection * connection);
 
+/* advance to the next listOk 
+ * returns 0 if advanced to the next list_OK,
+ * returns -1 if it advanced to an OK or ACK */
 int mpd_nextListOkCommand(mpd_Connection * connection);
 
 #ifdef __cplusplus
