@@ -1,5 +1,5 @@
 /* libmpdclient
- * (c)2002 by Warren Dukes (shank@mercury.chem.pitt.edu)
+ * (c)2003-2004 by Warren Dukes (shank@mercury.chem.pitt.edu)
  * This project's homepage is: http://www.musicpd.org
  *
  * This library is free software; you can redistribute it and/or
