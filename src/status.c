@@ -71,7 +71,7 @@ void print_status (mpd_Connection *conn)
 		}
 		else printf("[paused] ");
 
-		perc = status->elapsedTime<=status->totalTime ?
+		perc = status->elapsedTime<status->totalTime ?
 				100.0*status->elapsedTime/status->totalTime :
 				100.0;
 
