@@ -24,6 +24,9 @@ Adds a song from the music database to the playlist. Use 'mpc add ""' to add all
 .B clear
 Empties playlist.
 .TP
+.B crossfade [<seconds>]
+Gets and sets the current amount of crossfading between songs (0 disables crossfading).
+.TP
 .B del <song>
 Removes a song from the playlist. Can also read input from pipes.
 .TP
@@ -84,7 +87,8 @@ Scans music directory for updates.
 .B version
 Reports the version of MPD.
 .TP
-.B volume <value>
-Sets the volume to <value> (0-100).
+.B volume <[+-]value>
+Sets the volume to <value> (0-100).  If "+" or "-" is used, then it adjusts
+the volume relative to the current volume.
 .SH SEE ALSO
 mpd(1)
