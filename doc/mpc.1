@@ -89,8 +89,8 @@ Shuffles all songs on the playlist.
 .B stop
 Stops playing.
 .TP
-.B update 
-Scans music directory for updates.
+.B update [<path>]
+Scans music directory for updates if no <path> is specified.  If one or more <path>'s are specified, scans only those path's for updates.  Can take input from a pipe.
 .TP
 .B version
 Reports the version of MPD.
