@@ -114,13 +114,13 @@ void setLocaleCharset() {
         char * originalLocale;
         char * charset = NULL;
                                                                                 
-        if((originalLocale = setlocale(LC_ALL,""))) {
+        if((originalLocale = setlocale(LC_CTYPE,""))) {
                 char * temp;
                                                                                 
                 if((temp = nl_langinfo(CODESET))) {
                         charset = strdup(temp);
                 }
-                if(!setlocale(LC_ALL,originalLocale));
+                if(!setlocale(LC_CTYPE,originalLocale));
         }
 	
 	if(localeCharset) free(localeCharset);
