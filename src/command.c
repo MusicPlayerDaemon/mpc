@@ -1,5 +1,6 @@
 /* mpc
  * (c) 2003-2004 by normalperson and Warren Dukes (shank@mercury.chem.pitt.edu)
+ *              and Daniel Brown (danb@cs.utexas.edu)
  * This project's homepage is: http://www.musicpd.org
  *
  * This program is free software; you can redistribute it and/or modify
@@ -334,14 +335,11 @@ int cmd_playlist ( int argc, char ** argv, mpd_Connection * conn )
 	while((entity = mpd_getNextInfoEntity(conn))) {
 		if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
 			mpd_Song * song = entity->info.song;
-			if(song->artist && song->title) {
-				printf("#%i) %s - ",1+count, fromUtf8(song->artist));
-				printf("%s\n", fromUtf8(song->title));
-			}
-			else if(song->title) {
-				printf("#%i) %s\n",1+count, fromUtf8(song->title));
-			}
-			else printf("#%i) %s\n",1+count, fromUtf8(song->file));
+
+			printf("#%i) ", 1+count);
+			pretty_print_song(song);
+			printf("\n");
+
 			count++;
 		}
 		mpd_freeInfoEntity(entity);

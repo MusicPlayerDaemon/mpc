@@ -1,5 +1,6 @@
 /* 
  * (c)2003-2004 by Warren Dukes (shank@mercury.chem.pitt.edu)
+ *                 Daniel Brown (danb@cs.utexas.edu)
  * This project's homepage is: http://www.musicpd.org
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,6 +23,7 @@
 #include "util.h"
 #include "mpc.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -48,16 +50,8 @@ void print_status (mpd_Connection *conn)
 				continue;
 			}
 
-			if(song->artist && song->title &&
-				strlen(song->artist) &&
-				strlen(song->title)) {
-				printf("%s - ",fromUtf8(song->artist));
-				printf("%s\n",fromUtf8(song->title));
-			}
-			else if(song->title && strlen(song->title)) {
-				printf("%s\n",fromUtf8(song->title));
-			}
-			else printf("%s\n",fromUtf8(song->file));
+			pretty_print_song(song);
+			printf("\n");
 
 			mpd_freeInfoEntity(entity);
 

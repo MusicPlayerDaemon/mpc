@@ -1,5 +1,6 @@
 /* mpc
  * (c) 2003-2004 by normalperson and Warren Dukes (shank@mercury.chem.pitt.edu)
+ *              and Daniel Brown (danb@cs.utexas.edu)
  * This project's homepage is: http://www.musicpd.org
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +22,7 @@
 #include "charConv.h"
 #include "list.h"
 #include "mpc.h"
+#include "options.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -166,3 +168,92 @@ int parse_int_value_change(const char * str, struct int_value_change * ret)
         return 1;
 }
 
+/* this is a little ugly... */
+void print_formatted_song (mpd_Song * song, const char * format)
+{
+	char esc = '%';
+	char *p, *end;
+	int length, i;
+
+	/* we won't mess up format, we promise... */
+	for (p = (char *)format; *p != '\0'; )
+	{
+		/* pass-through non-escaped portions of the format string */
+		if (p[0] != esc)
+		{
+			printf("%c", *p);
+			++p;
+			continue;
+		}
+
+		/* let the escape character escape itself */
+		if (p[1] == esc)
+		{
+			printf("%c", esc);
+			++p;
+			continue;
+		}
+
+		/* advance past the esc character */
+		++p;
+
+		/* find the extent of this format specifier (stop at \0, ' ', or esc) */
+		for (i = 0; p[i] != ' ' && p[i] != esc && p[i] != '\0'; ++i)
+			;
+		end = p + i;
+		length = end - p;
+
+		/* does this specifier mean anything to us? (there should be a better
+		   way to do this...) */
+		if      (strncmp("file", p, length) == 0)
+			printf("%s", fromUtf8(song->file));
+		else if (strncmp("artist", p, length) == 0)
+			printf("%s", fromUtf8(song->artist ? song->artist : ""));
+		else if (strncmp("title", p, length) == 0)
+			printf("%s", fromUtf8(song->title ? song->title : ""));
+		else if (strncmp("album", p, length) == 0)
+			printf("%s", fromUtf8(song->album ? song->album : ""));
+		else if (strncmp("track", p, length) == 0)
+			printf("%s", fromUtf8(song->track ? song->track : ""));
+		else if (strncmp("time", p, length) == 0)
+		{
+			if (song->time != MPD_SONG_NO_TIME)
+				printf("%d:%d", song->time / 60, song->time % 60 + 1);
+			else
+				printf("%s", "");
+		}
+		else
+		{
+			/* just pass-through any unknown specifiers (including esc) */
+			/* drop a null char in so printf stops at the end of this specifier,
+			   but put the real character back in (pseudo-const) */
+			char c = *end;
+			*end = '\0';
+			printf("%c%s", esc, p);
+			*end = c;
+		}
+
+		/* advance past the specifier */
+		p += length;
+	}
+}
+
+void pretty_print_song (mpd_Song * song)
+{
+	/* was a format string specified? */
+	if (get_option("format")->set)
+	{
+		print_formatted_song(song, get_option("format")->value);
+	}
+	/* just do something pretty */
+	else
+	{
+		if (song->artist && song->title && strlen(song->artist) &&
+				strlen(song->title))
+			printf("%s - %s", fromUtf8(song->artist), fromUtf8(song->title));
+		else if (song->title && strlen(song->title))
+			printf("%s", fromUtf8(song->title));
+		else
+			printf("%s", fromUtf8(song->file));
+	}
+}

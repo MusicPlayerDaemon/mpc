@@ -1,5 +1,6 @@
 /* mpc
  * (c) 2003-2004 by normalperson and Warren Dukes (shank@mercury.chem.pitt.edu)
+ *              and Daniel Brown (danb@cs.utexas.edu)
  * This project's homepage is: http://www.musicpd.org
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,5 +37,6 @@ int get_boolean (const char * arg);
 int parse_int(const char *, int *);
 int parse_songnum(const char *, int *);
 int parse_int_value_change(const char *, struct int_value_change *);
+void pretty_print_song (mpd_Song * song);
 
 #endif /* MPC_UTIL_H */	

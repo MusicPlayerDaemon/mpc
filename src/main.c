@@ -1,5 +1,6 @@
 /* mpc
  * (c) 2003-2004 by Warren Dukes (shank@mercury.chem.pitt.edu)
+ *                  Daniel Brown (danb@cs.utexas.edu)
  * This project's homepage is: http://www.musicpd.org
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +25,9 @@
 #include "status.h"
 #include "command.h"
 #include "mpc.h"
+#include "options.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -195,6 +198,8 @@ int main(int argc, char ** argv)
 	int helplen = 0;
 	int ret = 0;
 	setLocaleCharset();
+
+	parse_options(&argc, argv);
 
 	if (argc==1)
 		print_status_and_exit ();
