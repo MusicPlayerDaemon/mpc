@@ -1,22 +1,13 @@
 .TH "Music Player Command" 1
-.SH NAME
+.SH "NAME"
 mpc \- Program for controlling Music Player Daemon (MPD)
-.SH SYNOPSIS
+.SH "SYNOPSIS"
 .B mpc
 [<command> <arguments>]
-.SH DESCRIPTION
-mpc is a client for MPD, the Music Player Daemon. mpc connects to a MPD running on a machine on the local network and controls this according to commands and arguments passed to it. If no arguments are passed, current status is given. 
+.SH "DESCRIPTION"
+mpc is a client for MPD, the Music Player Daemon. mpc connects to a MPD running on a machine on the local network and controls MPD according to commands and arguments passed to it. If no arguments are passed, current status is given. 
 
-By default, mpc connects to localhost:6600. This can be changed either at compile-time, or by exporting the MPD_HOST and MPD_PORT environment variables.
-
-$ export MPD_HOST=localhost && export MPD_PORT=6600
-
-To use a password with mpd, set MPD_HOST to password@host.
-
-$ export MPD_HOST=password@localhost
-
-Read more about MPD on http://www.musicpd.org
-.SH OPTIONS
+.SH "OPTIONS"
 .TP
 .BI --format
 .br
@@ -89,7 +80,7 @@ Saves playlist as <file>.
 .B search <table> <pattern>
 Searches for songs that match the pattern, where table is "artist", "album", "title", or "filename".
 .TP
-.B seek [<HH:MM:SS>] or <[+-]num[s]%>
+.B seek [+-][<HH:MM:SS>] or <[+-]<0-100>%>
 Seeks by hour, minute or seconds, hours or minutes can be omitted.
 If seeking by percentage, seeks within the current song in the specified manner.  If a "+" or "-" is used, the seek is done relative to the current song position. Absolute seeking by default.
 .TP
@@ -108,7 +99,18 @@ Reports the version of MPD.
 .B volume <[+-]value>
 Sets the volume to <value> (0-100).  If "+" or "-" is used, then it adjusts
 the volume relative to the current volume.
-.SH EXAMPLES
+.SH "ENVIRONMENT"
+.TP
+This section describes some environment variables that affect how mpc operates.
+.br
+	MPD_HOST
+.br
+	MPD_PORT
+.br
+		By default, mpc connects to localhost:6600. This can be changed either at compile-time, or by exporting the MPD_HOST and MPD_PORT environment variables.
+.br
+		To use a password with mpd, set MPD_HOST to password@host.
+.SH "EXAMPLES"
 .TP
 Here is a script to load and play m3u playlists (useful for mozilla):
 .br
@@ -135,5 +137,12 @@ grep '^File[0-9]*' $1 | sed -e 's/^File[0-9]*=//' | mpc add
 .br
 mpc play
 .br
-.SH SEE ALSO
+.SH "BUGS"
+Report bugs on http://www.musicpd.org/mantis/
+.SH "NOTE"
+Since MPD uses UTF\-8, mpc needs to convert characters to the
+charset used by the local system. If you get character conversion errors when your running mpc you probably need to set up your locale. This is done by setting any of the LC_CTYPE, LANG or LC_ALL enviroment vatiables (LC_CTYPE only affects character handling).
+.SH "SEE ALSO"
 mpd(1)
+.SH "AUTHOR"
+	See <https://svn.musicpd.org/mpc/trunk/AUTHORS>, for contributors to mpc

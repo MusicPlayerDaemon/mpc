@@ -57,7 +57,7 @@ struct _mpc_table {
 	{"prev", 0, 0, 0, cmd_prev,"","Play the previous song in the current playlist"},
 	{"pause", 0, 0, 0, cmd_pause, "", "Pauses the currently playing song"},
 	{"stop", 0, 0, 0, cmd_stop,"", "Stop the currently playing playlists"},
-	{"seek", 1, 1, 0, cmd_seek,"<0-100>","Seeks to the position specified in percent"},
+	{"seek", 1, 1, 0, cmd_seek,"[+-][HH:MM:SS] or <0-100>%","Seeks to the specified position"},
 	{"clear", 0, 0, 0, cmd_clear,"", "Clear the current playlist"},
 	{"outputs", 0, 0, 0, cmd_outputs,"", "Show the current outputs"},
 	{"enable", 1, 1, 0, cmd_enable, "<output #>", "Enable a output"},

@@ -375,16 +375,13 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 
 	status = getStatus(conn);
 
-	if(status->state==MPD_STATUS_STATE_STOP) {
+	if(status->state==MPD_STATUS_STATE_STOP)
 		DIE("not currently playing\n");
-	}
 
-        if(*arg == '+') {
+        if(*arg == '+')
                 rel = 1;
-	}
-        else if(*arg == '-') {
+        else if(*arg == '-')
                 rel = -1;
-	}
 
 	last_char = &arg[strlen(arg)-1];
 
@@ -396,13 +393,11 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 		/* Remove the % */
 		arg[ strlen(arg) - 1 ] = '\0';
 
-		/* percent seek */
+		/* percent seek, strtod is needed for percent with decimals */
 		perc = strtod(arg,&test);
 
-		if(( *test!='\0' ) || (!rel && (perc<0 || perc>100)) ||
-                                  (rel && perc>abs(100))) {
+		if(( *test!='\0' ) || (!rel && (perc<0 || perc>100)) || (rel && perc>abs(100)))
 			DIE("\"%s\" is not an number between 0 and 100\n",arg);
-		}
 
 		seekchange = perc*status->totalTime/100+0.5;
 
@@ -425,8 +420,7 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 			++sec_ptr;
 
 			/* If hour is in the argument, else just point to the arg */
-			if( strrchr( arg, ':' )) {
-				min_ptr = strrchr( arg, ':' );
+			if(( min_ptr = strrchr( arg, ':' ))) {
 
 				/* Remove ':' and move the pointer one byte up */
 				* min_ptr = '\0';
@@ -437,11 +431,9 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 					hr_ptr = arg;
 					hr = strtol( hr_ptr, &test, 10 );
 
-					if( *test != '\0' || ( ! rel && hr < 0 )) {
+					if( *test != '\0' || ( ! rel && hr < 0 ))
 						DIE("\"%s\" is not a positive number\n", sec_ptr);
-					}
 				}
-
 			} else {
 				min_ptr = arg;
 			}
@@ -449,15 +441,25 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 			/* Change the pointers to a integer  */
 			sec = strtol( sec_ptr, &test, 10 );
 
-			if( *test != '\0' || ( ! rel && sec < 0 )) {
+			if( *test != '\0' || ( ! rel && sec < 0 ))
 				DIE("\"%s\" is not a positive number\n", sec_ptr);
-			}
 
 			min = strtol( min_ptr, &test, 10 );
 
-			if( *test != '\0' || ( ! rel && min < 0 )) {
+			if( *test != '\0' || ( ! rel && min < 0 ))
 				DIE("\"%s\" is not a positive number\n", min_ptr);
-			}
+
+			/* If mins exist, check secs. If hrs exist, check mins  */
+			if( min && strlen(sec_ptr) != 2 )
+				DIE("\"%s\" is not two digits\n", sec_ptr);
+			else if( hr && strlen(min_ptr) != 2 )
+				DIE("\"%s\" is not two digits\n", min_ptr);
+
+			/* Finally, make sure they're not above 60 if higher unit exists */
+			if( min && sec > 60 )
+				DIE("\"%s\" is greater than 60\n", sec_ptr);
+			else if( hr && min > 60 )
+				DIE("\"%s\" is greater than 60\n", min_ptr);
 
 			total_secs = ( hr * 3600 ) + ( min * 60 ) + sec;
 
@@ -466,9 +468,8 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 			/* absolute seek (in seconds) */
 			total_secs = strtol( arg, &test, 10 ); /* get the # of seconds */
 
-			if( *test != '\0' || ( ! rel && total_secs < 0 )) {
+			if( *test != '\0' || ( ! rel && total_secs < 0 ))
 				DIE("\"%s\" is not a positive number\n", arg);
-			}
 		}
 		seekchange = total_secs;
 	}
