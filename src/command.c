@@ -320,7 +320,10 @@ int cmd_playlist ( int argc, char ** argv, mpd_Connection * conn )
 			mpd_Song * song = entity->info.song;
 			if(song->artist && song->title) {
 				printf("#%i) %s - ",1+count, fromUtf8(song->artist));
-				printf("%s\n",fromUtf8(song->title));
+				printf("%s\n", fromUtf8(song->title));
+			}
+			else if(song->title) {
+				printf("#%i) %s\n",1+count, fromUtf8(song->title));
 			}
 			else printf("#%i) %s\n",1+count, fromUtf8(song->file));
 			count++;

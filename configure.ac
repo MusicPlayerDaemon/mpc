@@ -50,12 +50,14 @@ if test x$enable_iconv = xyes; then
 	CPPFLAGS=$CFLAGS
 	AC_CHECK_HEADER(iconv.h,,[CFLAGS=$oldcflags;enable_iconv=no])
 	if test x$enable_iconv = xyes; then
-		AC_CHECK_LIB(iconv,iconv_open,,LIBS=$oldlibs)
+		AC_CHECK_LIB(iconv, main,,LIBS=$oldlibs)
 		AC_DEFINE(HAVE_ICONV,1,[Define to use iconv])
 	fi
 fi
 
-AC_CHECK_HEADER(langinfo.h,AC_DEFINE(HAVE_LANGINFO,1,[Define for nl_langinfo]),)
+
+AM_LANGINFO_CODESET
+
 AC_CHECK_HEADER(locale.h,AC_DEFINE(HAVE_LOCALE,1,[Define for locale]),)
 
 AC_DEFINE_UNQUOTED(DEFAULT_HOST,"$DEFAULT_HOST",[Define default host])

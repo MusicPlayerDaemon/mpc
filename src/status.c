@@ -54,6 +54,9 @@ void print_status (mpd_Connection *conn)
 				printf("%s - ",fromUtf8(song->artist));
 				printf("%s\n",fromUtf8(song->title));
 			}
+			else if(song->title && strlen(song->title)) {
+				printf("%s\n",fromUtf8(song->title));
+			}
 			else printf("%s\n",fromUtf8(song->file));
 
 			mpd_freeInfoEntity(entity);

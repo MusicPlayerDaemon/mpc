@@ -26,7 +26,7 @@
 /*#include <stdio.h>*/
 
 #ifdef HAVE_LOCALE
-#ifdef HAVE_LANGINFO
+#ifdef HAVE_LANGINFO_CODESET
 #include <locale.h>
 #include <langinfo.h>
 #endif
@@ -112,7 +112,7 @@ void closeCharSetConversion() {
 
 void setLocaleCharset() {
 #ifdef HAVE_LOCALE
-#ifdef HAVE_LANGINFO
+#ifdef HAVE_LANGINFO_CODESET
         char * originalLocale;
         char * charset = NULL;
                                                                                 
@@ -130,12 +130,13 @@ void setLocaleCharset() {
         if(charset) {
 		localeCharset = strdup(charset);
                 free(charset);
+		return;
         }
-        else localeCharset = strdup("ISO-8859-1");
-
 	/*printf("localCharset: %s\n",localeCharset);*/
 #endif
 #endif
+        localeCharset = strdup("ISO-8859-1");
+
 }
 
 char * toUtf8(char * from) {
