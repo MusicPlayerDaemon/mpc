@@ -218,8 +218,6 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 	char * temp;
 	int length;
 	int found = 0;
-	char esc = '%';
-	char c;
 
 	/* we won't mess up format, we promise... */
 	for (p = (char *)format; *p != '\0'; )
@@ -286,36 +284,31 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 		}
 
 		/* advance past the esc character */
-		++p;
 
 		/* find the extent of this format specifier (stop at \0, ' ', or esc) */
-		end  = p;
+		temp = NULL;
+
+		end  = p+1;
 		while(*end >= 'a' && *end <= 'z')
 		{
 			end++;
 		}
-		length = end - p;
-
-		c = *end;
-		*end = '\0';
-
-		/* does this specifier mean anything to us? (there should be a better
-		   way to do this...) */
-		temp = NULL;
-		if      (strcmp("file", p) == 0) {
+		length = end - p + 1;
+		if(*end != '%')
+			length--;
+		else if (strncmp("%file%", p, length) == 0)
 			temp = fromUtf8(song->file);
-		}
-		else if (strcmp("artist", p) == 0)
+		else if (strncmp("%artist%", p, length) == 0)
 			temp = song->artist ? fromUtf8(song->artist) : NULL;
-		else if (strcmp("title", p) == 0)
+		else if (strncmp("%title%", p, length) == 0)
 			temp = song->title ? fromUtf8(song->title) : NULL;
-		else if (strcmp("album", p) == 0)
+		else if (strncmp("%album%", p, length) == 0)
 			temp = song->album ? fromUtf8(song->album) : NULL;
-		else if (strcmp("track", p) == 0)
+		else if (strncmp("%track%", p, length) == 0)
 			temp = song->track ? fromUtf8(song->track) : NULL;
-		else if (strcmp("name", p) == 0)
+		else if (strncmp("%name%", p, length) == 0)
 			temp = song->name ? fromUtf8(song->name) : NULL;
-		else if (strcmp("time", p) == 0)
+		else if (strncmp("%time%", p, length) == 0)
 		{
 			if (song->time != MPD_SONG_NO_TIME) {
 				char s[10];
@@ -325,25 +318,21 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 				temp = fromUtf8(s);
 			}
 		}
-		else
+
+		if( temp == NULL)
 		{
 			/* just pass-through any unknown specifiers (including esc) */
 			/* drop a null char in so printf stops at the end of this specifier,
 			   but put the real character back in (pseudo-const) */
-			ret = appendToString(ret, &esc, 1);
-			ret = appendToString(ret, p, strlen(p));
+			ret = appendToString(ret, p, length);
 		}
-
-		*end = c;
-
-		if(temp) {
+		else {
 			found = 1;
 			ret = appendToString(ret, temp, strlen(temp));
 		}
 
 		/* advance past the specifier */
 		p += length;
-		if(*end == '%') ++p;
 	}
 
 	if(last) *last = p;
