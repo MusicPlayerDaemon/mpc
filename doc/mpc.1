@@ -16,6 +16,11 @@ To use a password with mpd, set MPD_HOST to password@host.
 $ export MPD_HOST=password@localhost
 
 Read more about MPD on http://www.musicpd.org
+.SH OPTIONS
+.TP
+.BI --format
+.br
+Configure the format of song display for status and the playlist.  The metadata delimeters are "%name%", "%artist%", "%album%", "%title%", "%track%", "%time%", and "%file%".  The [] operator is used to group output such that if no metadata delimeters are found or matched between '[' and ']', then none of the characters between '[' and ']' are output.  '&' and '|' are logical operators for and and or.  Some useful examples for format are: "%file%" and "[[%artist% - ]%title%]|[%file]"
 .SH COMMANDS 
 .TP
 .B add <song>
