@@ -78,12 +78,12 @@ struct _mpc_table {
 	{"search", 2, -1, 3, cmd_search, "<type> <queries>",	"Search for a song"},
 	{"crossfade", 0, 1, 0, cmd_crossfade,"[sec]","Set and display crossfade settings"},
 	{"update", 0, -1, 2, cmd_update,	"", "Scans music directory for updates"},
+	{"stats", 0, -1, 0, cmd_stats, "", "Displays statistics about MPD"}, 
 	{"version", 0, 0, 0, cmd_version,"", "Reports version of MPD"},
 	/*  loadtab, lstab, and tab used for completion-scripting only */
 	{"loadtab",0, 1, 0, cmd_loadtab,"<directory>",}, 
 	{"lstab",0, 1, 0, cmd_lstab,"<directory>",}, 
 	{"tab",0, 1, 0, cmd_tab,"<directory/file>",},
-	{"stats", 0, -1, 0, cmd_stats, "", NULL }, 
 	/* status was added for pedantic reasons */
 	{"status", 0, -1, 0, cmd_status, "", NULL }, 
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */
