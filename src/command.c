@@ -63,7 +63,6 @@ SIMPLE_CMD(cmd_prev, mpd_sendPrevCommand, 1)
 SIMPLE_CMD(cmd_stop, mpd_sendStopCommand, 1)
 SIMPLE_CMD(cmd_clear, mpd_sendClearCommand, 1)
 SIMPLE_CMD(cmd_shuffle, mpd_sendShuffleCommand, 1)
-SIMPLE_CMD(cmd_update, mpd_sendUpdateCommand, 1)
 
 SIMPLE_ONEARG_CMD(cmd_save, mpd_sendSaveCommand, 0)
 SIMPLE_ONEARG_CMD(cmd_rm, mpd_sendRmCommand, 0)
@@ -394,6 +393,28 @@ int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
 	} while(++i<argc&& (listall = toUtf8(argv[i])));
 
 	return 0;
+}
+
+int cmd_update ( int argc, char ** argv, mpd_Connection * conn) 
+{
+	char * update = "";
+	int i = 0;
+
+	mpd_sendCommandListBegin(conn);
+	printErrorAndExit(conn);
+
+	if(argc > 0) update = toUtf8(argv[i]);
+
+	do {
+		mpd_sendUpdateCommand(conn, update);
+	} while(++i<argc && (update = toUtf8(argv[i])));
+
+	mpd_sendCommandListEnd(conn);
+	printErrorAndExit(conn);
+	mpd_finishCommand(conn);
+	printErrorAndExit(conn);
+
+	return 1;
 }
 
 int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
