@@ -554,9 +554,14 @@ mpd_Status * mpd_getStatus(mpd_Connection * connection) {
 		else if(strcmp(re->name,"time")==0) {
 			char * tok;
 			char * copy;
+			char * temp;
 			copy = strdup(re->value);
-			status->elapsedTime = atoi(strtok_r(copy,":",&tok));
-			status->totalTime = atoi(strtok_r(NULL,"",&tok));
+			temp = strtok_r(copy,":",&tok);
+			if(temp) {
+				status->elapsedTime = atoi(temp);
+				temp = strtok_r(NULL,"",&tok);
+				if(temp) status->totalTime = atoi(temp);
+			}
 			free(copy);
 		}
 		else if(strcmp(re->name,"error")==0) {
@@ -568,10 +573,18 @@ mpd_Status * mpd_getStatus(mpd_Connection * connection) {
 		else if(strcmp(re->name,"audio")==0) {
 			char * tok;
 			char * copy;
+			char * temp;
 			copy = strdup(re->value);
-			status->sampleRate = atoi(strtok_r(copy,":",&tok));
-			status->bits = atoi(strtok_r(NULL,":",&tok));
-			status->channels = atoi(strtok_r(NULL,"",&tok));
+			temp = strtok_r(copy,":",&tok);
+			if(temp) {
+				status->sampleRate = atoi(temp);
+				temp = strtok_r(NULL,":",&tok);
+				if(temp) {
+					status->bits = atoi(temp);
+					temp = strtok_r(NULL,"",&tok);
+					if(temp) status->channels = atoi(temp);
+				}
+			}
 			free(copy);
 		}
 
