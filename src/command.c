@@ -537,7 +537,7 @@ int cmd_search ( int argc, char ** argv, mpd_Connection * conn )
 		return -1;
 	}
 
-	for(i=0; i<argc && (search = toUtf8(argv[i])); i++)  {
+	for(i=1; i<argc && (search = toUtf8(argv[i])); i++)  {
 		mpd_sendSearchCommand(conn,table,search);
 		printErrorAndExit(conn);
 
