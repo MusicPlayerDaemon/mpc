@@ -82,11 +82,14 @@ void print_status (mpd_Connection *conn)
 				100.0*status->elapsedTime/status->totalTime :
 				100.0;
 
-		printf(" #%i/%i %3i:%02i (%.0f%c)\n",
+
+		printf(" #%i/%i %3i:%02i/%i:%02i (%.0f%c)\n",
 				status->song+1,
 				status->playlistLength,
 				status->elapsedTime/60,
 				status->elapsedTime%60,
+				status->totalTime/60,
+				status->totalTime%60,
 				perc,'%');
 	}
 
