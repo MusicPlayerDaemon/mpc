@@ -60,9 +60,11 @@ struct _mpc_table {
 	{"stop", 0, 0, 0, cmd_stop,"", "Stop the currently playing playlists"},
 	{"seek", 1, 1, 0, cmd_seek,"[+-][HH:MM:SS] or <0-100>%","Seeks to the specified position"},
 	{"clear", 0, 0, 0, cmd_clear,"", "Clear the current playlist"},
+	/*
 	{"outputs", 0, 0, 0, cmd_outputs,"", "Show the current outputs"},
 	{"enable", 1, 1, 0, cmd_enable, "<output #>", "Enable a output"},
 	{"disable", 1, 1, 0, cmd_disable, "<output #>", "Disable a output"},
+	*/
 	{"shuffle", 0, 0, 0, cmd_shuffle,"", "Shuffle the current playlist"},
 	{"move", 2, 2, 0, cmd_move,"<from> <to>", "Move song in playlist"},
 	{"playlist", 0, 0, 0, cmd_playlist, "", "Print the current playlist"},
