@@ -19,6 +19,6 @@ automake --foreign --add-missing -c
 autoconf
 
 # Run configure for this platform
-#./configure $*
-echo "Now you are ready to run ./configure"
+./configure $*
+#echo "Now you are ready to run ./configure"
 
