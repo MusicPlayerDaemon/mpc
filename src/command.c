@@ -585,7 +585,7 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 	} else {
 		mpd_Status *status;
 
-		status = mpd_getStatus(conn);
+		status = getStatus(conn);
 
 		printf("volume:%3i%c   \n",status->volume,'%');
 
@@ -647,7 +647,7 @@ int cmd_random ( int argc, char ** argv, mpd_Connection * conn )
 	}
 	else {
 		mpd_Status * status;
-		status = mpd_getStatus(conn);
+		status = getStatus(conn);
 		mode = !status->random;
 		mpd_freeStatus(status);
 	}
