@@ -179,6 +179,46 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
+int cmd_crop( int argc, char ** argv, mpd_Connection * conn )
+{
+
+	/* We need the status to ensure the state is 'Playing' */
+	mpd_Status *status;
+	status = getStatus( conn );
+
+	int length = ( status->playlistLength - 1 );
+
+	if( status->playlistLength == 0 )
+	{
+		mpd_freeStatus(status);
+		DIE( "You have to have a playlist longer than 1 song in length to crop" );
+	}
+	else if( status->state == 3 || status->state == 2 )
+	{
+		mpd_sendCommandListBegin( conn );
+		printErrorAndExit( conn );
+		while( length != 0 )
+		{
+			if( length !=  status->song )
+			{
+				mpd_sendDeleteCommand( conn, length );
+				printErrorAndExit( conn );
+			}
+			length--;
+		}
+		mpd_sendCommandListEnd( conn );
+		my_finishCommand( conn );
+		mpd_freeStatus(status);
+		return (0);
+	}
+	else
+	{
+		mpd_freeStatus(status);	
+		DIE( "You need to be playing to crop the playlist\n" );
+	}
+
+}
+
 int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 {
 	int i,j;
@@ -244,46 +284,57 @@ int cmd_outputs( int argc, char ** argv, mpd_Connection * conn )
 	mpd_OutputEntity * output;
 
 	mpd_sendOutputsCommand( conn );
-	while( (output = mpd_getNextOutput(conn)) ) {
-		if( output->enabled ) {
-			printf("Output %i is enabled\n", (output->id + 1) );
-		} else {
-			printf("Output %i is disabled\n", (output->id +1) );
+	while(( output = mpd_getNextOutput( conn ))) {
+		/* We increment by 1 to make it natural to the user  */
+		output->id++;
+
+		/* If it's a negative number a password is needed  */
+		if( output->id > 0 )
+		{
+			if( output->enabled ) {
+				printf( "Output %i (%s) is enabled\n", output->id, output->name );
+			} else {
+				printf( "Output %i (%s) is disabled\n", output->id, output->name );
+			}
 		}
-		mpd_freeOutputElement(output);
+		else
+		{
+			DIE( "error: cannot receive the current outputs\n" );
+		}
+		mpd_freeOutputElement( output );
 	}
-	mpd_finishCommand(conn);
-	return 0;
+	mpd_finishCommand( conn );
+	return( 0 );
 }
 
 int cmd_enable( int argc, char ** argv, mpd_Connection * conn )
 {
 	int arg;
 
-        if(!parse_int(argv[0], &arg) || arg<=0) {
-		DIE("Not a positive integer\n");
+        if( ! parse_int( argv[0], &arg ) || arg <= 0 ) {
+		DIE( "Not a positive integer\n" );
 	} else {
-		mpd_sendEnableOutputCommand( conn, (arg-1) );
+		mpd_sendEnableOutputCommand( conn, (arg - 1) );
 	}
 
-	mpd_finishCommand(conn);
-	// put interesting output info here
-	return 0;
+	mpd_finishCommand( conn );
+	cmd_outputs( 0, 0, conn );
+	return( 0 );
 }
 
 int cmd_disable( int argc, char ** argv, mpd_Connection * conn )
 {
 	int arg;
 
-        if(!parse_int(argv[0], &arg) || arg<=0) {
-		DIE("Not a positive integer\n");
+        if( ! parse_int( argv[0], &arg ) || arg <= 0 ) {
+		DIE( "Not a positive integer\n" );
 	} else {
-		mpd_sendDisableOutputCommand( conn, (arg-1) );
+		mpd_sendDisableOutputCommand( conn, ( arg - 1 ) );
 	}
 	
-	mpd_finishCommand(conn);
-	//put interesting output info here
-	return 0;
+	mpd_finishCommand( conn );
+	cmd_outputs( 0, 0, conn );
+	return( 0 );
 }
 
 int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
