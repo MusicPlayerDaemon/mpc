@@ -80,6 +80,7 @@ struct _mpc_table {
 	{"stats", 0, -1, 0, cmd_stats, "", NULL }, 
 	/* status was added for pedantic reasons */
 	{"status", 0, -1, 0, cmd_status, "", NULL }, 
+	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */
 	{}
 };
 
