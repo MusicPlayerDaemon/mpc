@@ -75,6 +75,8 @@ int main(int argc, char ** argv) {
 	char * test;
 	int port_env = 0;
 	int host_env = 0;
+	int passwordLen = 0;
+	int parsedLen = 0;
 
 	setLocaleCharset();
 
@@ -95,12 +97,36 @@ int main(int argc, char ** argv) {
 		return -1;
 	}
 
-	conn = mpd_newConnection(host,iport,10);
+	/* parse password and host */
+	{
+		char * ret = strstr(host,"@");
+		int len = ret-host;
+
+		if(ret && len == 0) parsedLen++;
+		else if(ret) {
+			passwordLen = len;
+			parsedLen+=len+1;
+		}
+	}
+
+	conn = mpd_newConnection(host+parsedLen,iport,10);
 	if(conn->error && (!port_env || !host_env)) {
 		fprintf(stderr,"MPD_HOST and/or MPD_PORT environment variables"
 			" are not set\n");
 	}
 	printErrorAndExit(conn);
+
+	if(passwordLen) {
+		char * dup = strdup(host);
+		dup[passwordLen] = '\0';
+
+		mpd_sendPasswordCommand(conn,dup);
+		printErrorAndExit(conn);
+		mpd_finishCommand(conn);
+		printErrorAndExit(conn);
+
+		free(dup);
+	}
 
 	if(argc==1) goto status;
 	else if(strcmp(argv[1],"lsplaylists")==0) {
@@ -1037,12 +1063,14 @@ int main(int argc, char ** argv) {
 			printErrorAndExit(conn);
 		}
 		else {
-			seconds = mpd_getCrossfade(conn);
+			mpd_Status * status = mpd_getStatus(conn);
 			printErrorAndExit(conn);
 			mpd_finishCommand(conn);
 			printErrorAndExit(conn);
 
-			printf("crossfade: %i\n",seconds);
+			printf("crossfade: %i\n",status->crossfade);
+
+			mpd_freeStatus(status);
 		}
 	}
 	else if(strcmp(argv[1],"random")==0) {

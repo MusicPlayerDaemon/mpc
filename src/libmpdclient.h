@@ -117,6 +117,8 @@ typedef struct mpd_Status {
 	long long playlist;
 	/* use with MPD_STATUS_STATE_* to determine state of player */
 	int state;
+	/* crossfade setting in seconds */
+	int crossfade;
 	/* if in PLAY or PAUSE state, this is the number of the currently
 	 * playing song in the playlist, beginning with 0
 	 */
@@ -129,6 +131,12 @@ typedef struct mpd_Status {
 	int totalTime;
 	/* current bit rate in kbs */
 	int bitRate;
+	/* audio sample rate */
+	unsigned int sampleRate;
+	/* audio bits */
+	int bits;
+	/* audio channels */
+	int channels;
 	/* error */
 	char * error;
 } mpd_Status;
@@ -363,6 +371,7 @@ void mpd_sendRandomCommand(mpd_Connection * connection, int randomMode);
 
 void mpd_sendSetvolCommand(mpd_Connection * connection, int volumeChange);
 
+/* WARNING: don't use volume command, its depreacted */
 void mpd_sendVolumeCommand(mpd_Connection * connection, int volumeChange);
 
 void mpd_sendCrossfadeCommand(mpd_Connection * connection, int seconds);
