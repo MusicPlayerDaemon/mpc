@@ -77,6 +77,7 @@ struct _mpc_table {
 	{"loadtab",0, 1, 0, cmd_loadtab,"<directory>",}, 
 	{"lstab",0, 1, 0, cmd_lstab,"<directory>",}, 
 	{"tab",0, 1, 0, cmd_tab,"<directory/file>",},
+	{"stats", 0, -1, 0, cmd_stats, "", NULL }, 
 	/* status was added for pedantic reasons */
 	{"status", 0, -1, 0, cmd_status, "", NULL }, 
 	{}

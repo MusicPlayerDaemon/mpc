@@ -30,6 +30,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 #include <sys/param.h>
 
 #define DIE(args...) do { fprintf(stderr, ##args); return -1; } while(0)
@@ -798,6 +799,60 @@ int cmd_tab ( int argc, char ** argv, mpd_Connection * conn )
 	}
 
 	my_finishCommand(conn);
+	return 0;
+}
+
+char * DHMS(unsigned long t)
+{
+	static char buf[32];	/* Ugh */
+	int days, hours, mins, secs;
+
+#ifndef SECSPERDAY
+#define SECSPERDAY 86400
+#endif
+#ifndef SECSPERHOUR
+#define SECSPERHOUR 3600
+#endif
+#ifndef SECSPERMIN
+#define SECSPERMIN 60
+#endif
+
+	days = t / SECSPERDAY;
+	t %= SECSPERDAY;
+	hours = t / SECSPERHOUR;
+	t %= SECSPERHOUR;
+	mins = t / SECSPERMIN;
+	t %= SECSPERMIN;
+	secs = t;
+
+	snprintf(buf, sizeof(buf) - 1, "%d days, %d:%02d:%02d",
+	    days, hours, mins, secs);
+	return buf;
+}
+
+int cmd_stats ( int argc, char ** argv, mpd_Connection * conn )
+{
+	mpd_Stats *stats;
+	time_t t;
+
+	mpd_sendStatsCommand(conn);
+	stats = mpd_getStats(conn);
+	printErrorAndExit(conn);
+
+	if (stats != NULL) {
+		t = stats->dbUpdateTime;
+		printf("Artists: %6d\n", stats->numberOfArtists);
+		printf("Albums:  %6d\n", stats->numberOfAlbums);
+		printf("Songs:   %6d\n", stats->numberOfSongs);
+		printf("\n");
+		printf("Play Time:    %s\n", DHMS(stats->playTime));
+		printf("Uptime:       %s\n", DHMS(stats->uptime));
+		printf("DB Updated:   %s", ctime(&t));	/* no \n needed */
+		printf("DB Play Time: %s\n", DHMS(stats->dbPlayTime));
+		mpd_freeStats(stats);
+	} else {
+		printf("Error getting mpd stats\n");
+	}
 	return 0;
 }
 
