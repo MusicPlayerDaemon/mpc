@@ -410,14 +410,13 @@ void mpd_getNextReturnElement(mpd_Connection * connection) {
 
 	bufferCheck = connection->buffer+connection->bufstart;
 	while(connection->bufstart>=connection->buflen || 
-			!(rt = strstr(bufferCheck,"\n"))) {
+			!(rt = strchr(bufferCheck,'\n'))) {
 		if(connection->buflen>=MPD_BUFFER_MAX_LENGTH) {
 			memmove(connection->buffer,
 					connection->buffer+
 					connection->bufstart,
 					connection->buflen-
 					connection->bufstart+1);
-			bufferCheck-=connection->bufstart;
 			connection->buflen-=connection->bufstart;
 			connection->bufstart = 0;
 		}
@@ -428,7 +427,7 @@ void mpd_getNextReturnElement(mpd_Connection * connection) {
 			connection->doneListOk = 0;
 			return;
 		}
-		bufferCheck+=connection->buflen-connection->bufstart;
+		bufferCheck = connection->buffer+connection->buflen;
 		tv.tv_sec = connection->timeout.tv_sec;
 		tv.tv_usec = connection->timeout.tv_usec;
 		FD_ZERO(&fds);
@@ -438,7 +437,9 @@ void mpd_getNextReturnElement(mpd_Connection * connection) {
 				connection->buffer+connection->buflen,
 				MPD_BUFFER_MAX_LENGTH-connection->buflen,
 #ifdef WIN32
-			   ioctlsocket(connection->sock, commandLen, commandPtr));
+				ioctlsocket(connection->sock, 
+					    commandLen, 
+					    commandPtr));
 #endif
 #ifndef WIN32
 				MSG_DONTWAIT);
