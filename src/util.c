@@ -279,12 +279,16 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 			temp = song->track ? fromUtf8(song->track) : NULL;
 		else if (strncmp("name", p, length) == 0)
 			temp = song->name ? fromUtf8(song->name) : NULL;
-		/* fix time later */
-		/*else if (strncmp("time", p, length) == 0)
+		else if (strncmp("time", p, length) == 0)
 		{
-			if (song->time != MPD_SONG_NO_TIME)
-				printf("%d:%d", song->time / 60, song->time % 60 + 1);
-		}*/
+			if (song->time != MPD_SONG_NO_TIME) {
+				char s[10];
+				snprintf(s, 9, "%d:%d", song->time / 60, 
+						song->time % 60 + 1);
+				/* nasty hack to use static buffer */
+				temp = fromUtf8(s);
+			}
+		}
 		else
 		{
 			/* just pass-through any unknown specifiers (including esc) */
