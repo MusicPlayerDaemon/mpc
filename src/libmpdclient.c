@@ -30,6 +30,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <fcntl.h>
 
 #ifndef MPD_NO_IPV6
 #ifdef AF_INET6
@@ -172,60 +173,22 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 		return connection;
 	}
 
+	mpd_setConnectionTimeout(connection,timeout);
+
 	/* connect stuff */
 	{
-#ifdef SO_RCVTIMEO
-		struct timeval rcvoldto;
-		struct timeval sndoldto;
-		socklen_t oldlen = sizeof(struct timeval);
+		int flags = fcntl(connection->sock, F_GETFL, 0);
+		fcntl(connection->sock, F_SETFL, flags | O_NONBLOCK);
 
-		mpd_setConnectionTimeout(connection,timeout);
-
-		tv.tv_sec = connection->timeout.tv_sec;
-		tv.tv_usec = connection->timeout.tv_usec;
-
-		if(getsockopt(connection->sock,SOL_SOCKET,SO_RCVTIMEO,&rcvoldto,
-					&oldlen)<0 ||
-				getsockopt(connection->sock,SOL_SOCKET,
-					SO_SNDTIMEO,&sndoldto,&oldlen)<0)
+		if(connect(connection->sock,dest,destlen)<0 && 
+				errno!=EINPROGRESS) 
 		{
-			strcpy(connection->errorStr,"problems getting socket "
-					"timeout\n");
-			connection->error = MPD_ERROR_SYSTEM;
-			return connection;
-		}
-		if(setsockopt(connection->sock,SOL_SOCKET,SO_RCVTIMEO,&tv,
-					sizeof(struct timeval))<0 ||
-				setsockopt(connection->sock,SOL_SOCKET,
-					SO_SNDTIMEO,&tv,
-					sizeof(struct timeval))<0)
-		{
-			strcpy(connection->errorStr,"problems setting socket "
-					"timeout\n");
-			connection->error = MPD_ERROR_SYSTEM;
-			return connection;
-		}
-#endif
-		if(connect(connection->sock,dest,destlen)<0) {
 			snprintf(connection->errorStr,MPD_BUFFER_MAX_LENGTH,
 					"problems connecting to \"%s\" on port"
 				 	" %i",host,port);
 			connection->error = MPD_ERROR_CONNPORT;
 			return connection;
 		}
-#ifdef SO_RCVTIMEO
-		if(setsockopt(connection->sock,SOL_SOCKET,SO_SNDTIMEO,&rcvoldto,
-					sizeof(struct timeval))<0 ||
-				setsockopt(connection->sock,SOL_SOCKET,
-					SO_SNDTIMEO,&sndoldto,
-					sizeof(struct timeval))<0)
-		{
-			strcpy(connection->errorStr,"problems setting socket "
-					"timeout\n");
-			connection->error = MPD_ERROR_SYSTEM;
-			return connection;
-		}
-#endif
 	}
 
 	while(!(rt = strstr(connection->buffer,"\n"))) {
@@ -251,7 +214,19 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 			tv.tv_sec = connection->timeout.tv_sec;
 			tv.tv_usec = connection->timeout.tv_usec;
 		}
-		else if(err<0 && errno==EINTR) continue;
+		else if(err<0) {
+			switch(errno) {
+			case EINTR:
+				continue;
+			default:
+				snprintf(connection->errorStr,
+					MPD_BUFFER_MAX_LENGTH,
+					"problems connecting to \"%s\" on port"
+				 	" %i",host,port);
+				connection->error = MPD_ERROR_CONNPORT;
+				return connection;
+			}
+		}
 		else {
 			snprintf(connection->errorStr,MPD_BUFFER_MAX_LENGTH,
 				"timeout in attempting to get a response from"
