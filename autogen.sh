@@ -97,7 +97,7 @@ fi
 echo "Generating configuration files for $package, please wait...."
 
 if [ -d /usr/local/share/aclocal ]; then
-	ACLOCAL_FLAGS="$ACLOCAL_FLAGS -I /usr/local/share/aclocal"
+	ACLOCAL_FLAGS="$ACLOCAL_FLAGS -I ./m4 -I /usr/local/share/aclocal"
 fi
 echo "  $ACLOCAL $ACLOCAL_FLAGS"
 $ACLOCAL $ACLOCAL_FLAGS
