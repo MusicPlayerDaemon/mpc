@@ -125,13 +125,13 @@ int parse_int(const char * str, int * ret)
  * the number in any other way for that matter */
 int parse_songnum(const char * str, int * ret)
 {
+        int song;
+        char * endptr;
+
         if(!str)
                 return 0;
         if(*str == '#')
                 str++;
-
-        int song;
-        char * endptr;
 
         song = strtol(str, &endptr, 10);
 
