@@ -645,12 +645,12 @@ int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn )
 {
 	int seconds;
 
-	if(argc==3) {
+	if(argc==1) {
 		char * test;
 		seconds = strtol(argv[0],&test,10);
 
 		if(*test!='\0' || seconds<0)
-			DIE("\"%s\" is not 0 or positive integer\n",argv[2]);
+			DIE("\"%s\" is not 0 or positive integer\n",argv[0]);
 
 		mpd_sendCrossfadeCommand(conn,seconds);
 		my_finishCommand(conn);
