@@ -42,7 +42,7 @@ $ su -c "make install"
 Run
 ---
 
-As default, mpc connects to localhost:2100, but otherwise can be specified by changing the MPD_HOST and MPD_PORT environment variables. This is mostly done by:
+As default, mpc connects to localhost:6600, but otherwise can be specified by changing the MPD_HOST and MPD_PORT environment variables. This is mostly done by:
 
 $ export MPD_HOST=<host/ip>
 $ export MPD_PORT=1337
