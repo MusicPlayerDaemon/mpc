@@ -2,7 +2,7 @@ dnl AC_INIT(src/main.c)
 dnl AM_INIT_AUTOMAKE(mpc, 0.10.0)
 
 AC_PREREQ(2.52)
-AC_INIT(mpc, 0.11.5, warren.dukes@gmail.com)
+AC_INIT(mpc, 0.11.2, warren.dukes@gmail.com)
 AM_INIT_AUTOMAKE($PACKAGE_NAME, $PACKAGE_VERSION)
 
 AC_PROG_CC
