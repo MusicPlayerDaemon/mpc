@@ -72,7 +72,7 @@ void free_pipe_array (int max, char ** array)
 	free(array);
 }
 
-int get_boolean (char * arg)
+int get_boolean (const char * arg)
 {
 	int i;
 	struct _bool_table {
@@ -102,3 +102,67 @@ int get_boolean (char * arg)
 	}  
 	return -1;
 }
+
+/* note - return value is success; the parsed int itself is in ret */
+
+int parse_int(const char * str, int * ret)
+{
+        char * test;
+        int temp;
+
+        temp = strtol(str, &test, 10);
+
+        if(*test != '\0')
+                return 0; /* failure */
+
+        *ret = temp;
+        return 1; /* success */
+}
+
+/* note - simply strips number out of formatting; does not -1 or +1 or change
+ * the number in any other way for that matter */
+int parse_songnum(const char * str, int * ret)
+{
+        if(!str)
+                return 0;
+        if(*str == '#')
+                str++;
+
+        int song;
+        char * endptr;
+
+        song = strtol(str, &endptr, 10);
+
+        if(str == endptr || (*endptr != ')' && *endptr != '\0') || song < 0)
+                return 0;
+
+        *ret = song;
+
+        return 1;
+}
+
+int parse_int_value_change(const char * str, struct int_value_change * ret)
+{
+        int len;
+        int change;
+        int relative = 0;
+
+        len = strlen(str);
+
+        if(len < 1)
+                return 0;
+
+        if(*str == '+')
+                relative = 1;
+        else if(*str == '-')
+                relative = -1;
+
+        if(!parse_int(str, &change))
+                return 0;
+
+        ret->value = change;
+        ret->is_relative = (relative != 0);
+
+        return 1;
+}
+

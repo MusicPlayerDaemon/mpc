@@ -21,9 +21,20 @@
 
 #include "libmpdclient.h"
 
+#define VALUE_CHANGE(type) \
+struct type##_value_change { \
+        type value; \
+        int is_relative; \
+};
+
+VALUE_CHANGE(int) /* struct int_value_change */
+
 void printErrorAndExit(mpd_Connection * conn);
 void free_pipe_array (int max, char ** array);
 int stdinToArgArray(char *** array);
-int get_boolean (char * arg);
+int get_boolean (const char * arg);
+int parse_int(const char *, int *);
+int parse_songnum(const char *, int *);
+int parse_int_value_change(const char *, struct int_value_change *);
 
 #endif /* MPC_UTIL_H */	

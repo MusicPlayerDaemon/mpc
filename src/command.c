@@ -35,16 +35,16 @@
 
 #define SIMPLE_CMD(funcname, libmpdclient_funcname) \
 int funcname ( int argc, char ** argv, mpd_Connection * conn ) { \
-	libmpdclient_funcname(conn); \
-		my_finishCommand(conn); \
-		return 1; \
+        libmpdclient_funcname(conn); \
+        my_finishCommand(conn); \
+        return 1; \
 }
 
 #define SIMPLE_ONEARG_CMD(funcname, libmpdclient_funcname) \
 int funcname ( int argc, char ** argv, mpd_Connection * conn ) { \
-	libmpdclient_funcname(conn, toUtf8(argv[0])); \
-		my_finishCommand(conn); \
-		return 1; \
+        libmpdclient_funcname(conn, toUtf8(argv[0])); \
+        my_finishCommand(conn); \
+        return 1; \
 }
 
 static void my_finishCommand(mpd_Connection * conn) {
@@ -53,15 +53,15 @@ static void my_finishCommand(mpd_Connection * conn) {
 	printErrorAndExit(conn);
 }
 
-	SIMPLE_CMD(cmd_next, mpd_sendNextCommand)
-	SIMPLE_CMD(cmd_pause, mpd_sendPauseCommand)
-	SIMPLE_CMD(cmd_prev, mpd_sendPrevCommand)
-	SIMPLE_CMD(cmd_stop, mpd_sendStopCommand)
-	SIMPLE_CMD(cmd_clear, mpd_sendClearCommand)
-	SIMPLE_CMD(cmd_shuffle, mpd_sendShuffleCommand)
+SIMPLE_CMD(cmd_next, mpd_sendNextCommand)
+SIMPLE_CMD(cmd_pause, mpd_sendPauseCommand)
+SIMPLE_CMD(cmd_prev, mpd_sendPrevCommand)
+SIMPLE_CMD(cmd_stop, mpd_sendStopCommand)
+SIMPLE_CMD(cmd_clear, mpd_sendClearCommand)
+SIMPLE_CMD(cmd_shuffle, mpd_sendShuffleCommand)
 SIMPLE_CMD(cmd_update, mpd_sendUpdateCommand)
 
-	SIMPLE_ONEARG_CMD(cmd_save, mpd_sendSaveCommand)
+SIMPLE_ONEARG_CMD(cmd_save, mpd_sendSaveCommand)
 SIMPLE_ONEARG_CMD(cmd_rm, mpd_sendRmCommand)
 
 int cmd_add (int argc, char ** argv, mpd_Connection * conn ) 
@@ -161,15 +161,15 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 
 		range[0] = strtol(s,&t,10);
 		if(s==t)
-			DIE("error parsing song numbers from" ": %s\n",argv[i]);
+			DIE("error parsing song numbers from: %s\n",argv[i]);
 		else if(*t=='-') {
 			range[1] = strtol(t+1,&t2,10);
 			if(t+1==t2 || *t2!='\0')
-				DIE("error parsing range " "from: %s\n",argv[i]);
+				DIE("error parsing range from: %s\n",argv[i]);
 		}
 		else if(*t==')' || *t=='\0') range[1] = range[0];
 		else
-			DIE("error parsing song numbers from" ": %s\n",argv[i]);
+			DIE("error parsing song numbers from: %s\n",argv[i]);
 
 		if(range[0]<=0 || range[1]<=0 || range[1]<range[0])
 			DIE("song numbers must be positive: %i-%i\n",range[0],range[1]);
@@ -203,22 +203,12 @@ int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 
 	if(0==argc) song = MPD_PLAY_AT_BEGINNING;
 	else {
-		char * s;
-		char * t;
-
-		for(i=0;i<argc-1;i++) {
+		for(i=0;i<argc-1;i++)
 			printf("skipping: %s\n",argv[i]);
-		}
 
-		if(argv[i][0]=='#') s = &(argv[i][1]);
-		else s = argv[i];
-
-		song = strtol(s,&t,10);
-		if(s==t || (*t!=')' && *t!='\0'))
+                if(!parse_songnum(argv[i], &song))
 			DIE("error parsing song numbers from: %s\n",argv[i]);
 
-		if(song<1)
-			DIE("\"%s\" is not a positive integer\n",argv[i]);
 		song--;
 	}
 
@@ -228,56 +218,36 @@ int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 	return 1;
 }
 
-enum SeekMode { RelForward, RelBackward, Absolute };
-
-	static int calculate_seek(int current_time, int change, int mode) {
-		if(mode == Absolute)
-			return change;
-		else if(mode == RelForward)
-			return current_time + change;
-		else /* RelBackward */
-			return current_time - change;
-	}
-
 /* TODO: absolute seek times (normalperson) */
 int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_Status * status = mpd_getStatus(conn);
 	char * arg = argv[0];
-	int seekmode;
 	char * test;
 	int seekchange;
 	char * last_char;
 	int sec;
-	float perc;
+	double perc;
 	int seekto;
+        int rel = 0;
 
 	my_finishCommand(conn);
 	if(status->state==MPD_STATUS_STATE_STOP)
 		DIE("not currently playing\n");
 
-	if(!strlen(arg))
-		DIE("\"%s\" is not a positive number\n", arg);
-
-	seekmode = Absolute;
-
-	if(arg[0] == '+') {
-		seekmode = RelForward;
-		arg++;
-	} else if(arg[0] == '-') {
-		seekmode = RelBackward;
-		arg++;
-	}
-
+        if(*arg == '+')
+                rel = 1;
+        else if(*arg == '-')
+                rel = -1;
 
 	last_char = &arg[strlen(arg)-1];
+
 	if(*last_char == 's') {
 		/* absolute seek (in seconds) */
 
-		*last_char = '\0'; /* chop off the s */
 		sec = strtol(arg,&test,10); /* get the # of seconds */
 
-		if(*test!='\0' || sec<0)
+		if(*test!='s' || (!rel && sec<0))
 			DIE("\"%s\" is not a positive number\n", arg);
 
 		seekchange = sec;
@@ -286,13 +256,15 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 		/* percent seek */
 
 		perc = strtod(arg,&test);
-		if(*test!='\0' || perc<0 || perc>100)
+
+		if(*test!='\0' || (!rel && (perc<0 || perc>100)) ||
+                                  (rel && perc>abs(100)))
 			DIE("\"%s\" is not an number between 0 and 100\n",arg);
 
 		seekchange = perc*status->totalTime/100+0.5;
 	}
 
-	seekto = calculate_seek(status->elapsedTime, seekchange, seekmode);
+	seekto = (rel ? status->elapsedTime + seekchange : seekchange);
 
 	if(seekto > status->totalTime)
 		DIE("seek amount would seek past the end of the song\n");
@@ -307,15 +279,12 @@ int cmd_move ( int argc, char ** argv, mpd_Connection * conn )
 {
 	int from;
 	int to;
-	char * test;
 
-	from = strtol(argv[0],&test,10);
-	if(*test!='\0' || from<=0)
-		DIE("\"%s\" is not a positive " "integer\n",argv[0]);
+	if(!parse_int(argv[0], &from) || from<=0)
+		DIE("\"%s\" is not a positive integer\n",argv[0]);
 
-	to = strtol(argv[1],&test,10);
-	if(*test!='\0' || to<=0)
-		DIE("\"%s\" is not a positive " "integer\n",argv[1]);
+	if(!parse_int(argv[1], &to) || to<=0)
+		DIE("\"%s\" is not a positive integer\n",argv[1]);
 
 	/* users type in 1-based numbers, mpd uses 0-based */
 	from--;
@@ -561,24 +530,11 @@ int cmd_search ( int argc, char ** argv, mpd_Connection * conn )
 
 int cmd_volume ( int argc, char ** argv, mpd_Connection * conn ) 
 {
-	int vol;
-	int rel = 0;
+        struct int_value_change ch;
 
 	if(argc==1) {
-		char * test;
-
-		if (0 == strncmp(argv[0],"+",1))
-			rel = 1;
-		else if (0 == strncmp(argv[0],"-",1))
-			rel = -1;
-
-		vol = strtol(argv[0],&test,10);
-
-		if (!rel && (*test!='\0' || vol<0))
-			DIE("\"%s\" is not a positive integer\n",argv[0]);
-		else if (rel && (*test!='\0'))
+                if(!parse_int_value_change(argv[0], &ch))
 			DIE("\"%s\" is not an integer\n", argv[0]);
-
 	} else {
 		mpd_Status *status = mpd_getStatus(conn);
 		my_finishCommand(conn);
@@ -590,10 +546,10 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 		return 0;
 	}
 
-	if (rel)
-		mpd_sendVolumeCommand(conn,vol);
+	if (ch.is_relative)
+		mpd_sendVolumeCommand(conn,ch.value);
 	else 
-		mpd_sendSetvolCommand(conn,vol);
+		mpd_sendSetvolCommand(conn,ch.value);
 
 	my_finishCommand(conn);
 	return 1;
@@ -651,10 +607,7 @@ int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn )
 	int seconds;
 
 	if(argc==1) {
-		char * test;
-		seconds = strtol(argv[0],&test,10);
-
-		if(*test!='\0' || seconds<0)
+                if(!parse_int(argv[0], &seconds) || seconds<0)
 			DIE("\"%s\" is not 0 or positive integer\n",argv[0]);
 
 		mpd_sendCrossfadeCommand(conn,seconds);
