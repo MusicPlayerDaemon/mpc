@@ -38,7 +38,6 @@ int cmd_lsplaylists ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_load ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_search ( int argc, char ** argv, mpd_Connection * conn ) ;
 int cmd_save ( int argc, char ** argv, mpd_Connection * conn ) ;
-int cmd_addurl ( int argc, char ** argv, mpd_Connection * conn ) ;
 int cmd_rm ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_volume ( int argc, char ** argv, mpd_Connection * conn ) ;
 int cmd_repeat ( int argc, char ** argv, mpd_Connection * conn );

@@ -67,7 +67,6 @@ SIMPLE_CMD(cmd_update, mpd_sendUpdateCommand, 1)
 
 SIMPLE_ONEARG_CMD(cmd_save, mpd_sendSaveCommand, 0)
 SIMPLE_ONEARG_CMD(cmd_rm, mpd_sendRmCommand, 0)
-SIMPLE_ONEARG_CMD(cmd_addurl, mpd_sendAddCommand, 0)
 
 int cmd_add (int argc, char ** argv, mpd_Connection * conn ) 
 {
@@ -124,6 +123,13 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 	mpd_sendCommandListBegin(conn);
 	printErrorAndExit(conn);
 	for(i=0;i<argc;i++) {
+		if(0 == lists[i]->numberOfNodes) {
+			printf("adding: %s\n",argv[i]);
+			mpd_sendAddCommand(conn,toUtf8(argv[i]));
+			printErrorAndExit(conn);
+			continue;
+		}	
+
 		node = lists[i]->firstNode;
 		while(node) {
 			printf("adding: %s\n",(char *)node->data);
