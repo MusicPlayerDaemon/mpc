@@ -102,7 +102,7 @@ void print_help (int max, char * progname, char * command)
 			spaces," ",mpc_table[i].help);
 		
 	}
-	fprintf(stderr,"For more information about these and other options look man 1 mpc\n");
+	fprintf(stderr,"For more information about these and other options look at man 1 mpc\n");
 }
 
 mpd_Connection * setup_connection ()
