@@ -1,8 +1,8 @@
-0.12.0 (2005/x/x)
-1) Add crop command
-2) Add outputs command
-3) Add enable command
-4) Add disable command
+0.11.5 (2005/2/23)
+1) Fix a very hard-to-trigger segfault in libmpdclient (Eric Wong)
+2) Add new commands: crop, stats, toggle (avuton and Snark)
+3) Add relative and exact-time seeking (mackstann)
+4) Fix single-digit time formatting in status (Eric Wong)
 	
 0.11.1 (2004/6/18)
 1) Fix compiler problem for gcc < 3
