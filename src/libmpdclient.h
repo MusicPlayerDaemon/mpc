@@ -36,6 +36,9 @@
 #define MPD_ERROR_ACK		18 /* ACK returned! */
 #define MPD_ERROR_BUFFEROVERRUN	19 /* Buffer was overrun! */
 
+#define MPD_ERROR_CODE_UNK	-1;
+#define MPD_ERROR_AT_UNK	-1;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -55,7 +58,9 @@ typedef struct _mpd_Connection {
 	int version[3];
 	/* IMPORTANT, you want to get the error messages from here */
 	char errorStr[MPD_BUFFER_MAX_LENGTH+1];
-	/* this will be set to 1 if there is an error, 0 if not */
+	int errorCode;
+	int errorAt;
+	/* this will be set to MPD_ERROR_* if there is an error, 0 if not */
 	int error;
 	/* DON'T TOUCH any of the rest of this stuff */
 	int sock; 
@@ -168,6 +173,7 @@ void mpd_freeStats(mpd_Stats * stats);
 /* SONG STUFF */
 
 #define MPD_SONG_NO_TIME	-1
+#define MPD_SONG_NO_NUM		-1
 
 /* mpd_Song
  * for storing song info returned by mpd
@@ -183,8 +189,14 @@ typedef struct _mpd_Song {
 	char * album;
 	/* track, maybe NULL if there is no tag */
 	char * track;
+	/* name, maybe NULL if there is no tag; it's the name of the current
+	 * song, f.e. the icyName of the stream */
+	char * name;
 	/* length of song in seconds, check that it is not MPD_SONG_NO_TIME  */
 	int time;
+	/* if plchanges or playlistinfo used, is the number of the song in
+	 * the playlist */
+	int num;
 } mpd_Song;
 
 /* mpd_newSong
@@ -296,6 +308,9 @@ mpd_InfoEntity * mpd_getNextInfoEntity(mpd_Connection * connection);
 
 /* songNum of -1, means to display the whole list */
 void mpd_sendPlaylistInfoCommand(mpd_Connection * connection, int songNum);
+
+/* use this to get the changes in the playlist since version _playlist_ */
+void mpd_sendPlChangesCommand(mpd_Connection * connection, long long playlist);
 
 void mpd_sendListallCommand(mpd_Connection * connection, const char * dir);
 

@@ -168,28 +168,67 @@ int parse_int_value_change(const char * str, struct int_value_change * ret)
         return 1;
 }
 
+char * appendToString(char * dest, const char * src, int len) {
+	int destlen;
+
+	if(dest == NULL) {
+		dest = malloc(len+1);
+		memset(dest, 0, len+1);
+		destlen = 0;
+	}
+	else {
+		destlen = strlen(dest);
+		dest = realloc(dest, destlen+len+1);
+	}
+
+	memcpy(dest+destlen, src, len);
+	dest[destlen+len] = '\0';
+
+	return dest;
+}
+
 /* this is a little ugly... */
-void print_formatted_song (mpd_Song * song, const char * format)
+char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 {
+	char * ret = NULL;
 	char esc = '%';
 	char *p, *end;
-	int length, i;
+	char * temp;
+	int length;
+	int found = 0;
 
 	/* we won't mess up format, we promise... */
 	for (p = (char *)format; *p != '\0'; )
 	{
+		if (p[0] == '[')
+		{
+			temp = songToFormatedString(song, p+1, &p);
+			if(temp) ret = appendToString(ret, temp, strlen(temp));
+			continue;
+		}
+
+		if (p[0] == ']')
+		{
+			if(last) *last = p+1;
+			if(!found && ret) {
+				free(ret);
+				ret = NULL;
+			}
+			return ret;
+		}
+
 		/* pass-through non-escaped portions of the format string */
 		if (p[0] != esc)
 		{
-			printf("%c", *p);
+			ret = appendToString(ret, p, 1);
 			++p;
 			continue;
 		}
 
 		/* let the escape character escape itself */
-		if (p[1] == esc)
+		if (p[1] == esc || p[1] == '[' || p[1] == ']')
 		{
-			printf("%c", esc);
+			ret = appendToString(ret, p+1, 1);
 			++p;
 			continue;
 		}
@@ -198,30 +237,36 @@ void print_formatted_song (mpd_Song * song, const char * format)
 		++p;
 
 		/* find the extent of this format specifier (stop at \0, ' ', or esc) */
-		for (i = 0; p[i] != ' ' && p[i] != esc && p[i] != '\0'; ++i)
-			;
-		end = p + i;
+		end  = p;
+		while(*end != '\0' && *end != ' ' && *end != esc && 
+			*end != '[' && *end != ']') 
+		{
+			end++;
+		}
 		length = end - p;
 
 		/* does this specifier mean anything to us? (there should be a better
 		   way to do this...) */
-		if      (strncmp("file", p, length) == 0)
-			printf("%s", fromUtf8(song->file));
+		temp = NULL;
+		if      (strncmp("file", p, length) == 0) {
+			temp = fromUtf8(song->file);
+		}
 		else if (strncmp("artist", p, length) == 0)
-			printf("%s", fromUtf8(song->artist ? song->artist : ""));
+			temp = song->artist ? fromUtf8(song->artist) : NULL;
 		else if (strncmp("title", p, length) == 0)
-			printf("%s", fromUtf8(song->title ? song->title : ""));
+			temp = song->title ? fromUtf8(song->title) : NULL;
 		else if (strncmp("album", p, length) == 0)
-			printf("%s", fromUtf8(song->album ? song->album : ""));
+			temp = song->album ? fromUtf8(song->album) : NULL;
 		else if (strncmp("track", p, length) == 0)
-			printf("%s", fromUtf8(song->track ? song->track : ""));
-		else if (strncmp("time", p, length) == 0)
+			temp = song->track ? fromUtf8(song->track) : NULL;
+		else if (strncmp("name", p, length) == 0)
+			temp = song->name ? fromUtf8(song->name) : NULL;
+		/* fix time later */
+		/*else if (strncmp("time", p, length) == 0)
 		{
 			if (song->time != MPD_SONG_NO_TIME)
 				printf("%d:%d", song->time / 60, song->time % 60 + 1);
-			else
-				printf("%s", "");
-		}
+		}*/
 		else
 		{
 			/* just pass-through any unknown specifiers (including esc) */
@@ -229,12 +274,32 @@ void print_formatted_song (mpd_Song * song, const char * format)
 			   but put the real character back in (pseudo-const) */
 			char c = *end;
 			*end = '\0';
-			printf("%c%s", esc, p);
+			ret = appendToString(ret, &esc, 1);
+			ret = appendToString(ret, p, strlen(p));
 			*end = c;
+		}
+
+		if(temp) {
+			found = 1;
+			ret = appendToString(ret, temp, strlen(temp));
 		}
 
 		/* advance past the specifier */
 		p += length;
+		if(*end == esc) ++p;
+	}
+
+	if(last) *last = p;
+	return ret;
+}
+
+void print_formatted_song (mpd_Song * song, const char * format)
+{
+	char * str = songToFormatedString(song, format, NULL);
+
+	if(str) {
+		printf("%s", str);
+		free(str);
 	}
 }
 
