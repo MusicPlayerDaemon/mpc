@@ -78,7 +78,7 @@ void print_status (mpd_Connection *conn)
 	}
 
 	if(status->updatingDb) {
-		printf("Updating DB ...\n");
+		printf("Updating DB (#%i) ...\n",status->updatingDb);
 	}
 
 	if(status->volume!=MPD_STATUS_NO_VOLUME) {
