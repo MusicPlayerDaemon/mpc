@@ -1,4 +1,4 @@
-SUBDIRS = debian doc src
+SUBDIRS = doc src
 pkgdata_DATA =
 docdir = $(prefix)/share/doc/$(PACKAGE)
 doc_DATA = AUTHORS README
