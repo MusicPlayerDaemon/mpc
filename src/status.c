@@ -33,7 +33,10 @@ void print_status (mpd_Connection *conn)
 	printErrorAndExit(conn);
 
 	if(status->state == MPD_STATUS_STATE_PLAY || 
-			status->state == MPD_STATUS_STATE_PAUSE) {
+			status->state == MPD_STATUS_STATE_PAUSE) 
+	{
+		float perc;
+			
 		mpd_sendPlaylistInfoCommand(conn,status->song);
 		printErrorAndExit(conn);
 
@@ -68,13 +71,16 @@ void print_status (mpd_Connection *conn)
 		}
 		else printf("[paused] ");
 
+		perc = status->elapsedTime<=status->totalTime ?
+				100.0*status->elapsedTime/status->totalTime :
+				100.0;
+
 		printf(" #%i/%i %3i:%02i (%.0f%c)\n",
 				status->song+1,
 				status->playlistLength,
 				status->elapsedTime/60,
 				status->elapsedTime%60,
-				100.0*status->elapsedTime/
-				status->totalTime,'%');
+				perc,'%');
 	}
 
 	if(status->updatingDb) {
