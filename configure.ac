@@ -1,5 +1,9 @@
-AC_INIT(src/main.c)
-AM_INIT_AUTOMAKE(mpc, 0.10.0)
+dnl AC_INIT(src/main.c)
+dnl AM_INIT_AUTOMAKE(mpc, 0.10.0)
+
+AC_PREREQ(2.52)
+AC_INIT(mpc, 0.10.0, shank@mercury.chem.pitt.edu)
+AM_INIT_AUTOMAKE($PACKAGE_NAME, $PACKAGE_VERSION)
 
 AC_PROG_CC
 AC_PROG_INSTALL
@@ -28,4 +32,4 @@ AC_CHECK_HEADER(locale.h,CFLAGS="$CFLAGS -DHAVE_LOCALE",)
 CFLAGS="$CFLAGS -DDEFAULT_HOST=\\\"$DEFAULT_HOST\\\""
 CFLAGS="$CFLAGS -DDEFAULT_PORT=\\\"$DEFAULT_PORT\\\""
 
-AC_OUTPUT(debian/Makefile doc/Makefile src/Makefile Makefile)
+AC_OUTPUT(doc/Makefile src/Makefile Makefile)
