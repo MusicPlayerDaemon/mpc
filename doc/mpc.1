@@ -98,5 +98,32 @@ Reports the version of MPD.
 .B volume <[+-]value>
 Sets the volume to <value> (0-100).  If "+" or "-" is used, then it adjusts
 the volume relative to the current volume.
+.SH EXAMPLES
+.TP
+Here is a script to load and play m3u playlists (useful for mozilla):
+.br
+
+.br
+#!/bin/bash
+.br
+mpc clear
+.br
+cat $1 | mpc add
+.br
+mpc play
+.br
+.TP
+This script can be used to load and play pls playlists (again, useful for mozilla):
+.br
+
+.br
+#!/bin/bash
+.br
+mpc clear
+.br
+grep '^File[0-9]*' $1 | sed -e 's/^File[0-9]*=//' | mpc add
+.br
+mpc play
+.br
 .SH SEE ALSO
 mpd(1)
