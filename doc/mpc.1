@@ -35,6 +35,12 @@ Gets and sets the current amount of crossfading between songs (0 disables crossf
 .B del <song>
 Removes a song from the playlist. Can also read input from pipes.
 .TP
+.B disable <output #>
+Disables the output, number is required.
+.TP
+.B enable <output #>
+Enables the output, number is required.
+.TP
 .B listall [<song>]
 Lists <song> from playlist. If no <song> is specified, lists all songs.
 .TP
@@ -52,6 +58,9 @@ Moves song at position <from> to the postion <to> in the playlist.
 .TP
 .B next
 Starts playing next song on playlist.
+.TP
+.B outputs
+Lists all available outputs
 .TP
 .B pause
 Pauses playing.
@@ -80,8 +89,9 @@ Saves playlist as <file>.
 .B search <table> <pattern>
 Searches for songs that match the pattern, where table is "artist", "album", "title", or "filename".
 .TP
-.B seek <[+-]num[s]>
-Seeks within the current song in the specified manner.  If a "+" or "-" is used, the seek is done relative to the current song position.  If an "s" is present after the number, then the number indicates seconds; otherwise, it indicates a percentage of the song's length.
+.B seek [<HH:MM:SS>] or <[+-]num[s]%>
+Seeks by hour, minute or seconds, hours or minutes can be omitted.
+If seeking by percentage, seeks within the current song in the specified manner.  If a "+" or "-" is used, the seek is done relative to the current song position. Absolute seeking by default.
 .TP
 .B shuffle
 Shuffles all songs on the playlist.

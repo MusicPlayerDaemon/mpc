@@ -182,39 +182,41 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 int cmd_crop( int argc, char ** argv, mpd_Connection * conn )
 {
 
-	/* We need the status to ensure the state is 'Playing' */
 	mpd_Status *status;
 	status = getStatus( conn );
 
 	int length = ( status->playlistLength - 1 );
 
-	if( status->playlistLength == 0 )
-	{
+	if( status->playlistLength == 0 ) {
+
 		mpd_freeStatus(status);
 		DIE( "You have to have a playlist longer than 1 song in length to crop" );
-	}
-	else if( status->state == 3 || status->state == 2 )
-	{
+
+	} else if( status->state == 3 || status->state == 2 ) { /* If playing or paused */
+
 		mpd_sendCommandListBegin( conn );
 		printErrorAndExit( conn );
-		while( length != 0 )
+
+		while( length >= 0 )
 		{
-			if( length !=  status->song )
+			if( length != status->song )
 			{
 				mpd_sendDeleteCommand( conn, length );
 				printErrorAndExit( conn );
 			}
 			length--;
 		}
+
 		mpd_sendCommandListEnd( conn );
 		my_finishCommand( conn );
-		mpd_freeStatus(status);
-		return (0);
-	}
-	else
-	{
+		mpd_freeStatus( status );
+		return ( 0 );
+
+	} else {
+
 		mpd_freeStatus(status);	
 		DIE( "You need to be playing to crop the playlist\n" );
+
 	}
 
 }
@@ -359,51 +361,116 @@ int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 	return 1;
 }
 
-/* TODO: absolute seek times (normalperson) */
 int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_Status * status;
 	char * arg = argv[0];
 	char * test;
-	int seekchange;
 	char * last_char;
-	int sec;
-	double perc;
+
+	int seekchange;
+	int total_secs;
 	int seekto;
         int rel = 0;
 
 	status = getStatus(conn);
-	
-	if(status->state==MPD_STATUS_STATE_STOP)
-		DIE("not currently playing\n");
 
-        if(*arg == '+')
+	if(status->state==MPD_STATUS_STATE_STOP) {
+		DIE("not currently playing\n");
+	}
+
+        if(*arg == '+') {
                 rel = 1;
-        else if(*arg == '-')
+	}
+        else if(*arg == '-') {
                 rel = -1;
+	}
 
 	last_char = &arg[strlen(arg)-1];
 
-	if(*last_char == 's') {
-		/* absolute seek (in seconds) */
+	/* If seeking by percent */
+	if( *last_char == '%' ) {
 
-		sec = strtol(arg,&test,10); /* get the # of seconds */
+		double perc;
 
-		if(*test!='s' || (!rel && sec<0))
-			DIE("\"%s\" is not a positive number\n", arg);
+		/* Remove the % */
+		arg[ strlen(arg) - 1 ] = '\0';
 
-		seekchange = sec;
-
-	} else {
 		/* percent seek */
-
 		perc = strtod(arg,&test);
 
-		if(*test!='\0' || (!rel && (perc<0 || perc>100)) ||
-                                  (rel && perc>abs(100)))
+		if(( *test!='\0' ) || (!rel && (perc<0 || perc>100)) ||
+                                  (rel && perc>abs(100))) {
 			DIE("\"%s\" is not an number between 0 and 100\n",arg);
+		}
 
 		seekchange = perc*status->totalTime/100+0.5;
+
+	} else { /* If seeking by absolute seek time */
+
+		if( strchr( arg, ':' )) {
+			char * sec_ptr;
+			char * min_ptr;
+			char * hr_ptr;
+
+			int hr = 0;
+			int min = 0;
+			int sec = 0;
+
+			/* Take the seconds off the end of arg */
+			sec_ptr = strrchr( arg, ':' );
+
+			/* Remove ':' and move the pointer one byte up */
+			* sec_ptr = '\0';
+			++sec_ptr;
+
+			/* If hour is in the argument, else just point to the arg */
+			if( strrchr( arg, ':' )) {
+				min_ptr = strrchr( arg, ':' );
+
+				/* Remove ':' and move the pointer one byte up */
+				* min_ptr = '\0';
+				++min_ptr;
+
+				/* If the argument still exists, it's the hour  */
+				if( arg != NULL ) {
+					hr_ptr = arg;
+					hr = strtol( hr_ptr, &test, 10 );
+
+					if( *test != '\0' || ( ! rel && hr < 0 )) {
+						DIE("\"%s\" is not a positive number\n", sec_ptr);
+					}
+				}
+
+			} else {
+				min_ptr = arg;
+			}
+
+			/* Change the pointers to a integer  */
+			sec = strtol( sec_ptr, &test, 10 );
+
+			if( *test != '\0' || ( ! rel && sec < 0 )) {
+				DIE("\"%s\" is not a positive number\n", sec_ptr);
+			}
+
+			min = strtol( min_ptr, &test, 10 );
+
+			if( *test != '\0' || ( ! rel && min < 0 )) {
+				DIE("\"%s\" is not a positive number\n", min_ptr);
+			}
+
+			total_secs = ( hr * 3600 ) + ( min * 60 ) + sec;
+
+		} else {
+
+			/* absolute seek (in seconds) */
+			total_secs = strtol( arg, &test, 10 ); /* get the # of seconds */
+
+			if( *test != '\0' || ( ! rel && total_secs < 0 )) {
+				DIE("\"%s\" is not a positive number\n", arg);
+			}
+		}
+		seekchange = total_secs;
 	}
 
 	seekto = (rel ? status->elapsedTime + seekchange : seekchange);
