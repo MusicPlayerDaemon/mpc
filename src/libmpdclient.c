@@ -416,6 +416,7 @@ void mpd_getNextReturnElement(mpd_Connection * connection) {
 			strcpy(connection->errorStr,"buffer overrun");
 			connection->error = MPD_ERROR_BUFFEROVERRUN;
 			connection->doneProcessing = 1;
+			connection->doneListOk = 0;
 			return;
 		}
 		bufferCheck+=connection->buflen-connection->bufstart;
@@ -436,6 +437,7 @@ void mpd_getNextReturnElement(mpd_Connection * connection) {
 					" closed");
 				connection->error = MPD_ERROR_CONNCLOSED;
 				connection->doneProcessing = 1;
+				connection->doneListOk = 0;
 				return;
 			}
 			connection->buflen+=readed;
@@ -446,6 +448,7 @@ void mpd_getNextReturnElement(mpd_Connection * connection) {
 			strcpy(connection->errorStr,"connection timeout");
 			connection->error = MPD_ERROR_TIMEOUT;
 			connection->doneProcessing = 1;
+			connection->doneListOk = 0;
 			return;
 		}
 	}
@@ -461,6 +464,7 @@ void mpd_getNextReturnElement(mpd_Connection * connection) {
 		}
 		connection->listOks = 0;
 		connection->doneProcessing = 1;
+		connection->doneListOk = 0;
 		return;
 	}
 
@@ -487,6 +491,7 @@ void mpd_getNextReturnElement(mpd_Connection * connection) {
 		connection->errorCode = MPD_ACK_ERROR_UNK;
 		connection->errorAt = MPD_ERROR_AT_UNK;
 		connection->doneProcessing = 1;
+		connection->doneListOk = 0;
 
 		needle = strchr(output, '[');
 		if(!needle) return;
