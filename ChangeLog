@@ -1,5 +1,8 @@
-0.10.0 (2004/02/??)
+0.10.0 (2004/3/4)
 1) UTF-8 Support
+2) Crossfade Support
+3) Password Support
+4) Cleanup/rewrite by normalperson
 
 0.9.2 (2003/10/31)
 1) Updated libmpdclient, much more efficient thanks to tw-nym

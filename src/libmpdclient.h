@@ -157,8 +157,6 @@ typedef struct _mpd_Stats {
 	int numberOfSongs;
 	unsigned long uptime;
 	unsigned long dbUpdateTime;
-	unsigned long playTime;
-	unsigned long dbPlayTime;
 } mpd_Stats;
 
 mpd_Stats * mpd_getStats(mpd_Connection * connection);
