@@ -375,7 +375,7 @@ void mpd_executeCommand(mpd_Connection * connection, char * command) {
 	}
 
 	if(!connection->commandList) connection->doneProcessing = 0;
-	else if(connection->listOks >= 0) {
+	else {
 		connection->listOks++;
 	}
 }
@@ -463,6 +463,7 @@ void mpd_getNextReturnElement(mpd_Connection * connection) {
 			strcpy(connection->errorStr, "expected more list_OK's");
 			connection->error = 1;
 		}
+		connection->listOks = 0;
 		connection->doneProcessing = 1;
 		return;
 	}
@@ -1353,8 +1354,9 @@ void mpd_sendCommandListOkBegin(mpd_Connection * connection) {
 		return;
 	}
 	connection->commandList = 1;
-	mpd_executeCommand(connection,"command_list_ok_begin\n");
 	connection->listOks = 0;
+	mpd_executeCommand(connection,"command_list_ok_begin\n");
+	connection->listOks--;
 }
 
 void mpd_sendCommandListEnd(mpd_Connection * connection) {
@@ -1364,6 +1366,6 @@ void mpd_sendCommandListEnd(mpd_Connection * connection) {
 		return;
 	}
 	connection->commandList = 0;
-	connection->doneListOk = 0;
 	mpd_executeCommand(connection,"command_list_end\n");
+	connection->listOks--;
 }
