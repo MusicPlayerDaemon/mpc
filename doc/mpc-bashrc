@@ -6,32 +6,55 @@
 
  _mpdadd_complete_func ()
 {
-	x=1;
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	first=${COMP_WORDS[1]}
 	hold="";
+	
+	# add more escape stuff as needed:
+	scrub='s/\([\\\>\\\<\\\(\\\)\\\";]\)/\\\1/g';
+	
 	case "$first" in
 		add) 
 		hold=`mpc tab ${cur}`;
-		COMPREPLY=($(compgen -W "${hold}"))
+		COMPREPLY=($(compgen -W "${hold}" | sed "$scrub"))
+		return 0
+		;;
+		play|del|move)
+		hold=`mpc playlist | sed 's/\#\([[:digit:]]\+\).*/\1/g'` # | grep "^${cur}"`
+		COMPREPLY=($(compgen -W "${hold}" "${cur}"))
+		return 0
+		;;
+		# TODO add trailing 's' for seconds in seek (total song time needed)
+		seek|volume)
+		COMPREPLY=($(compgen -W "`seq 0 100; seq -f +%g 0 100; seq -f -%g 0 100`" "${cur}"))
+		return 0
+		;;
+		# TODO get total song time and use that as a limit
+		crossfade)
+		COMPREPLY=($(compgen -W "`seq 0 99`" "${cur}"))
 		return 0
 		;;
 		ls)
 		hold=`mpc lstab ${cur}`;
-		COMPREPLY=($(compgen -W "${hold}"))
+		COMPREPLY=($(compgen -W "${hold}" | sed "$scrub"))
 		return 0
 		;;
-		load)
+		search)
+		COMPREPLY=($(compgen -W "album artist title filename" "${cur}"))
+		return 0
+		;;
+		load|rm)
 		hold=`mpc loadtab ${cur}`;
-		COMPREPLY=($(compgen -W "${hold}"))
+		COMPREPLY=($(compgen -W "${hold}" | sed "$scrub"))
 		return 0
 		;;
-		repeat)
-		COMPREPLY=($(compgen -W "0 1" ${cur}))
+		repeat|random)
+		COMPREPLY=($(compgen -W "0 1 true false yes no on off" "${cur}"))
 		return 0
 		;;
 		*)
-		COMPREPLY=($(compgen -W "play clear add pause status next prev shuffle stop volume playlist ls listall lsplaylists load save rm seek crossfade" ${cur}))
+		hold=`mpc help 2>&1 | grep "^mpc [a-z]\+ " | awk '{print $2}'`;
+		COMPREPLY=($(compgen -W "${hold} status" ${cur}))
 		return 0
 		;;
 	esac
