@@ -375,8 +375,10 @@ void mpd_sendVolumeCommand(mpd_Connection * connection, int volumeChange);
 
 void mpd_sendCrossfadeCommand(mpd_Connection * connection, int seconds);
 
-/* returns the update job id*/
-int mpd_sendUpdateCommand(mpd_Connection * connection);
+void mpd_sendUpdateCommand(mpd_Connection * connection);
+
+/* returns the update job id, call this after a update command*/
+int mpd_getUpdateId(mpd_Connection * connection);
 
 void mpd_sendPasswordCommand(mpd_Connection * connection, const char * pass);
 
