@@ -19,6 +19,8 @@
 #ifndef MPC_H
 #define MPC_H
 
+#include "../config.h"
+
 #include "libmpdclient.h"
 #define STRING_LENGTH	(2*MAXPATHLEN)
 

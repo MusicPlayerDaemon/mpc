@@ -19,6 +19,7 @@
 #include "password.h"
 #include "libmpdclient.h"
 #include "util.h"
+#include "mpc.h"
 
 #include <string.h>
 #include <stdlib.h>

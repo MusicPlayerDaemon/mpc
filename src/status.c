@@ -20,6 +20,7 @@
 #include "libmpdclient.h"
 #include "charConv.h"
 #include "util.h"
+#include "mpc.h"
 
 #include <stdio.h>
 #include <string.h>

@@ -12,6 +12,8 @@ AC_PROG_LIBTOOL
 set -- $CFLAGS
 CFLAGS="-Wall $CFLAGS"
 
+AM_CONFIG_HEADER(config.h)
+
 AC_ARG_WITH(default-host,[  --with-default-host=HOST  Use as host when MPD_HOST environment variable is not set], DEFAULT_HOST="$withval",DEFAULT_HOST="localhost")
 AC_ARG_WITH(default-port,[  --with-default-port=PORT  Use as port when MPD_PORT environment variable is not set], DEFAULT_PORT="$withval",DEFAULT_PORT="2100")
 
@@ -22,10 +24,10 @@ AM_ICONV
 CFLAGS="$CFLAGS $INCICONV"
 CFLAGS="$CFLAGS $LIBICONV"
 
-AC_CHECK_HEADER(langinfo.h,CFLAGS="$CFLAGS -DHAVE_LANGINFO",)
-AC_CHECK_HEADER(locale.h,CFLAGS="$CFLAGS -DHAVE_LOCALE",)
+AC_CHECK_HEADER(langinfo.h,AC_DEFINE(HAVE_LANGINFO,1,[Define for nl_langinfo]),)
+AC_CHECK_HEADER(locale.h,AC_DEFINE(HAVE_LOCALE,1,[Define for locale]),)
 
-CFLAGS="$CFLAGS -DDEFAULT_HOST=\\\"$DEFAULT_HOST\\\""
-CFLAGS="$CFLAGS -DDEFAULT_PORT=\\\"$DEFAULT_PORT\\\""
+AC_DEFINE_UNQUOTED(DEFAULT_HOST,"$DEFAULT_HOST",[Define default host])
+AC_DEFINE_UNQUOTED(DEFAULT_PORT,"$DEFAULT_PORT",[Define default port])
 
 AC_OUTPUT(doc/Makefile src/Makefile Makefile)
