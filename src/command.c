@@ -68,6 +68,20 @@ SIMPLE_CMD(cmd_update, mpd_sendUpdateCommand, 1)
 SIMPLE_ONEARG_CMD(cmd_save, mpd_sendSaveCommand, 0)
 SIMPLE_ONEARG_CMD(cmd_rm, mpd_sendRmCommand, 0)
 
+int isUrl(char * s) {
+	char * t;
+
+	t = strstr(s,"://");
+	if(!t) return 0;
+
+	while(s!=t) {
+		if(!(*s >= 'A' && *s <= 'z')) return 0;
+		s++;
+	}
+
+	return 1;
+}
+
 int cmd_add (int argc, char ** argv, mpd_Connection * conn ) 
 {
 	List ** lists;
@@ -106,7 +120,9 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 				if(len<arglens[i]) continue;
 				ret = strncmp(argv[i],dup,
 						arglens[i]);
-				if(ret==0) {
+				if(ret==0 && (dup[arglens[i]]=='\0' || 
+						dup[arglens[i]]=='/')) 
+				{
 					insertInListWithoutKey(
 							lists[i],
 							strdup(fromUtf8(
@@ -123,7 +139,7 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 	mpd_sendCommandListBegin(conn);
 	printErrorAndExit(conn);
 	for(i=0;i<argc;i++) {
-		if(0 == lists[i]->numberOfNodes) {
+		if(0 == lists[i]->numberOfNodes && isUrl(argv[i])) {
 			printf("adding: %s\n",argv[i]);
 			mpd_sendAddCommand(conn,toUtf8(argv[i]));
 			printErrorAndExit(conn);
