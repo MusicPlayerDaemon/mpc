@@ -217,6 +217,7 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 	char * temp;
 	int length;
 	int found = 0;
+	int labelFound = 0;
 
 	/* we won't mess up format, we promise... */
 	for (p = (char *)format; *p != '\0'; )
@@ -293,22 +294,36 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 			end++;
 		}
 		length = end - p + 1;
+
+		labelFound = 0;
+		
 		if(*end != '%')
 			length--;
-		else if (strncmp("%file%", p, length) == 0)
+		else if (strncmp("%file%", p, length) == 0) {
 			temp = fromUtf8(song->file);
-		else if (strncmp("%artist%", p, length) == 0)
+		}
+		else if (strncmp("%artist%", p, length) == 0) {
+			labelFound = 1;
 			temp = song->artist ? fromUtf8(song->artist) : NULL;
-		else if (strncmp("%title%", p, length) == 0)
+		}
+		else if (strncmp("%title%", p, length) == 0) {
+			labelFound = 1;
 			temp = song->title ? fromUtf8(song->title) : NULL;
-		else if (strncmp("%album%", p, length) == 0)
+		}
+		else if (strncmp("%album%", p, length) == 0) {
+			labelFound = 1;
 			temp = song->album ? fromUtf8(song->album) : NULL;
-		else if (strncmp("%track%", p, length) == 0)
+		}
+		else if (strncmp("%track%", p, length) == 0) {
+			labelFound = 1;
 			temp = song->track ? fromUtf8(song->track) : NULL;
-		else if (strncmp("%name%", p, length) == 0)
+		}
+		else if (strncmp("%name%", p, length) == 0) {
+			labelFound = 1;
 			temp = song->name ? fromUtf8(song->name) : NULL;
-		else if (strncmp("%time%", p, length) == 0)
-		{
+		}
+		else if (strncmp("%time%", p, length) == 0) {
+			labelFound = 1;
 			if (song->time != MPD_SONG_NO_TIME) {
 				char s[10];
 				snprintf(s, 9, "%d:%02d", song->time / 60, 
@@ -318,14 +333,10 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 			}
 		}
 
-		if( temp == NULL)
-		{
-			/* just pass-through any unknown specifiers (including esc) */
-			/* drop a null char in so printf stops at the end of this specifier,
-			   but put the real character back in (pseudo-const) */
+		if( temp == NULL && !labelFound ) {
 			ret = appendToString(ret, p, length);
 		}
-		else {
+		else if( temp != NULL ) {
 			found = 1;
 			ret = appendToString(ret, temp, strlen(temp));
 		}
