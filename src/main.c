@@ -57,6 +57,7 @@ struct _mpc_table {
 	{"stop", 0, 0, 0, cmd_stop,"", "Stop the currently playing playlists"},
 	{"seek", 1, 1, 0, cmd_seek,"<0-100>","Seeks to the position specified in percent"},
 	{"clear", 0, 0, 0, cmd_clear,"", "Clear the current playlist"},
+	{"outputs", 0, 0, 0, cmd_outputs,"", "Show the current outputs"},
 	{"shuffle", 0, 0, 0, cmd_shuffle,"", "Shuffle the current playlist"},
 	{"move", 2, 2, 0, cmd_move,"<from> <to>", "Move song in playlist"},
 	{"playlist", 0, 0, 0, cmd_playlist, "", "Print the current playlist"},

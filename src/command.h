@@ -43,6 +43,7 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn ) ;
 int cmd_repeat ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_random ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn );
+int cmd_outputs ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_update ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_version ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_loadtab ( int argc, char ** argv, mpd_Connection * conn );

@@ -239,6 +239,23 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
+int cmd_outputs( int argc, char ** argv, mpd_Connection * conn )
+{
+	mpd_OutputEntity * output;
+
+	mpd_sendOutputsCommand( conn );
+	while( (output = mpd_getNextOutput(conn)) ) {
+		if( output->enabled ) {
+			printf("Output %i is enabled\n", (output->id + 1) );
+		} else {
+			printf("Output %i is disabled\n", (output->id +1) );
+		}
+		mpd_freeOutputElement(output);
+	}
+	mpd_finishCommand(conn);
+	return 0;
+}
+
 int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 {
 	int song;
