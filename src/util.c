@@ -209,12 +209,20 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 				}
 			}
 			else {
-				while(*p != ']' && *p != '\0' && *p != '|'
-						&& *p != '&' && *p != '[') 
-				{
-					/*if(*p == '%' && p[1] != '\0') {
-						++p;
-					}*/
+				int stack = 0;
+			
+				while (*p != '\0') {
+					if(*p == '[') stack++;
+					else if(stack) {
+						if(*p == ']') stack--;
+					}
+					else {
+						if(*p == '&' || *p == '|' ||
+								*p == ']') 
+						{
+							break;
+						}
+					}
 					++p;
 				}
 			}
@@ -223,17 +231,25 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 		
 		if (p[0] == '&') {
 			++p;
-			if(!found) {
+			if(found == 0) {
+				int stack = 0;
+			
 				if(ret) {
 					free(ret);
 					ret = NULL;
 				}
-				while(*p != ']' && *p != '\0' && *p != '|'
-						&& *p != '&' && *p != '[') 
-				{
-					/*if(*p == '%' && p[1] != '\0') {
-						++p;
-					}*/
+				while (*p != '\0') {
+					if(*p == '[') stack++;
+					else if(stack) {
+						if(*p == ']') stack--;
+					}
+					else {
+						if(*p == '&' || *p == '|' ||
+								*p == ']') 
+						{
+							break;
+						}
+					}
 					++p;
 				}
 			}
@@ -353,7 +369,7 @@ void print_formatted_song (mpd_Song * song, const char * format)
 	}
 }
 
-#define DEFAULT_FORMAT "%name%: &[%artist% - ][%title%]|%name%|[%artist% - ][%title%]|%file%"
+#define DEFAULT_FORMAT "[%name%: &[%artist - ][%title]]|[%name%]|[[%artist% - ][%title%]]|%file%"
 
 void pretty_print_song (mpd_Song * song)
 {
