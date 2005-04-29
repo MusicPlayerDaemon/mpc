@@ -380,7 +380,6 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 	mpd_Status * status;
 	char * arg = argv[0];
 	char * test;
-	char * last_char;
 
 	int seekchange;
 	int total_secs;
@@ -392,15 +391,14 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 	if(status->state==MPD_STATUS_STATE_STOP)
 		DIE("not currently playing\n");
 
-        if(*arg == '+')
-                rel = 1;
-        else if(*arg == '-')
-                rel = -1;
+	/* Detect +/- if exists point to the next char */
+        if(*arg == '+') rel = 1;
+        else if(*arg == '-') rel = -1;
 
-	last_char = &arg[strlen(arg)-1];
+	if(rel != 0) arg++;
 
 	/* If seeking by percent */
-	if( *last_char == '%' ) {
+	if( arg[strlen(arg)-1] == '%' ) {
 
 		double perc;
 
@@ -488,10 +486,17 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 		seekchange = total_secs;
 	}
 
-	seekto = (rel ? status->elapsedTime + seekchange : seekchange);
+	/* This detects +/- and is necessary due to the parsing of HH:MM:SS numbers*/
+	if(rel == 1) {
+		seekto = status->elapsedTime + seekchange;
+	} else if (rel == -1) {
+		seekto = status->elapsedTime - seekchange;
+	} else {
+		seekto = seekchange;
+	}
 
 	if(seekto > status->totalTime)
-		DIE("seek amount would seek past the end of the song\n");
+		DIE("Seek amount would seek past the end of the song\n");
 
 	mpd_sendSeekIdCommand(conn,status->songid,seekto);
 	printErrorAndExit(conn);
