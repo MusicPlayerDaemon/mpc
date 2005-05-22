@@ -26,12 +26,12 @@
 		;;
 		# TODO add trailing 's' for seconds in seek (total song time needed)
 		seek|volume)
-		COMPREPLY=($(compgen -W "`seq 0 100; seq -f +%g 0 100; seq -f -%g 0 100`" "${cur}"))
+		COMPREPLY=($(compgen -W "`awk 'BEGIN{for(x=0;x<=100;x++){print x;print"-"x;print"+"x}}'`" "${cur}"))
 		return 0
 		;;
 		# TODO get total song time and use that as a limit
 		crossfade)
-		COMPREPLY=($(compgen -W "`seq 0 99`" "${cur}"))
+		COMPREPLY=($(compgen -W "`awk 'BEGIN{for(x=0;x<99;x++){print x}}'`" "${cur}"))
 		return 0
 		;;
 		ls)
