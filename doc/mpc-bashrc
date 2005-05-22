@@ -35,11 +35,11 @@
 		return 0
 		;;
 		ls)
-                if [ "x$cur" = "x" ]; then
-                        hold=`mpc ls`;
-                else
-		        hold=`mpc lstab ${cur}`;
-                fi
+		if [ "x$cur" = "x" ]; then
+			hold=`mpc ls`;
+		else
+			hold=`mpc lstab ${cur}`;
+		fi
 		COMPREPLY=($(compgen -W "${hold}" | sed "$scrub"))
 		return 0
 		;;
@@ -61,7 +61,7 @@
 		return 0
 		;;
 		*)
-		hold=`mpc help 2>&1 | grep "^mpc [a-z]\+ " | awk '{print $2}'`;
+		hold=`mpc help 2>&1 | awk '/^mpc [a-z]+ /{print $2}'`;
 		COMPREPLY=($(compgen -W "${hold} status" ${cur}))
 		return 0
 		;;
