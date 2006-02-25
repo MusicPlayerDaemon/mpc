@@ -221,9 +221,12 @@ int main(int argc, char ** argv)
 			mpd_Connection * conn = setup_connection();
 			
 			/* not a typo, assignment intended */
-			if( (ret=mpc_table[i].handler(argc, array, conn)))
-				print_status(conn);
-			
+			if( (ret=mpc_table[i].handler(argc, array, conn))) {
+				struct mpc_option* nostatus = get_option ("no-status");
+				if (! nostatus->set)
+					print_status(conn);
+			}
+
 			if (0>mpc_table[i].pipe)
 				free_pipe_array(argc,array);
 			

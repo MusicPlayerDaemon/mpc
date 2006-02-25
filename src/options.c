@@ -28,6 +28,7 @@
 struct mpc_option mpc_options [] =
 {
 	{ "format", 1, 0, 0 },
+	{ "no-status", 0, 0, 0 },
 
 	/* other ideas for options...
 	{ "host", 1, 0, 0 },

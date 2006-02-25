@@ -1043,5 +1043,6 @@ int cmd_stats ( int argc, char ** argv, mpd_Connection * conn )
 
 int cmd_status ( int argc, char ** argv, mpd_Connection * conn )
 {
-	return 1;
+	print_status(conn);
+	return 0;
 }
