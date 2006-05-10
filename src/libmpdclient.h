@@ -1,5 +1,5 @@
 /* libmpdclient
-   (c)2003-2004 by Warren Dukes (warren.dukes@gmail.com)
+   (c)2003-2004 by Warren Dukes (shank@mercury.chem.pitt.edu)
    This project's homepage is: http://www.musicpd.org
   
    Redistribution and use in source and binary forms, with or without
@@ -233,6 +233,11 @@ typedef struct _mpd_Song {
 	char * name;
 	/* date */
 	char *date;
+
+	/* added by qball */
+	char *genre;
+	char *composer;
+
 	/* length of song in seconds, check that it is not MPD_SONG_NO_TIME  */
 	int time;
 	/* if plchanges/playlistinfo/playlistid used, is the position of the 
@@ -250,7 +255,7 @@ typedef struct _mpd_Song {
  * use mpd_freeSong to free the memory for the mpd_Song, it will also
  * free memory for file, artist, etc, so don't do it yourself
  */
-mpd_Song * mpd_newSong();
+mpd_Song * mpd_newSong(void);
 
 /* mpd_freeSong
  * use to free memory allocated by mpd_newSong
@@ -276,7 +281,7 @@ typedef struct _mpd_Directory {
  * allocates memory for a new directory
  * use mpd_freeDirectory to free this memory
  */
-mpd_Directory * mpd_newDirectory ();
+mpd_Directory * mpd_newDirectory (void);
 
 /* mpd_freeDirectory
  * used to free memory allocated with mpd_newDirectory, and it frees
@@ -302,7 +307,7 @@ typedef struct _mpd_PlaylistFile {
  * allocates memory for new mpd_PlaylistFile, path is set to NULL
  * free this memory with mpd_freePlaylistFile
  */
-mpd_PlaylistFile * mpd_newPlaylistFile();
+mpd_PlaylistFile * mpd_newPlaylistFile(void);
 
 /* mpd_freePlaylist
  * free memory allocated for freePlaylistFile, will also free
@@ -340,7 +345,7 @@ typedef struct mpd_InfoEntity {
 	} info;
 } mpd_InfoEntity;
 
-mpd_InfoEntity * mpd_newInfoEntity();
+mpd_InfoEntity * mpd_newInfoEntity(void);
 
 void mpd_freeInfoEntity(mpd_InfoEntity * entity);
 
@@ -361,6 +366,14 @@ void mpd_sendPlaylistIdCommand(mpd_Connection * connection, int songId);
 
 /* use this to get the changes in the playlist since version _playlist_ */
 void mpd_sendPlChangesCommand(mpd_Connection * connection, long long playlist);
+
+/**
+ * @param connection: A valid and connected mpd_Connection.
+ * @param playlist: The playlist version you want the diff with.
+ * A more bandwidth efficient version of the mpd_sendPlChangesCommand.
+ * It only returns the pos+id of the changes song.
+ */
+void mpd_sendPlChangesPosIdCommand(mpd_Connection * connection, long long playlist);
 
 /* recursivel fetches all songs/dir/playlists in "dir* (no metadata is 
  * returned) */
