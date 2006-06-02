@@ -90,15 +90,27 @@ struct _mpc_table {
 	{}
 };
 
-void print_help (int max, char * progname, char * command)
+void print_help (char * progname, char * command)
 {
-	int i;
+	int i, max = 0;
+	FILE *outfp = stdout;
 
-	if(command && strcmp(command,"help"))
-			fprintf(stderr,"unknown command \"%s\"\n",command);
-	fprintf(stderr,"Usage: %s <command> [command args]...\n"
+	if(command && strcmp(command,"help")) {
+		outfp = stderr;
+		fprintf(outfp,"unknown command \"%s\"\n",command);
+	}
+	fprintf(outfp,"Usage: %s <command> [command args]...\n"
 		"mpc version: "VERSION"\n",progname);
-	fprintf(stderr,	"%s %*s  Displays status\n",progname,max," ");
+	
+	for (i=0; mpc_table[i].command; ++i) {
+		if (mpc_table[i].help) {
+			int tmp = strlen(mpc_table[i].command) +
+					strlen(mpc_table[i].usage);
+			max = (tmp > max) ? tmp : max;
+		}
+	}
+	
+	fprintf(outfp,	"%s %*s  Displays status\n",progname,max," ");
 	
 	for (i=0; mpc_table[i].command; ++i) {
 		int spaces;
@@ -108,12 +120,12 @@ void print_help (int max, char * progname, char * command)
 		spaces = max-(strlen(mpc_table[i].command)+strlen(mpc_table[i].usage));
 		spaces += !spaces ? 0 : 1;
 
-		fprintf(stderr,"%s %s %s%*s%s\n",progname,
+		fprintf(outfp,"%s %s %s%*s%s\n",progname,
 			mpc_table[i].command,mpc_table[i].usage,
 			spaces," ",mpc_table[i].help);
 		
 	}
-	fprintf(stderr,"For more information about these and other options look at man 1 mpc\n");
+	fprintf(outfp,"For more information about these and other options look at man 1 mpc\n");
 }
 
 mpd_Connection * setup_connection ()
@@ -203,12 +215,11 @@ char ** check_args (int idx, int * argc, char ** argv)
 int main(int argc, char ** argv)
 {
 	int i = 0;
-	int helplen = 0;
 	int ret = 0;
 	setLocaleCharset();
 
 	if(parse_options(&argc, argv) < 0) {
-		print_help(helplen,argv[0],NULL);
+		print_help(argv[0],NULL);
 		exit(EXIT_FAILURE);
 	}
 
@@ -234,12 +245,9 @@ int main(int argc, char ** argv)
 			mpd_closeConnection(conn);
 			fclose(stdout);
 			return EXIT_SUCCESS;
-		} else if (mpc_table[i].help) {
-			int tmp = strlen(mpc_table[i].command) + strlen(mpc_table[i].usage);
-			helplen = (tmp > helplen) ? tmp : helplen;
-		}
+		} 
 	}
-	print_help(helplen,argv[0],argv[1]);
+	print_help(argv[0],argv[1]);
 	fclose(stdout);
 	return EXIT_SUCCESS;
 }
