@@ -22,8 +22,6 @@
 
 #include <stdlib.h>
 #include <errno.h>
-#include <string.h>
-/*#include <stdio.h>*/
 
 #ifdef HAVE_LOCALE
 #ifdef HAVE_LANGINFO_CODESET
@@ -42,56 +40,58 @@ char * char_conv_from = NULL;
 #endif
 
 #define BUFFER_SIZE	1024
+static void closeCharSetConversion();
 
-int setCharSetConversion(char * to, char * from) {
+static int setCharSetConversion(char * to, char * from) {
 #ifdef HAVE_ICONV
 	/* begin code from iconv_prog.c (omiting invalid symbols) */
 	const char *errhand = strchrnul (to, '/');
 	int nslash = 2;
-	char *newp;
+	char *newp = NULL;
 	char *cp;
 
-	if (*errhand == '/')
-	{
+	if (*errhand == '/') {
 		--nslash;
 		errhand = strchrnul (errhand, '/');
 
-		if (*errhand == '/')
-		{
+		if (*errhand == '/') {
 			--nslash;
-			++errhand;
+			errhand = strchr(errhand, '\0');
 		}
 	}
 
-	newp = (char *) alloca (errhand - to + nslash + 6 + 1);
+	newp = (char *)malloc(errhand - to + nslash + 7 + 1);
 	cp = mempcpy (newp, to, errhand - to);
 	while (nslash-- > 0)
 		*cp++ = '/';
+	if (cp[-1] != '/')
+		*cp++ = ',';
 	memcpy (cp, "IGNORE", sizeof ("IGNORE"));
 
 	to = newp;
 	/* end code from iconv_prog.c */
 
-
 	if(char_conv_to && strcmp(to,char_conv_to)==0 &&
 			char_conv_from && strcmp(from,char_conv_from)==0)
-	{ 
 		return 0;
-	}
 
 	closeCharSetConversion();
 
-	if((char_conv_iconv = iconv_open(to,from))==(iconv_t)(-1)) return -1;
+	if ((char_conv_iconv = iconv_open(to,from))==(iconv_t)(-1))
+		return -1;
 
 	char_conv_to = strdup(to);
 	char_conv_from = strdup(from);
+
+	if (newp)
+		free(newp);
 
 	return 0;
 #endif
 	return -1;
 }
 
-char * convStrDup(char * string) {
+static char * convStrDup(char * string) {
 #ifdef HAVE_ICONV
 	char buffer[BUFFER_SIZE];
 	size_t inleft = strlen(string);
@@ -126,7 +126,7 @@ char * convStrDup(char * string) {
 	return NULL;
 }
 
-void closeCharSetConversion() {
+static void closeCharSetConversion() {
 #ifdef HAVE_ICONV
 	if(char_conv_to) {
 		iconv_close(char_conv_iconv);
