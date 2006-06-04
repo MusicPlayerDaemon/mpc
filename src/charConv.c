@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 #include <errno.h>
+#include <string.h>
 
 #ifdef HAVE_LOCALE
 #ifdef HAVE_LANGINFO_CODESET

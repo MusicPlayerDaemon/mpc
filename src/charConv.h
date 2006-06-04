@@ -19,9 +19,6 @@
 #ifndef CHAR_CONV_H
 #define CHAR_CONV_H
 
-#define _GNU_SOURCE
-#include <string.h>
-
 char * toUtf8(char * from);
 
 char * fromUtf8(char * to);

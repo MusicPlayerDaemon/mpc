@@ -35,9 +35,9 @@
 #include <sys/param.h>
 
 struct _mpc_table {
-	const char * command; 
+	const char * command;
 	const int min, max;	/* min/max arguments allowed, -1 = unlimited */
-	int pipe;		/* 
+	int pipe;		/*
 				1: implicit pipe read, `-' optional as argv[2]
 				2: explicit pipe read `-' needed as argv[2]
 				3: explicit pipe read `-' needed as argv[3]
@@ -78,30 +78,34 @@ struct _mpc_table {
 	{"search", 2, -1, 3, cmd_search, "<type> <queries>",	"Search for a song"},
 	{"crossfade", 0, 1, 0, cmd_crossfade,"[sec]","Set and display crossfade settings"},
 	{"update", 0, -1, 2, cmd_update,	"", "Scans music directory for updates"},
-	{"stats", 0, -1, 0, cmd_stats, "", "Displays statistics about MPD"}, 
+	{"stats", 0, -1, 0, cmd_stats, "", "Displays statistics about MPD"},
 	{"version", 0, 0, 0, cmd_version,"", "Reports version of MPD"},
 	/*  loadtab, lstab, and tab used for completion-scripting only */
-	{"loadtab",0, 1, 0, cmd_loadtab,"<directory>",}, 
-	{"lstab",0, 1, 0, cmd_lstab,"<directory>",}, 
+	{"loadtab",0, 1, 0, cmd_loadtab,"<directory>",},
+	{"lstab",0, 1, 0, cmd_lstab,"<directory>",},
 	{"tab",0, 1, 0, cmd_tab,"<directory/file>",},
 	/* status was added for pedantic reasons */
-	{"status", 0, -1, 0, cmd_status, "", NULL }, 
+	{"status", 0, -1, 0, cmd_status, "", NULL },
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */
 	{}
 };
 
-void print_help (char * progname, char * command)
+static int print_help(char * progname, char * command)
 {
 	int i, max = 0;
-	FILE *outfp = stdout;
+	int ret = EXIT_FAILURE;
+	FILE *outfp = stderr;
 
-	if(command && strcmp(command,"help")) {
-		outfp = stderr;
-		fprintf(outfp,"unknown command \"%s\"\n",command);
+	if (command) {
+		if (!strcmp(command,"help")) {
+			outfp = stdout;
+			ret = EXIT_SUCCESS;
+		} else
+			fprintf(outfp,"unknown command \"%s\"\n",command);
 	}
 	fprintf(outfp,"Usage: %s <command> [command args]...\n"
 		"mpc version: "VERSION"\n",progname);
-	
+
 	for (i=0; mpc_table[i].command; ++i) {
 		if (mpc_table[i].help) {
 			int tmp = strlen(mpc_table[i].command) +
@@ -109,12 +113,12 @@ void print_help (char * progname, char * command)
 			max = (tmp > max) ? tmp : max;
 		}
 	}
-	
+
 	fprintf(outfp,	"%s %*s  Displays status\n",progname,max," ");
-	
+
 	for (i=0; mpc_table[i].command; ++i) {
 		int spaces;
-		
+
 		if (!mpc_table[i].help)
 			continue ;
 		spaces = max-(strlen(mpc_table[i].command)+strlen(mpc_table[i].usage));
@@ -123,12 +127,14 @@ void print_help (char * progname, char * command)
 		fprintf(outfp,"%s %s %s%*s%s\n",progname,
 			mpc_table[i].command,mpc_table[i].usage,
 			spaces," ",mpc_table[i].help);
-		
+
 	}
-	fprintf(outfp,"For more information about these and other options look at man 1 mpc\n");
+	fprintf(outfp,"For more information about these and other "
+			"options look at man 1 mpc\n");
+	return ret;
 }
 
-mpd_Connection * setup_connection ()
+static mpd_Connection * setup_connection ()
 {
 	char * host = DEFAULT_HOST;
 	char * port = DEFAULT_PORT;
@@ -139,7 +145,7 @@ mpd_Connection * setup_connection ()
 	int password_len= 0;
 	int parsed_len = 0;
 	mpd_Connection * conn;
-	
+
 	if((test = getenv("MPD_HOST"))) {
 		host =test;
 		host_env = 1;
@@ -151,7 +157,7 @@ mpd_Connection * setup_connection ()
 	}
 
 	iport = strtol(port,&test,10);
-	
+
 	if(iport<0 || *test!='\0') {
 		fprintf(stderr,"MPD_PORT \"%s\" is not a positive integer\n",
 				port);
@@ -159,36 +165,35 @@ mpd_Connection * setup_connection ()
 	}
 
 	parse_password(host, &password_len, &parsed_len);
-	
+
 	conn = mpd_newConnection(host+parsed_len,iport,10);
 
-	if(conn->error && (!port_env || !host_env)) 
+	if(conn->error && (!port_env || !host_env))
 		fprintf(stderr,"MPD_HOST and/or MPD_PORT environment variables"
 			" are not set\n");
-	
+
 	printErrorAndExit(conn);
 
-	if(password_len) 
+	if(password_len)
 		send_password (host, password_len, conn);
 
 	return conn;
 }
 
-void print_status_and_exit () 
+static int print_status_and_exit ()
 {
 	mpd_Connection * conn = setup_connection();
 	print_status(conn);
 	mpd_closeConnection(conn);
-	fclose(stdout);
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }
 
 /* check arguments to see if they are valid */
-char ** check_args (int idx, int * argc, char ** argv)
+static char ** check_args(int idx, int * argc, char ** argv)
 {
 	char ** array;
 	int i;
-	
+
 	if ( ( mpc_table[idx].pipe==1 &&
 		(2==*argc || (3==*argc && 0==strcmp(argv[2],STDIN_SYMBOL) )))
 	|| (mpc_table[idx].pipe==2 && (3==*argc && 0==strcmp(argv[2],STDIN_SYMBOL)))
@@ -214,23 +219,22 @@ char ** check_args (int idx, int * argc, char ** argv)
 
 int main(int argc, char ** argv)
 {
-	int i = 0;
-	int ret = 0;
+	int i, ret;
+	const char *cmd;
 	setLocaleCharset();
 
-	if(parse_options(&argc, argv) < 0) {
-		print_help(argv[0],NULL);
-		exit(EXIT_FAILURE);
-	}
+	if(parse_options(&argc, argv) < 0)
+		return print_help(argv[0],NULL);
 
 	if (argc==1)
-		print_status_and_exit ();
+		return print_status_and_exit();
 
+	cmd = argv[1];
 	for (i = 0; mpc_table[i].command; ++i) {
-		if ( ! strcmp(argv[1], mpc_table[i].command) ) {
+		if ( ! strcmp(cmd, mpc_table[i].command) ) {
 			char ** array = check_args (i, &argc , argv);
 			mpd_Connection * conn = setup_connection();
-			
+
 			/* not a typo, assignment intended */
 			if( (ret=mpc_table[i].handler(argc, array, conn))) {
 				struct mpc_option* nostatus = get_option ("no-status");
@@ -240,15 +244,12 @@ int main(int argc, char ** argv)
 
 			if (0>mpc_table[i].pipe)
 				free_pipe_array(argc,array);
-			
+
 			free(array);
 			mpd_closeConnection(conn);
-			fclose(stdout);
-			return EXIT_SUCCESS;
-		} 
+			return (ret >= 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+		}
 	}
-	print_help(argv[0],argv[1]);
-	fclose(stdout);
-	return EXIT_SUCCESS;
+	return print_help(argv[0],argv[1]);
 }
 

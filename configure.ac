@@ -53,6 +53,8 @@ if test x$enable_iconv = xyes; then
 		AC_CHECK_LIB(iconv, main,,LIBS=$oldlibs)
 		AC_DEFINE(HAVE_ICONV,1,[Define to use iconv])
 	fi
+	AC_DEFINE(_GNU_SOURCE,1,[Define to use GNU functions])
+	AC_CHECK_FUNCS(strchrnul mempcpy)
 fi
 
 
