@@ -45,33 +45,6 @@ static void closeCharSetConversion();
 
 static int setCharSetConversion(char * to, char * from) {
 #ifdef HAVE_ICONV
-	/* begin code from iconv_prog.c (omiting invalid symbols) */
-	const char *errhand = strchrnul (to, '/');
-	int nslash = 2;
-	char *newp = NULL;
-	char *cp;
-
-	if (*errhand == '/') {
-		--nslash;
-		errhand = strchrnul (errhand, '/');
-
-		if (*errhand == '/') {
-			--nslash;
-			errhand = strchr(errhand, '\0');
-		}
-	}
-
-	newp = (char *)malloc(errhand - to + nslash + 7 + 1);
-	cp = mempcpy (newp, to, errhand - to);
-	while (nslash-- > 0)
-		*cp++ = '/';
-	if (cp[-1] != '/')
-		*cp++ = ',';
-	memcpy (cp, "IGNORE", sizeof ("IGNORE"));
-
-	to = newp;
-	/* end code from iconv_prog.c */
-
 	if(char_conv_to && strcmp(to,char_conv_to)==0 &&
 			char_conv_from && strcmp(from,char_conv_from)==0)
 		return 0;
@@ -83,9 +56,6 @@ static int setCharSetConversion(char * to, char * from) {
 
 	char_conv_to = strdup(to);
 	char_conv_from = strdup(from);
-
-	if (newp)
-		free(newp);
 
 	return 0;
 #endif
