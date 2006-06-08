@@ -38,18 +38,14 @@
 #define SIMPLE_CMD(funcname, libmpdclient_funcname, ret) \
 int funcname ( int argc, char ** argv, mpd_Connection * conn) { \
         libmpdclient_funcname(conn); \
-	printErrorAndExit(conn); \
         my_finishCommand(conn); \
-	printErrorAndExit(conn); \
         return ret; \
 }
 
 #define SIMPLE_ONEARG_CMD(funcname, libmpdclient_funcname, ret) \
 int funcname ( int argc, char ** argv, mpd_Connection * conn) { \
         libmpdclient_funcname(conn, toUtf8(argv[0])); \
-	printErrorAndExit(conn); \
         my_finishCommand(conn); \
-	printErrorAndExit(conn); \
         return ret; \
 }
 
