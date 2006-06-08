@@ -474,6 +474,8 @@ int mpd_getUpdateId(mpd_Connection * connection);
 
 void mpd_sendPasswordCommand(mpd_Connection * connection, const char * pass);
 
+void mpd_sendKillCommand(mpd_Connection * connection);
+
 /* after executing a command, when your done with it to get its status
  * (you want to check connection->error for an error)
  */

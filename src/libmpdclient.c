@@ -1422,6 +1422,10 @@ void mpd_sendPasswordCommand(mpd_Connection * connection, const char * pass) {
 	free(sPass);
 }
 
+void mpd_sendKillCommand(mpd_Connection * connection) {
+	mpd_executeCommand(connection,"kill\n");
+}
+
 void mpd_sendCommandListBegin(mpd_Connection * connection) {
 	if(connection->commandList) {
 		strcpy(connection->errorStr,"already in command list mode");

@@ -1046,3 +1046,10 @@ int cmd_status ( int argc, char ** argv, mpd_Connection * conn )
 	print_status(conn);
 	return 0;
 }
+
+int cmd_kill ( int argc, char ** argv, mpd_Connection * conn ) {
+	mpd_sendKillCommand(conn);
+	mpd_finishCommand(conn);
+
+	return 1;
+}
