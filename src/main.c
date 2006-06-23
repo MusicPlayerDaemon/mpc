@@ -80,7 +80,6 @@ struct _mpc_table {
 	{"update", 0, -1, 2, cmd_update,	"", "Scans music directory for updates"},
 	{"stats", 0, -1, 0, cmd_stats, "", "Displays statistics about MPD"},
 	{"version", 0, 0, 0, cmd_version,"", "Reports version of MPD"},
-	{"kill", 0, 0, 0, cmd_kill, "", "Kills MPD"},
 	/*  loadtab, lstab, and tab used for completion-scripting only */
 	{"loadtab",0, 1, 0, cmd_loadtab,"<directory>",},
 	{"lstab",0, 1, 0, cmd_lstab,"<directory>",},
