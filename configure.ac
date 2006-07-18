@@ -9,10 +9,44 @@ AC_PROG_CC
 AC_PROG_INSTALL
 #AC_PROG_LIBTOOL
 
-set -- $CFLAGS
-CFLAGS="-Wall $CFLAGS"
-
 AM_CONFIG_HEADER(config.h)
+
+set -- $CFLAGS
+
+case "$CC" in
+*gcc*)
+	CFLAGS="-Wall"
+	;;
+esac
+
+local_lib=
+local_include=
+
+# aren't autotools supposed to be smart enough to figure this out?
+# oh well, the git-core Makefile managed to do some of the work for us :)
+case "$host_os" in
+darwin*)
+	local_lib='/sw/lib /opt/local/lib'
+	local_include='/sw/include /opt/local/include'
+	;;
+freebsd* | openbsd*)
+	local_lib=/usr/local/lib
+	local_include=/usr/local/include
+	;;
+netbsd*)
+	local_lib=/usr/pkg/lib
+	local_include=/usr/pkg/include
+	LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/pkg/lib"
+	;;
+esac
+
+for d in $local_lib; do
+	test -d "$d" && LDFLAGS="$LDFLAGS -L$d"
+done
+for d in $local_include; do
+	test -d "$d" && CFLAGS="$CFLAGS -I$d"
+done
+
 
 AC_ARG_ENABLE(iconv,[  --disable-iconv     disable iconv support],,enable_iconv=yes)
 
