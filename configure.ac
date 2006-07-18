@@ -24,7 +24,7 @@ local_include=
 
 # aren't autotools supposed to be smart enough to figure this out?
 # oh well, the git-core Makefile managed to do some of the work for us :)
-case "$host_os" in
+case "`uname -s | tr A-Z a-z`" in
 darwin*)
 	local_lib='/sw/lib /opt/local/lib'
 	local_include='/sw/include /opt/local/include'
