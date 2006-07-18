@@ -179,9 +179,7 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 int cmd_crop( int argc, char ** argv, mpd_Connection * conn )
 {
 
-	mpd_Status *status;
-	status = getStatus( conn );
-
+	mpd_Status *status = getStatus( conn );
 	int length = ( status->playlistLength - 1 );
 
 	if( status->playlistLength == 0 ) {
