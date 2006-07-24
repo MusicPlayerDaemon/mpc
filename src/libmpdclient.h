@@ -1,22 +1,22 @@
 /* libmpdclient
-   (c)2003-2004 by Warren Dukes (shank@mercury.chem.pitt.edu)
+   (c)2003-2006 by Warren Dukes (warren.dukes@gmail.com)
    This project's homepage is: http://www.musicpd.org
-  
+
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
    are met:
-                                                                                
+
    - Redistributions of source code must retain the above copyright
    notice, this list of conditions and the following disclaimer.
-                                                                                
+
    - Redistributions in binary form must reproduce the above copyright
    notice, this list of conditions and the following disclaimer in the
    documentation and/or other materials provided with the distribution.
-                                                                                
+
    - Neither the name of the Music Player Daemon nor the names of its
    contributors may be used to endorse or promote products derived from
    this software without specific prior written permission.
-                                                                                
+
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -28,14 +28,17 @@
    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 */
 
 #ifndef LIBMPDCLIENT_H
 #define LIBMPDCLIENT_H
 
-#include <sys/time.h>
+#ifdef WIN32
+#  define __W32API_USE_DLLIMPORT__ 1
+#endif
 
+#include <sys/time.h>
+#include <stdarg.h>
 #define MPD_BUFFER_MAX_LENGTH	50000
 #define MPD_WELCOME_MESSAGE	"OK MPD "
 
@@ -71,6 +74,25 @@
 extern "C" {
 #endif
 
+typedef enum mpd_TagItems
+{
+	MPD_TAG_ITEM_ARTIST,
+	MPD_TAG_ITEM_ALBUM,
+	MPD_TAG_ITEM_TITLE,
+	MPD_TAG_ITEM_TRACK,
+	MPD_TAG_ITEM_NAME,
+	MPD_TAG_ITEM_GENRE,
+	MPD_TAG_ITEM_DATE,
+	MPD_TAG_ITEM_COMPOSER,
+	MPD_TAG_ITEM_PERFORMER,
+	MPD_TAG_ITEM_COMMENT,
+	MPD_TAG_ITEM_DISC,
+	MPD_TAG_ITEM_FILENAME,
+	MPD_TAG_NUM_OF_ITEM_TYPES
+}mpd_TagItems;
+
+extern char * mpdTagItemKeys[MPD_TAG_NUM_OF_ITEM_TYPES];
+
 /* internal stuff don't touch this struct */
 typedef struct _mpd_ReturnElement {
 	char * name;
@@ -91,7 +113,7 @@ typedef struct _mpd_Connection {
 	/* this will be set to MPD_ERROR_* if there is an error, 0 if not */
 	int error;
 	/* DON'T TOUCH any of the rest of this stuff */
-	int sock; 
+	int sock;
 	char buffer[MPD_BUFFER_MAX_LENGTH+1];
 	int buflen;
 	int bufstart;
@@ -101,6 +123,7 @@ typedef struct _mpd_Connection {
 	int commandList;
 	mpd_ReturnElement * returnElement;
 	struct timeval timeout;
+	char *request;
 } mpd_Connection;
 
 /* mpd_newConnection
@@ -235,12 +258,18 @@ typedef struct _mpd_Song {
 	char *date;
 
 	/* added by qball */
+	/* Genre */
 	char *genre;
+	/* Composer */
 	char *composer;
+	/* Disc */
+	char *disc;
+	/* Comment */
+	char *comment;
 
 	/* length of song in seconds, check that it is not MPD_SONG_NO_TIME  */
 	int time;
-	/* if plchanges/playlistinfo/playlistid used, is the position of the 
+	/* if plchanges/playlistinfo/playlistid used, is the position of the
 	 * song in the playlist */
 	int pos;
 	/* song id for a song in the playlist */
@@ -281,7 +310,7 @@ typedef struct _mpd_Directory {
  * allocates memory for a new directory
  * use mpd_freeDirectory to free this memory
  */
-mpd_Directory * mpd_newDirectory (void);
+mpd_Directory * mpd_newDirectory(void);
 
 /* mpd_freeDirectory
  * used to free memory allocated with mpd_newDirectory, and it frees
@@ -375,7 +404,7 @@ void mpd_sendPlChangesCommand(mpd_Connection * connection, long long playlist);
  */
 void mpd_sendPlChangesPosIdCommand(mpd_Connection * connection, long long playlist);
 
-/* recursivel fetches all songs/dir/playlists in "dir* (no metadata is 
+/* recursivel fetches all songs/dir/playlists in "dir* (no metadata is
  * returned) */
 void mpd_sendListallCommand(mpd_Connection * connection, const char * dir);
 
@@ -390,25 +419,27 @@ void mpd_sendLsInfoCommand(mpd_Connection * connection, const char * dir);
 #define MPD_TABLE_TITLE		2
 #define MPD_TABLE_FILENAME	3
 
-void mpd_sendSearchCommand(mpd_Connection * connection, int table, 
+void mpd_sendSearchCommand(mpd_Connection * connection, int table,
 		const char * str);
 
-void mpd_sendFindCommand(mpd_Connection * connection, int table, 
+void mpd_sendFindCommand(mpd_Connection * connection, int table,
 		const char * str);
 
 /* LIST TAG COMMANDS */
 
-/* use this function fetch next artist entry, be sure to free the returned 
+/* use this function fetch next artist entry, be sure to free the returned
  * string.  NULL means there are no more.  Best used with sendListArtists
  */
 char * mpd_getNextArtist(mpd_Connection * connection);
 
 char * mpd_getNextAlbum(mpd_Connection * connection);
 
+char * mpd_getNextTag(mpd_Connection *connection, int table);
+
 /* list artist or albums by artist, arg1 should be set to the artist if
  * listing albums by a artist, otherwise NULL for listing all artists or albums
  */
-void mpd_sendListCommand(mpd_Connection * connection, int table, 
+void mpd_sendListCommand(mpd_Connection * connection, int table,
 		const char * arg1);
 
 /* SIMPLE COMMANDS */
@@ -474,8 +505,6 @@ int mpd_getUpdateId(mpd_Connection * connection);
 
 void mpd_sendPasswordCommand(mpd_Connection * connection, const char * pass);
 
-void mpd_sendKillCommand(mpd_Connection * connection);
-
 /* after executing a command, when your done with it to get its status
  * (you want to check connection->error for an error)
  */
@@ -488,7 +517,7 @@ void mpd_sendCommandListOkBegin(mpd_Connection * connection);
 
 void mpd_sendCommandListEnd(mpd_Connection * connection);
 
-/* advance to the next listOk 
+/* advance to the next listOk
  * returns 0 if advanced to the next list_OK,
  * returns -1 if it advanced to an OK or ACK */
 int mpd_nextListOkCommand(mpd_Connection * connection);
@@ -509,6 +538,86 @@ void mpd_sendDisableOutputCommand(mpd_Connection * connection, int outputId);
 
 void mpd_freeOutputElement(mpd_OutputEntity * output);
 
+/**
+ * @param connection a #mpd_Connection
+ *
+ * Queries mpd for the allowed commands
+ */
+void mpd_sendCommandsCommand(mpd_Connection * connection);
+/**
+ * @param connection a #mpd_Connection
+ *
+ * Queries mpd for the not allowed commands
+ */
+void mpd_sendNotCommandsCommand(mpd_Connection * connection);
+
+/**
+ * @param connection a #mpd_Connection
+ *
+ * returns the next supported command.
+ *
+ * @returns a string, needs to be free'ed
+ */
+char *mpd_getNextCommand(mpd_Connection *connection);
+
+/**
+ * @param connection a MpdConnection
+ * @param path	the path to the playlist.
+ *
+ * List the content, with full metadata, of a stored playlist.
+ *
+ */
+void mpd_sendListPlaylistInfoCommand(mpd_Connection *connection, char *path);
+/**
+ * @param connection a MpdConnection
+ * @param path	the path to the playlist.
+ *
+ * List the content of a stored playlist.
+ *
+ */
+void mpd_sendListPlaylistCommand(mpd_Connection *connection, char *path);
+
+/**
+ * @param connection a #mpd_Connection
+ * @param exact if to match exact
+ *
+ * starts a search, use mpd_addConstraintSearch to add
+ * a constraint to the search, and mpd_commitSearch to do the actual search
+ */
+void mpd_startSearch(mpd_Connection * connection,int exact);
+/**
+ * @param connection a #mpd_Connection
+ * @param field
+ * @param name
+ *
+ */
+void mpd_addConstraintSearch(mpd_Connection *connection, int field, char *name);
+/**
+ * @param connection a #mpd_Connection
+ *
+ */
+void mpd_commitSearch(mpd_Connection *connection);
+
+/**
+ * @param connection a #mpd_Connection
+ * @param field The field to search
+ *
+ * starts a search for fields... f.e. get a list of artists would be:
+ * mpd_startFieldSearch(connection, MPD_TAG_ITEM_ARTIST);
+ * mpd_commitSearch(connection);
+ *
+ * or get a list of artist in genre "jazz" would be:
+ * @code
+ * mpd_startFieldSearch(connection, MPD_TAG_ITEM_ARTIST);
+ * mpd_addConstraintSearch(connection, MPD_TAG_ITEM_GENRE, "jazz")
+ * mpd_commitSearch(connection);
+ * @endcode
+ *
+ * mpd_startSearch will return  a list of songs (and you need mpd_getNextInfoEntity)
+ * this one will return a list of only one field (the field specified with field) and you need
+ * mpd_getNextTag to get the results
+ */
+void mpd_startFieldSearch(mpd_Connection * connection,int field);
 #ifdef __cplusplus
 }
 #endif
