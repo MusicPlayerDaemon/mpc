@@ -135,9 +135,11 @@ static int mpd_connect(mpd_Connection * connection, const char * host, int port,
 
 	for (res = addrinfo; res; res = res->ai_next) {
 		/* create socket */
-
-		if((connection->sock = socket(res->ai_family,SOCK_STREAM,res->ai_protocol))<0) {
-			strcpy(connection->errorStr,"problems creating socket");
+		connection->sock = socket(res->ai_family, SOCK_STREAM, res->ai_protocol);
+		if (connection->sock < 0) {
+			snprintf(connection->errorStr, MPD_BUFFER_MAX_LENGTH,
+			         "problems creating socket: %s",
+			         strerror(errno));
 			connection->error = MPD_ERROR_SYSTEM;
 			freeaddrinfo(addrinfo);
 			return -1;
