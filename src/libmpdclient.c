@@ -44,6 +44,38 @@
 #ifdef WIN32
 #  include <ws2tcpip.h>
 #  include <winsock.h>
+#else
+#  include <netinet/in.h>
+#  include <arpa/inet.h>
+#  include <sys/socket.h>
+#  include <netdb.h>
+#endif
+
+#ifndef MSG_DONTWAIT
+#  define MSG_DONTWAIT 0
+#endif
+
+#ifndef MPD_NO_GAI
+#  ifdef AI_ADDRCONFIG
+#    define MPD_HAVE_GAI
+#  endif
+#endif
+
+#define COMMAND_LIST    1
+#define COMMAND_LIST_OK 2
+
+#ifdef WIN32
+#  define SELECT_ERRNO_IGNORE   (errno == WSAEINTR || errno == WSAEINPROGRESS)
+#  define SENDRECV_ERRNO_IGNORE SELECT_ERRNO_IGNORE
+#else
+#  define SELECT_ERRNO_IGNORE   (errno == EINTR)
+#  define SENDRECV_ERRNO_IGNORE (errno == EINTR || errno == EAGAIN)
+#  define winsock_dll_error(c)  0
+#  define closesocket(s)        close(s)
+#  define WSACleanup()          do { /* nothing */ } while (0)
+#endif
+
+#ifdef WIN32
 static int winsock_dll_error(mpd_Connection *connection)
 {
 	WSADATA wsaData;
@@ -63,47 +95,24 @@ static int do_connect_fail(mpd_Connection *connection,
 {
 	int iMode = 1; /* 0 = blocking, else non-blocking */
 	ioctlsocket(connection->sock, FIONBIO, (u_long FAR*) &iMode);
-	return (connect(connection->sock,serv_addr,addrlen)
-					== SOCKET_ERROR
+	return (connect(connection->sock,serv_addr,addrlen) == SOCKET_ERROR
 			&& WSAGetLastError() != WSAEWOULDBLOCK);
 }
-
-static int select_errno_ignore(const int my_errno)
-{
-	return (my_errno == WSAEINPROGRESS || my_errno == WSAEINTR);
-}
 #else /* !WIN32 (sane operating systems) */
-#  include <netinet/in.h>
-#  include <arpa/inet.h>
-#  include <sys/socket.h>
-#  include <netdb.h>
-#  define winsock_dll_error(c)		0
-#  define closesocket(s)		close(s)
-#  define WSACleanup()			do { /* nothing */ } while (0)
-
 static int do_connect_fail(mpd_Connection *connection,
                            const struct sockaddr *serv_addr, int addrlen)
 {
 	int flags = fcntl(connection->sock, F_GETFL, 0);
 	fcntl(connection->sock, F_SETFL, flags | O_NONBLOCK);
-
 	return (connect(connection->sock,serv_addr,addrlen)<0 &&
 				errno!=EINPROGRESS);
 }
-
-static int select_errno_ignore(const int my_errno)
-{
-	return (my_errno == EINTR);
-}
 #endif /* !WIN32 */
 
-#ifndef MSG_DONTWAIT
-#  define MSG_DONTWAIT 0
-#endif
-
-#ifndef MPD_NO_GAI
+#ifdef MPD_HAVE_GAI
 static int mpd_connect(mpd_Connection * connection, const char * host, int port,
-                       float timeout) {
+                       float timeout)
+{
 	int error;
 	char service[20];
 	struct addrinfo hints;
@@ -113,14 +122,14 @@ static int mpd_connect(mpd_Connection * connection, const char * host, int port,
 	/**
 	 * Setup hints
 	 */
-	hints.ai_flags          = 0;
-	hints.ai_family         = PF_UNSPEC;
-	hints.ai_socktype       = SOCK_STREAM;
-	hints.ai_protocol       = IPPROTO_TCP;
-	hints.ai_addrlen        = 0;
-	hints.ai_addr           = NULL;
-	hints.ai_canonname      = NULL;
-	hints.ai_next           = NULL;
+	hints.ai_flags     = AI_ADDRCONFIG;
+	hints.ai_family    = PF_UNSPEC;
+	hints.ai_socktype  = SOCK_STREAM;
+	hints.ai_protocol  = IPPROTO_TCP;
+	hints.ai_addrlen   = 0;
+	hints.ai_addr      = NULL;
+	hints.ai_canonname = NULL;
+	hints.ai_next      = NULL;
 
 	snprintf(service, sizeof(service), "%d", port);
 
@@ -170,7 +179,8 @@ static int mpd_connect(mpd_Connection * connection, const char * host, int port,
 }
 #else /* !MPD_HAVE_GAI */
 static int mpd_connect(mpd_Connection * connection, const char * host, int port,
-                       float timeout) {
+                       float timeout)
+{
 	struct hostent * he;
 	struct sockaddr * dest;
 	int destlen;
@@ -222,9 +232,6 @@ static int mpd_connect(mpd_Connection * connection, const char * host, int port,
 	return 0;
 }
 #endif /* !MPD_HAVE_GAI */
-
-#define COMMAND_LIST	1
-#define COMMAND_LIST_OK	2
 
 char * mpdTagItemKeys[MPD_TAG_NUM_OF_ITEM_TYPES] =
 {
@@ -368,7 +375,7 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 			connection->buffer[connection->buflen] = '\0';
 		}
 		else if(err<0) {
- 			if (select_errno_ignore(errno))
+ 			if (SELECT_ERRNO_IGNORE)
 				continue;
 			snprintf(connection->errorStr,
 					MPD_BUFFER_MAX_LENGTH,
@@ -432,11 +439,11 @@ static void mpd_executeCommand(mpd_Connection * connection, char * command) {
 	tv.tv_usec = connection->timeout.tv_usec;
 
 	while((ret = select(connection->sock+1,NULL,&fds,NULL,&tv)==1) ||
-			(ret==-1 && errno==EINTR)) {
+			(ret==-1 && SELECT_ERRNO_IGNORE)) {
 		ret = send(connection->sock,commandPtr,commandLen,MSG_DONTWAIT);
 		if(ret<=0)
 		{
-			if(ret==EAGAIN || ret==EINTR) continue;
+			if (SENDRECV_ERRNO_IGNORE) continue;
 			snprintf(connection->errorStr,MPD_BUFFER_MAX_LENGTH,
 			         "problems giving command \"%s\"",command);
 			connection->error = MPD_ERROR_SENDING;
@@ -517,7 +524,7 @@ static void mpd_getNextReturnElement(mpd_Connection * connection) {
 					connection->buffer+connection->buflen,
 					MPD_BUFFER_MAX_LENGTH-connection->buflen,
 					MSG_DONTWAIT);
-			if(readed<0 && (errno==EAGAIN || errno==EINTR)) {
+			if(readed<0 && SENDRECV_ERRNO_IGNORE) {
 				continue;
 			}
 			if(readed<=0) {
@@ -531,7 +538,7 @@ static void mpd_getNextReturnElement(mpd_Connection * connection) {
 			connection->buflen+=readed;
 			connection->buffer[connection->buflen] = '\0';
 		}
-		else if(err<0 && errno==EINTR) continue;
+		else if(err<0 && SELECT_ERRNO_IGNORE) continue;
 		else {
 			strcpy(connection->errorStr,"connection timeout");
 			connection->error = MPD_ERROR_TIMEOUT;
