@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+#
+# Authors: danb, normalperson
+#
+# Useful for large-segment playlist manipulation.
+#
+# Opens the current playlist in an editor and lets the user remove/re-arrange
+# (existing) tracks. Track addition is not supported (as there is no good
+# interface to do so).
+
+# avoid file name collisions
+playlist_orig=`tempfile`
+playlist_new=`tempfile`
+
+while :; do
+  case "$1" in
+    --format)
+      mpc_args="--format '$2'"; shift 2;;
+    sort)
+      sortpl=1; shift;;
+    *) break;;
+  esac
+done
+
+# store the playlist in two files
+mpc $mpc_args playlist | tee "$playlist_orig" > "$playlist_new"
+
+# let user edit the new playlist file (use vi by default)
+if [ -n "$sortpl" ]; then
+  sort -k 2 < "$playlist_orig" > "$playlist_new"
+else
+  ${EDITOR-"vi"} "$playlist_new"
+fi
+
+# insert requested songs into the list, keeping track of song positions
+declare -a where_is_track
+declare -a what_is_index
+while read dest_index src_track
+do
+
+  # setup default values in lookup arrays, if applicable
+  for i in $dest_index $src_track
+  do
+    if [ -z "${where_is_track[$i]}" ]
+    then
+      where_is_track[$i]=$i
+    fi
+    if [ -z "${what_is_index[$i]}" ]
+    then
+      what_is_index[$i]=$i
+    fi
+  done
+
+  # alias the other 2 of {src,dest}_{index,track}
+  src_index=${where_is_track[$src_track]}
+  dest_track=${what_is_index[$dest_index]}
+
+  # swap tracks, if necessary (avoid the mpc swap command for back compat.)
+  if [ $src_index != $dest_index ]
+  then
+
+    # swap
+    declare offset
+    if [ $src_index -lt $dest_index ]
+    then
+      offset=-1
+    else
+      offset=1
+    fi
+    mpc move $src_index $dest_index
+    mpc move $(($dest_index + $offset)) $src_index
+
+    # update locations to reflect the swap
+    where_is_track[$src_track]=$dest_index
+    where_is_track[$dest_track]=$src_index
+    what_is_index[$src_index]=$dest_track
+    what_is_index[$dest_index]=$src_track
+
+  fi
+
+done < <(
+  # parse the line numbers and track numbers from the new playlist
+  cat -b "$playlist_new" |
+  tr '#)' ' ' |
+  sed -e 's/[[:space:]][[:space:]]*/ /g;s/^[[:space:]]*//' |
+  cut -f 1-2 -d ' '
+)
+
+# get the (inclusive) range of items to delete
+min=$((`wc -l "$playlist_new" | (read n file; echo $n)` + 1))
+max=`wc -l "$playlist_orig" | (read n file; echo $n)`
+
+# remove deleted songs
+if [ $min -le $max ]; then
+  mpc del $min-$max
+fi
+
+# remove the tempfiles
+rm "$playlist_orig" "$playlist_new"
