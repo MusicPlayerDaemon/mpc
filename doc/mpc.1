@@ -18,7 +18,7 @@ Prevents the current song status from being printed on completion of some of
 the commands.
 .SH COMMANDS 
 .TP
-.B add <song>
+.B add <file>
 Adds a song from the music database to the playlist. Can also read input from pipes. Use "mpc ls | mpc add" to add all files to the playlist.
 .TP
 .B clear
@@ -30,7 +30,7 @@ Remove all songs except for the currently playing song.
 .B crossfade [<seconds>]
 Gets and sets the current amount of crossfading between songs (0 disables crossfading).
 .TP
-.B del <song>
+.B del <file>
 Removes a song from the playlist. Can also read input from pipes.
 .TP
 .B disable <output #>
@@ -39,8 +39,8 @@ Disables the output, number is required.
 .B enable <output #>
 Enables the output, number is required.
 .TP
-.B listall [<song>]
-Lists <song> from playlist. If no <song> is specified, lists all songs.
+.B listall [<file>]
+Lists <file> from playlist. If no <file> is specified, lists all songs.
 .TP
 .B load <file>
 Loads <file> as playlist.
@@ -63,7 +63,7 @@ Lists all available outputs
 .B pause
 Pauses playing.
 .TP
-.B play <number>
+.B play <position>
 Starts playing the song-number specified. If none is specified, plays number 1.
 .TP
 .B playlist
@@ -72,10 +72,10 @@ Prints entire playlist.
 .B prev
 Starts playing previous song.
 .TP
-.B random [<state>]
+.B random <on|off>
 Toggle random mode if state ("on" or "off") is not specified.
 .TP
-.B repeat [<state>]
+.B repeat <on|off>
 Toggle repeat mode if state ("on" or "off") is not specified.
 .TP
 .B rm <file>
@@ -84,8 +84,8 @@ Deletes a specific playlist.
 .B save <file>
 Saves playlist as <file>.
 .TP
-.B search <table> <pattern>
-Searches for songs that match the pattern, where table is "artist", "album", "title", or "filename".
+.B search <type> <queries>
+Searches for songs that match the queries, where type is "artist", "album", "title", or "filename".
 .TP
 .B seek [+-][<HH:MM:SS>] or <[+-]<0-100>%>
 Seeks by hour, minute or seconds, hours or minutes can be omitted.
@@ -109,8 +109,8 @@ Scans music directory for updates if no <path> is specified.  If one or more <pa
 .B version
 Reports the version of MPD.
 .TP
-.B volume <[+-]value>
-Sets the volume to <value> (0-100).  If "+" or "-" is used, then it adjusts
+.B volume [+-]<num>
+Sets the volume to <num> (0-100).  If "+" or "-" is used, then it adjusts
 the volume relative to the current volume.
 .SH "ENVIRONMENT"
 .TP
