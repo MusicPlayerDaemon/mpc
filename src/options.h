@@ -21,10 +21,10 @@
 
 struct mpc_option
 {
-	const char * name;	// long name of the option
-	int has_value;		// whether a value should follow this option
-	int set;			// whether this option is on/off
-	char * value;		// the value of the option (null if ! has_value)
+	const char *name;   /* long name of the option */
+	int has_value;      /* whether a value should follow this option */
+	int set;            /* whether this option is on/off */
+	char *value;        /* the value of the option (null if ! has_value) */
 };
 
 /* i like this type/instance naming scheme better than _mpc_table/mpc_table

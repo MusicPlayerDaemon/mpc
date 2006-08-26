@@ -737,7 +737,7 @@ int cmd_search ( int argc, char ** argv, mpd_Connection * conn )
 		{"artist", MPD_TABLE_ARTIST },
 		{"title", MPD_TABLE_TITLE },
 		{"filename", MPD_TABLE_FILENAME },
-		{}
+		{ NULL }
 	};
 
 	for(i=0;mpc_search[i].field;++i)

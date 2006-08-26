@@ -40,10 +40,4 @@
 
 typedef int (* cmdhandler)(int argc, char ** argv, mpd_Connection * conn);
 
-#ifdef DEBUG
-#  define dbg(fmt, arg...) do { printf("%s: "fmt,__func__, ## arg); } while (0)
-#else
-#  define dbg(fmt, arg...) do { } while (0)
-#endif /* DEBUG */
-
 #endif /* MPC_H */
