@@ -97,7 +97,7 @@ static char * convStrDup(char * string) {
 	return NULL;
 }
 
-static void closeCharSetConversion() {
+static void closeCharSetConversion(void) {
 #ifdef HAVE_ICONV
 	if(char_conv_to) {
 		iconv_close(char_conv_iconv);
@@ -109,7 +109,7 @@ static void closeCharSetConversion() {
 #endif
 }
 
-void setLocaleCharset() {
+void setLocaleCharset(void) {
 #ifdef HAVE_LOCALE
 #ifdef HAVE_LANGINFO_CODESET
         char * originalLocale;

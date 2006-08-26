@@ -282,9 +282,9 @@ int cmd_toggle( int argc, char ** argv, mpd_Connection * conn )
 	status = getStatus(conn);
 
 	if(status->state==MPD_STATUS_STATE_PLAY) {
-		cmd_pause(0,0,conn);
+		cmd_pause(0, NULL, conn);
 	} else {
-		cmd_play(0,0,conn);
+		cmd_play(0, NULL, conn);
 	}
 	return 1;
 }
@@ -328,7 +328,7 @@ int cmd_enable( int argc, char ** argv, mpd_Connection * conn )
 	}
 
 	mpd_finishCommand( conn );
-	cmd_outputs( 0, 0, conn );
+	cmd_outputs( 0, NULL, conn );
 	return( 0 );
 }
 
@@ -343,7 +343,7 @@ int cmd_disable( int argc, char ** argv, mpd_Connection * conn )
 	}
 	
 	mpd_finishCommand( conn );
-	cmd_outputs( 0, 0, conn );
+	cmd_outputs( 0, NULL, conn );
 	return( 0 );
 }
 

@@ -27,13 +27,13 @@
     - danb */
 struct mpc_option mpc_options [] =
 {
-	{ "format", 1, 0, 0 },
-	{ "no-status", 0, 0, 0 },
+	{ "format", 1, 0, NULL },
+	{ "no-status", 0, 0, NULL },
 
 	/* other ideas for options...
-	{ "host", 1, 0, 0 },
-	{ "port", 1, 0, 0 },
-	{ "verbose", 0, 0, 0 },
+	{ "host", 1, 0, NULL },
+	{ "port", 1, 0, NULL },
+	{ "verbose", 0, 0, NULL },
 	*/
 
 	{ NULL }
@@ -48,7 +48,7 @@ struct mpc_option * get_option (char option[])
 		if (strcmp(option, mpc_options[i].name) == 0)
 			return &mpc_options[i];
 
-	return 0;
+	return NULL;
 }
 
 /* removes the index-th element from arr (*size gets decremented) */

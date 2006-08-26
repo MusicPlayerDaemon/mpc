@@ -134,7 +134,7 @@ static int print_help(char * progname, char * command)
 	return ret;
 }
 
-static mpd_Connection * setup_connection ()
+static mpd_Connection * setup_connection (void)
 {
 	char * host = DEFAULT_HOST;
 	char * port = DEFAULT_PORT;
@@ -180,7 +180,7 @@ static mpd_Connection * setup_connection ()
 	return conn;
 }
 
-static int print_status_and_exit ()
+static int print_status_and_exit (void)
 {
 	mpd_Connection * conn = setup_connection();
 	print_status(conn);
