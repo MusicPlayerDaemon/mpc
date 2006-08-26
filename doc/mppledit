@@ -80,10 +80,7 @@ do
 
 done < <(
   # parse the line numbers and track numbers from the new playlist
-  cat -b "$playlist_new" |
-  tr '#)' ' ' |
-  sed -e 's/[[:space:]][[:space:]]*/ /g;s/^[[:space:]]*//' |
-  cut -f 1-2 -d ' '
+  awk '/[#]/ { gsub(/[#)]/,"",$1); print NR, $1 }' < "$playlist_new"
 )
 
 # get the (inclusive) range of items to delete
