@@ -21,3 +21,14 @@ mpc_SOURCES += util.c
 mpc_SOURCES += command.c
 mpc_SOURCES += options.c
 mpc_SOURCES += $(mpc_headers)
+
+# sparse is a semantic parser
+# URL: git://www.kernel.org/pub/scm/devel/sparse/sparse.git
+SPARSE = sparse
+SPARSE_FLAGS =
+sparse-check:
+	for i in $(mpc_SOURCES); \
+	do \
+		$(SPARSE) -I. $(mpc_CFLAGS) $(SPARSE_FLAGS) $(srcdir)/$$i || exit; \
+	done
+
