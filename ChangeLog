@@ -2,6 +2,11 @@
 1) Add outputs command
 2) Add enable command
 3) Add disable command
+4) Add --no-status switch
+5) Display total time in status output
+6) Include mppledit, a bash script that edits playlists with a text editor
+7) Allow "/" to be specified as a file to add to the playlist
+8) Multiple bug fixes and cleanups
 
 0.11.2 (2005/3/11)
 1) Fix a very hard-to-trigger segfault in libmpdclient (Eric Wong)
