@@ -128,6 +128,11 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 			while((sp = strchr(sp,' '))) *sp = '_';
 			len = strlen(dup);
 			for(i=0;i<argc;i++) {
+				if (strcmp(argv[i], "/") == 0) {
+					insertInListWithoutKey(lists[i],
+					                       strdup(fromUtf8(song->file)));
+					continue;
+				}
 				if(len<arglens[i]) continue;
 				ret = strncmp(argv[i],dup,
 						arglens[i]);
