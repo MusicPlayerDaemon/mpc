@@ -25,12 +25,11 @@ EXTRA_LIBS=
 case "$host" in
 *-mingw32* | *-windows*)
 	EXTRA_CFLAGS="-mno-cygwin -mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
-	EXTRA_LDFLAGS="-mno-cygwin -mms-bitfields -no-undefined"
+	EXTRA_LDFLAGS="-no-undefined"
 	EXTRA_LIBS="-lws2_32"
 	;;
 *-cygwin*)
 	EXTRA_CFLAGS="-mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
-	EXTRA_LDFLAGS="-mms-bitfields"
 	;;
 esac
 AC_SUBST(EXTRA_CFLAGS)
