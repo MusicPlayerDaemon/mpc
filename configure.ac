@@ -12,8 +12,6 @@ dnl AC_PROG_LIBTOOL
 AM_CONFIG_HEADER(config.h)
 
 set -- $CFLAGS
-set -- $LDFLAGS
-set -- $LIBS
 
 case "$CC" in
 *gcc*)
