@@ -1,5 +1,5 @@
 dnl AC_INIT(src/main.c)
-dnl AM_INIT_AUTOMAKE(mpc, 0.10.0)
+dnl AM_INIT_AUTOMAKE(mpc, 0.12.0)
 
 AC_PREREQ(2.58)
 AC_INIT(mpc, 0.12.0, warren.dukes@gmail.com)
