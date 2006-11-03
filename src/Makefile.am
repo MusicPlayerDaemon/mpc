@@ -22,6 +22,9 @@ mpc_SOURCES += command.c
 mpc_SOURCES += options.c
 mpc_SOURCES += $(mpc_headers)
 
+mpc_CFLAGS = @EXTRA_CFLAGS@
+mpc_LDFLAGS = @EXTRA_LDFLAGS@
+
 # sparse is a semantic parser
 # URL: git://www.kernel.org/pub/scm/devel/sparse/sparse.git
 SPARSE = sparse
