@@ -19,21 +19,23 @@ case "$CC" in
 	;;
 esac
 
-# Stolen from libmpd
 EXTRA_CFLAGS=
 EXTRA_LDFLAGS=
+EXTRA_LIBS=
 case "$host" in
-*-*-mingw32* | *-*-windows)
-	EXTRA_CFLAGS="-mno-cygwin -mwindows -mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
-	EXTRA_LDFLAGS="-export-all-symbols -mwindows -no-undefined -lws2_32 -mms-bitfields"
+*-mingw32* | *-windows*)
+	EXTRA_CFLAGS="-mno-cygwin -mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
+	EXTRA_LDFLAGS="-mno-cygwin -mms-bitfields -no-undefined"
+	EXTRA_LIBS="-lws2_32"
 	;;
-*-*-cygwin*)
-	EXTRA_CFLAGS="-fno-strict-aliasing"
-	EXTRA_LDFLAGS="-export-all-symbols -mms-bitfields"
+*-cygwin*)
+	EXTRA_CFLAGS="-mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
+	EXTRA_LDFLAGS="-mms-bitfields"
 	;;
 esac
 AC_SUBST(EXTRA_CFLAGS)
 AC_SUBST(EXTRA_LDFLAGS)
+AC_SUBST(EXTRA_LIBS)
 
 if test -z "$prefix" || test "x$prefix" = xNONE; then
 	local_lib=
