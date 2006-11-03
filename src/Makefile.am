@@ -1,7 +1,3 @@
-CFLAGS = @EXTRA_CFLAGS@
-LDFLAGS = @EXTRA_LDFLAGS@
-LIBS = @EXTRA_LIBS@
-
 bin_PROGRAMS = mpc
 # lots of += lines makes diffs easier to apply :)
 

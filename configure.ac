@@ -12,29 +12,25 @@ dnl AC_PROG_LIBTOOL
 AM_CONFIG_HEADER(config.h)
 
 set -- $CFLAGS
+set -- $LDFLAGS
+set -- $LIBS
 
 case "$CC" in
 *gcc*)
-	CFLAGS="-Wall"
+	CFLAGS="$CFLAGS -Wall"
 	;;
 esac
 
-EXTRA_CFLAGS=
-EXTRA_LDFLAGS=
-EXTRA_LIBS=
 case "$host" in
 *-mingw32* | *-windows*)
-	EXTRA_CFLAGS="-mno-cygwin -mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
-	EXTRA_LDFLAGS="-no-undefined"
-	EXTRA_LIBS="-lws2_32"
+	CFLAGS="$CFLAGS -mno-cygwin -mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
+	LDFLAGS="$LDFLAGS -no-undefined"
+	LIBS="$LIBS -lws2_32"
 	;;
 *-cygwin*)
-	EXTRA_CFLAGS="-mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
+	CFLAGS="$CFLAGS -mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
 	;;
 esac
-AC_SUBST(EXTRA_CFLAGS)
-AC_SUBST(EXTRA_LDFLAGS)
-AC_SUBST(EXTRA_LIBS)
 
 if test -z "$prefix" || test "x$prefix" = xNONE; then
 	local_lib=
