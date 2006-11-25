@@ -20,6 +20,7 @@
 
 #include "mpc.h"
 
+#include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
@@ -31,20 +32,50 @@
 #endif
 #endif
 
-static char * localeCharset = NULL;
+static char * localeCharset;
 
 #ifdef HAVE_ICONV
 #include <iconv.h>
-iconv_t char_conv_iconv;
-char * char_conv_to = NULL;
-char * char_conv_from = NULL;
+static iconv_t char_conv_iconv;
+static char * char_conv_to;
+static char * char_conv_from;
+static int ignore_invalid;
 #endif
 
 #define BUFFER_SIZE	1024
 static void closeCharSetConversion();
 
+/* code from iconv_prog.c (omiting invalid symbols): */
+static char * skip_invalid(char *to)
+{
+	const char *errhand = strchrnul(to, '/');
+	int nslash = 2;
+	char *newp, *cp;
+
+	if (*errhand == '/') {
+		--nslash;
+		errhand = strchrnul (errhand, '/');
+
+		if (*errhand == '/') {
+			--nslash;
+			errhand = strchr(errhand, '\0');
+		}
+	}
+
+	newp = (char *)malloc(errhand - to + nslash + 7 + 1);
+	cp = mempcpy(newp, to, errhand - to);
+	while (nslash-- > 0)
+		*cp++ = '/';
+	if (cp[-1] != '/')
+		*cp++ = ',';
+	memcpy(cp, "IGNORE", sizeof("IGNORE"));
+	return newp;
+}
+
 static int setCharSetConversion(char * to, char * from) {
 #ifdef HAVE_ICONV
+	if (ignore_invalid)
+		to = skip_invalid(to);
 	if(char_conv_to && strcmp(to,char_conv_to)==0 &&
 			char_conv_from && strcmp(from,char_conv_from)==0)
 		return 0;
@@ -56,6 +87,9 @@ static int setCharSetConversion(char * to, char * from) {
 
 	char_conv_to = strdup(to);
 	char_conv_from = strdup(from);
+
+	if (ignore_invalid)
+		free(to);
 
 	return 0;
 #endif
@@ -114,8 +148,10 @@ void setLocaleCharset(void) {
 #ifdef HAVE_LANGINFO_CODESET
         char * originalLocale;
         char * charset = NULL;
-                                                                                
-        if((originalLocale = setlocale(LC_CTYPE,""))) {
+
+	ignore_invalid = isatty(STDOUT_FILENO) && isatty(STDIN_FILENO);
+
+	if((originalLocale = setlocale(LC_CTYPE,""))) {
                 char * temp;
                                                                                 
                 if((temp = nl_langinfo(CODESET))) {
