@@ -22,7 +22,7 @@
 #include "../config.h"
 
 #include "libmpdclient.h"
-#define STRING_LENGTH	(2*MAXPATHLEN)
+#define STRING_LENGTH	(8192)
 
 #define STDIN_SYMBOL	"-"
 
