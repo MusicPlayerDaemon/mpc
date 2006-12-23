@@ -117,10 +117,6 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 		arglens[i] = strlen(argv[i]);
 	}
 
-	/* get list of songs to add */
-	mpd_sendListallCommand(conn,"");
-	printErrorAndExit(conn);
-
 	while((entity = mpd_getNextInfoEntity(conn))) {
 		if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
 			song = entity->info.song;
