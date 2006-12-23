@@ -530,8 +530,14 @@ int cmd_move ( int argc, char ** argv, mpd_Connection * conn )
 int cmd_playlist ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_InfoEntity * entity;
+	mpd_Status * status;
 	int count = 0;
 
+	mpd_sendStatusCommand(conn);
+	printErrorAndExit(conn);
+	status = mpd_getStatus(conn);
+	printErrorAndExit(conn);
+	mpd_finishCommand(conn);
 	mpd_sendPlaylistInfoCommand(conn,-1);
 	printErrorAndExit(conn);
 
@@ -539,7 +545,7 @@ int cmd_playlist ( int argc, char ** argv, mpd_Connection * conn )
 		if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
 			mpd_Song * song = entity->info.song;
 
-			printf("#%i) ", 1+count);
+			printf("%s%i) ", (status->song == count)?">":" ", 1+count);
 			pretty_print_song(song);
 			printf("\n");
 
@@ -549,6 +555,7 @@ int cmd_playlist ( int argc, char ** argv, mpd_Connection * conn )
 	}
 
 	my_finishCommand(conn);
+	mpd_freeStatus(status);
 
 	return 0;
 }
