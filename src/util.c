@@ -267,6 +267,25 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 			return ret;
 		}
 
+		/* take care of escape sequences */
+		while (p[0] == '\\')
+		{
+			char ltemp;
+			switch (p[1]) 
+			{
+				case 'a':	ltemp = '\a'; break;
+				case 'b':	ltemp = '\b'; break;
+				case 't':	ltemp = '\t'; break;
+				case 'n':	ltemp = '\n'; break;
+				case 'v':	ltemp = '\v'; break;
+				case 'f':	ltemp = '\f'; break;
+				case 'r':	ltemp = '\r'; break;
+				default:	ltemp = p[0]; p-=1; break;
+			}
+			ret = appendToString(ret, &ltemp, 1);
+			p+=2;
+		}
+
 		/* pass-through non-escaped portions of the format string */
 		if (p[0] != '#' && p[0] != '%')
 		{
