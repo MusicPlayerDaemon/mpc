@@ -374,6 +374,13 @@ int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 			DIE("error parsing song numbers from: %s\n",argv[i]);
 
 		song--;
+
+		/* This is necessary, otherwise mpc will output the wrong playlist number */
+		mpd_Status * status = getStatus(conn);
+		i = status->playlistLength;
+		mpd_freeStatus(status);
+		if(song >= i)
+			DIE("song number greater than playlist length.\n");
 	}
 
 	mpd_sendPlayCommand(conn,song);
