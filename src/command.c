@@ -245,6 +245,13 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 		else s = argv[i];
 
 		range[0] = strtol(s,&t,10);
+
+		/* If argument is 0 current song and we're not stopped */
+		if(range[0] == 0 && strlen(s) == 1 && \
+			(status->state == MPD_STATUS_STATE_PLAY ||
+			status->state == MPD_STATUS_STATE_PAUSE))
+			range[0] = status->song+1;
+
 		if(s==t)
 			DIE("error parsing song numbers from: %s\n",argv[i]);
 		else if(*t=='-') {
@@ -277,6 +284,7 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 	mpd_sendCommandListEnd(conn);
 	my_finishCommand(conn);
 
+	mpd_freeStatus(status);
 	free(songsToDel);
 	return 0;
 }
