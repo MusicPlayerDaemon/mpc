@@ -738,48 +738,37 @@ int cmd_search ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_InfoEntity * entity;
 	char * search;
-	int table = -1;
-	int i;
+	int table, i;
 
-	struct search_types {
-		const char * field;
-		const int table;
-	} mpc_search [] = {
-		{"album", MPD_TABLE_ALBUM },
-		{"artist", MPD_TABLE_ARTIST },
-		{"title", MPD_TABLE_TITLE },
-		{"filename", MPD_TABLE_FILENAME },
-		{ NULL }
-	};
+	for(i=0; i<MPD_TAG_NUM_OF_ITEM_TYPES; ++i)
+		if( strcasecmp(mpdTagItemKeys[i],argv[0]) == 0)
+			break;
+	table = i;
 
-	for(i=0;mpc_search[i].field;++i)
-		if (! strcmp(mpc_search[i].field,argv[0]))
-			table = mpc_search[i].table;
-	if (-1==table) {
+	if (table == MPD_TAG_NUM_OF_ITEM_TYPES) {
 		fprintf(stderr,"\"%s\" is not one of: ", argv[0]);
-		for(i=0;mpc_search[i].field;++i)
+		for(i=0;i<MPD_TAG_NUM_OF_ITEM_TYPES;++i)
 			fprintf(stderr,"%s%s%s",
-					( !mpc_search[i+1].field ? "or " : ""),
-					mpc_search[i].field,
-					(  mpc_search[i+1].field ? ", "   : "\n")
+					( !mpdTagItemKeys[i+1] ? "or " : ""),
+					mpdTagItemKeys[i],
+					(  mpdTagItemKeys[i+1] ? ", "   : "\n")
 			       );
 		return -1;
 	}
 
 	for(i=1; i<argc && (search = toUtf8(argv[i])); i++)  {
-		mpd_sendSearchCommand(conn,table,search);
+		mpd_startSearch(conn, 0);
+		mpd_addConstraintSearch(conn, table, search);
+		mpd_commitSearch(conn);
 		printErrorAndExit(conn);
 
 		while((entity = mpd_getNextInfoEntity(conn))) {
 			printErrorAndExit(conn);
-			if(entity->type==MPD_INFO_ENTITY_TYPE_DIRECTORY) {
-				mpd_Directory * dir = entity->info.directory;
-				printf("%s\n",fromUtf8(dir->path));
-			}
-			else if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
-				mpd_Song * song = entity->info.song;
-				printf("%s\n",fromUtf8(song->file));
-			}
+			if(entity->type==MPD_INFO_ENTITY_TYPE_DIRECTORY)
+				printf("%s\n",fromUtf8(entity->info.directory->path));
+			else if(entity->type==MPD_INFO_ENTITY_TYPE_SONG)
+				printf("%s\n",fromUtf8(entity->info.song->file));
+
 			mpd_freeInfoEntity(entity);
 		}
 
