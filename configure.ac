@@ -1,13 +1,15 @@
-dnl AC_INIT(src/main.c)
-dnl AM_INIT_AUTOMAKE(mpc, 0.12.0)
-
 AC_PREREQ(2.58)
 AC_INIT(mpc, 0.12.0, warren.dukes@gmail.com)
 AM_INIT_AUTOMAKE($PACKAGE_NAME, $PACKAGE_VERSION)
 
+AC_SUBST(MPC_LIBS)
+AC_SUBST(MPC_CFLAGS)
+
+MPC_LIBS=""
+MPC_CFLAGS=""
+
 AC_PROG_CC
 AC_PROG_INSTALL
-dnl AC_PROG_LIBTOOL
 
 AM_CONFIG_HEADER(config.h)
 
@@ -75,8 +77,8 @@ AC_ARG_WITH(iconv,[  --with-iconv=PFX   Prefix where iconv is installed (optiona
 AC_ARG_WITH(iconv-libraries,[  --with-iconv-libraries=DIR   Directory where libiconv library is installed (optional)], iconv_libraries="$withval", iconv_libraries="")
 AC_ARG_WITH(iconv-includes,[  --with-iconv-includes=DIR   Directory where libiconv header files are installed (optional)], iconv_includes="$withval", iconv_includes="")
 
-AC_CHECK_LIB(socket,socket,LIBS="$LIBS -lsocket",)
-AC_CHECK_LIB(nsl,gethostbyname,LIBS="$LIBS -lnsl",)
+AC_CHECK_LIB(socket,socket,MPC_LIBS="$MPC_LIBS -lsocket",)
+AC_CHECK_LIB(nsl,gethostbyname,MPC_LIBS="$MPC_LIBS -lnsl",)
 
 if test x$enable_iconv = xyes; then
   	if test "x$iconv_libraries" != "x" ; then
