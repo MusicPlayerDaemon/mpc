@@ -10,7 +10,24 @@ mpc is a client for MPD, the Music Player Daemon. mpc connects to a MPD running 
 .TP
 .BI --format
 .br
-Configure the format of song display for status and the playlist.  The metadata delimeters are "%name%", "%artist%", "%album%", "%title%", "%track%", "%time%", and "%file%".  The [] operator is used to group output such that if no metadata delimeters are found or matched between '[' and ']', then none of the characters between '[' and ']' are output.  '&' and '|' are logical operators for and and or.  '#' is used to escape characters.  Some useful examples for format are: "%file%" and "[[%artist% - ]%title%]|[%file%]"
+Configure the format of song display for status and the playlist.  The metadata delimeters are "%name%", "%artist%", "%album%", "%title%", "%track%", "%time%", and "%file%".  The [] operator is used to group output such that if no metadata delimeters are found or matched between '[' and ']', then none of the characters between '[' and ']' are output.  '&' and '|' are logical operators for and and or.  '#' is used to escape characters.  Some useful examples for format are: "%file%" and "[[%artist% - ]%title%]|[%file%]".
+This command also takes the following defined escape sequences:
+.br
+\\\\ - backslash
+.br
+\\a - alert
+.br
+\\b - backspace
+.br
+\\t - tab
+.br
+\\n - newline
+.br
+\\v - vertical tab
+.br
+\\f - form-feed
+.br
+\\r - carriage return
 .TP
 .BI --no-status
 .br
