@@ -80,7 +80,7 @@ do
 
 done < <(
   # parse the line numbers and track numbers from the new playlist
-  awk '/[#]/ { gsub(/[#)]/,"",$1); print NR, $1 }' < "$playlist_new"
+  awk '/^[#> ]/ { gsub(/[#)> ]/,"",$1); print NR, $1 }' < "$playlist_new"
 )
 
 # get the (inclusive) range of items to delete
