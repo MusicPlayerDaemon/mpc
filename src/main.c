@@ -40,7 +40,6 @@ struct _mpc_table {
 	int pipe;             /**
 	                       * 1: implicit pipe read, `-' optional as argv[2]
 	                       * 2: explicit pipe read, `-' needed as argv[2]
-	                       * 3: explicit pipe read, `-' needed as argv[3]
 	                       *
 	                       * multipled by -1 if used, so that it can signal
 	                       * a free() before the program exits
@@ -76,7 +75,7 @@ struct _mpc_table {
 	{"volume",      0,   1,   0,    cmd_volume,      "[+-]<num>", "Sets volume to <num> or adjusts by [+-]<num>"},
 	{"repeat",      0,   1,   0,    cmd_repeat,      "<on|off>", "Toggle repeat mode, or specify state"},
 	{"random",      0,   1,   0,    cmd_random,      "<on|off>", "Toggle random mode, or specify state"},
-	{"search",      2,   -1,  3,    cmd_search,      "<type> <queries>", "Search for a song"},
+	{"search",      2,   -1,  0,    cmd_search,      "<type> <queries>", "Search for a song"},
 	{"crossfade",   0,   1,   0,    cmd_crossfade,   "[<seconds>]", "Set and display crossfade settings"},
 	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scans music directory for updates"},
 	{"stats",       0,   -1,  0,    cmd_stats,       "", "Displays statistics about MPD"},
@@ -198,7 +197,6 @@ static char ** check_args(int idx, int * argc, char ** argv)
 	if ( ( mpc_table[idx].pipe==1 &&
 		(2==*argc || (3==*argc && 0==strcmp(argv[2],STDIN_SYMBOL) )))
 	|| (mpc_table[idx].pipe==2 && (3==*argc && 0==strcmp(argv[2],STDIN_SYMBOL)))
-	|| (mpc_table[idx].pipe==3 && (4==*argc && 0==strcmp(argv[3],STDIN_SYMBOL)))
 	){
 		*argc = stdinToArgArray(&array);
 		mpc_table[idx].pipe *= -1;
