@@ -49,16 +49,16 @@ struct _mpc_table {
 	char *help;           /* NULL means they won't be shown in help */
 } mpc_table [] = {
 	/* command,     min, max, pipe, handler,         usage, help */
-	{"add",         0,   -1,  1,    cmd_add,         "<file>", "Add a song to the current playlist" },
-	{"crop",        0,   0,   0,    cmd_crop,        "", "Remove all songs except for the currently playing song" },
-	{"del",         0,   -1,  1,    cmd_del,         "<position>", "Remove a song from the current playlist" },
-	{"play",        0,   -1,  2,    cmd_play,        "[<position>]", "Start playing at <position> (default: 1)" },
+	{"add",         0,   -1,  1,    cmd_add,         "<file>", "Add a song to the current playlist"},
+	{"crop",        0,   0,   0,    cmd_crop,        "", "Remove all but the currently playing song"},
+	{"del",         0,   -1,  1,    cmd_del,         "<position>", "Remove a song from the current playlist"},
+	{"play",        0,   -1,  2,    cmd_play,        "[<position>]", "Start playing at <position> (default: 1)"},
 	{"next",        0,   0,   0,    cmd_next,        "", "Play the next song in the current playlist"},
 	{"prev",        0,   0,   0,    cmd_prev,        "", "Play the previous song in the current playlist"},
 	{"pause",       0,   0,   0,    cmd_pause,       "", "Pauses the currently playing song"},
 	{"toggle",      0,   0,   0,    cmd_toggle,      "", "Toggles Play/Pause, plays if stopped"},
 	{"stop",        0,   0,   0,    cmd_stop,        "", "Stop the currently playing playlists"},
-	{"seek",        1,   1,   0,    cmd_seek,        "[+-][HH:MM:SS] or <0-100>%", "Seeks to the specified position"},
+	{"seek",        1,   1,   0,    cmd_seek,        "[+-][HH:MM:SS]|<0-100>%", "Seeks to the specified position"},
 	{"clear",       0,   0,   0,    cmd_clear,       "", "Clear the current playlist"},
 	{"outputs",     0,   0,   0,    cmd_outputs,     "", "Show the current outputs"},
 	{"enable",      1,   1,   0,    cmd_enable,      "<output #>", "Enable a output"},
@@ -75,7 +75,7 @@ struct _mpc_table {
 	{"volume",      0,   1,   0,    cmd_volume,      "[+-]<num>", "Sets volume to <num> or adjusts by [+-]<num>"},
 	{"repeat",      0,   1,   0,    cmd_repeat,      "<on|off>", "Toggle repeat mode, or specify state"},
 	{"random",      0,   1,   0,    cmd_random,      "<on|off>", "Toggle random mode, or specify state"},
-	{"search",      2,   -1,  0,    cmd_search,      "<type> <queries>", "Search for a song"},
+	{"search",      2,   -1,  0,    cmd_search,      "<type> <query>", "Search for a song"},
 	{"crossfade",   0,   1,   0,    cmd_crossfade,   "[<seconds>]", "Set and display crossfade settings"},
 	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scans music directory for updates"},
 	{"stats",       0,   -1,  0,    cmd_stats,       "", "Displays statistics about MPD"},
@@ -87,7 +87,7 @@ struct _mpc_table {
 	/* status was added for pedantic reasons */
 	{"status",      0,   -1,  0,    cmd_status,      "", NULL},
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */
-	{ NULL }
+	{NULL}
 };
 
 static int print_help(char * progname, char * command)
