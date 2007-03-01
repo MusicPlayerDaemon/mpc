@@ -183,7 +183,6 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 
 int cmd_crop( int argc, char ** argv, mpd_Connection * conn )
 {
-
 	mpd_Status *status = getStatus( conn );
 	int length = ( status->playlistLength - 1 );
 
@@ -218,7 +217,6 @@ int cmd_crop( int argc, char ** argv, mpd_Connection * conn )
 		DIE( "You need to be playing to crop the playlist\n" );
 
 	}
-
 }
 
 int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
@@ -322,7 +320,7 @@ int cmd_outputs( int argc, char ** argv, mpd_Connection * conn )
 		}
 		else
 		{
-			DIE( "error: cannot receive the current outputs\n" );
+			DIE( "cannot receive the current outputs\n" );
 		}
 		mpd_freeOutputElement( output );
 	}
@@ -752,31 +750,53 @@ int cmd_load ( int argc, char ** argv, mpd_Connection * conn )
 int cmd_search ( int argc, char ** argv, mpd_Connection * conn ) 
 {
 	mpd_InfoEntity * entity;
-	char * search;
-	int table, i;
+	int type, i, numconstraints = 0;
+	struct _constraints {
+		int type;
+		char * query;
+	} * constraints;
 
-	table = get_search_type(argv[0]);
-	if (table < 0)
-		return -1;
+	if (argc % 2 != 0) {
+		DIE("number of arguments must be a multiple of 2 "
+		    "(pairs of search types and queries)\n");
+	}
 
-	for(i=1; i<argc && (search = toUtf8(argv[i])); i++)  {
-		mpd_startSearch(conn, 0);
-		mpd_addConstraintSearch(conn, table, search);
-		mpd_commitSearch(conn);
-		printErrorAndExit(conn);
+	constraints = malloc(sizeof(struct _constraints)*argc/2);
 
-		while((entity = mpd_getNextInfoEntity(conn))) {
-			printErrorAndExit(conn);
-			if(entity->type==MPD_INFO_ENTITY_TYPE_DIRECTORY)
-				printf("%s\n",fromUtf8(entity->info.directory->path));
-			else if(entity->type==MPD_INFO_ENTITY_TYPE_SONG)
-				printf("%s\n",fromUtf8(entity->info.song->file));
-
-			mpd_freeInfoEntity(entity);
+	for (i = 0; i < argc; i += 2) {
+		type = get_search_type(argv[i]);
+		if (type < 0) {
+			free(constraints);
+			return -1;
 		}
 
-		my_finishCommand(conn);
+		constraints[numconstraints].type = type;
+		constraints[numconstraints].query = argv[i+1];
+		numconstraints++;
 	}
+
+	mpd_startSearch(conn, 0);
+
+	for (i = 0; i < numconstraints; i++) {
+		mpd_addConstraintSearch(conn, constraints[i].type,
+		                        toUtf8(constraints[i].query));
+	}
+
+	free(constraints);
+	mpd_commitSearch(conn);
+	printErrorAndExit(conn);
+
+	while ((entity = mpd_getNextInfoEntity(conn))) {
+		printErrorAndExit(conn);
+		if (entity->type == MPD_INFO_ENTITY_TYPE_DIRECTORY)
+			printf("%s\n", fromUtf8(entity->info.directory->path));
+		else if (entity->type == MPD_INFO_ENTITY_TYPE_SONG)
+			printf("%s\n", fromUtf8(entity->info.song->file));
+		mpd_freeInfoEntity(entity);
+	}
+
+	my_finishCommand(conn);
+
 	return 0;
 }
 

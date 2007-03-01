@@ -171,7 +171,6 @@ void setLocaleCharset(void) {
 #endif
 #endif
         localeCharset = strdup("ISO-8859-1");
-
 }
 
 char * toUtf8(char * from) {
