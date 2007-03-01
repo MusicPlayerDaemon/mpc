@@ -34,6 +34,7 @@ void printErrorAndExit(mpd_Connection * conn);
 void free_pipe_array (int max, char ** array);
 int stdinToArgArray(char *** array);
 int get_boolean (const char * arg);
+int get_search_type(const char * arg);
 int parse_int(const char *, int *);
 int parse_songnum(const char *, int *);
 int parse_int_value_change(const char *, struct int_value_change *);
