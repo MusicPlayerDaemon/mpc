@@ -101,8 +101,11 @@ Deletes a specific playlist.
 .B save <file>
 Saves playlist as <file>.
 .TP
-.B search <type> <queries>
-Searches for songs that match the queries, where type is "artist", "album", "title", or "filename".
+.B search <type> <query> [<type> <query>]...
+Searches for songs where all of the given tag <type>s match the given <query>s.
+Any number of tag type and query combinations can be specified.  Possible tag
+types are: artist, album, title, track, name, genre, date, composer, performer,
+comment, disc, filename, or any (to match any tag).
 .TP
 .B seek [+-][<HH:MM:SS>] or <[+-]<0-100>%>
 Seeks by hour, minute or seconds, hours or minutes can be omitted.
