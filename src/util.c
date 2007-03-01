@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <assert.h>
 #include <sys/param.h>
 
@@ -94,13 +95,33 @@ int get_boolean (const char * arg)
 			return 0;
 	}
 	
-	fprintf(stderr,"\"%s\" is not boolean value: <",arg);
+	fprintf(stderr,"\"%s\" is not a boolean value: <",arg);
 	
 	for (i=0; bool_table[i].on; ++i) {
 		fprintf(stderr,"%s|%s%s", bool_table[i].on,
 			bool_table[i].off,
 			( bool_table[i+1].off ? "|" : ">\n"));
 	}  
+	return -1;
+}
+
+int get_search_type(const char * arg)
+{
+	int i;
+
+	for (i = 0; i < MPD_TAG_NUM_OF_ITEM_TYPES; i++) {
+		if (strcasecmp(mpdTagItemKeys[i], arg) == 0)
+			return i;
+	}
+
+	fprintf(stderr, "\"%s\" is not a valid search type: <", arg);
+
+	for (i = 0; i < MPD_TAG_NUM_OF_ITEM_TYPES; i++) {
+		fprintf(stderr, "%c%s%s", tolower(mpdTagItemKeys[i][0]),
+		                          mpdTagItemKeys[i]+1,
+		                          (mpdTagItemKeys[i+1] ? "|" : ">\n"));
+	}
+
 	return -1;
 }
 

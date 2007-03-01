@@ -755,21 +755,9 @@ int cmd_search ( int argc, char ** argv, mpd_Connection * conn )
 	char * search;
 	int table, i;
 
-	for(i=0; i<MPD_TAG_NUM_OF_ITEM_TYPES; ++i)
-		if( strcasecmp(mpdTagItemKeys[i],argv[0]) == 0)
-			break;
-	table = i;
-
-	if (table == MPD_TAG_NUM_OF_ITEM_TYPES) {
-		fprintf(stderr,"\"%s\" is not one of: ", argv[0]);
-		for(i=0;i<MPD_TAG_NUM_OF_ITEM_TYPES;++i)
-			fprintf(stderr,"%s%s%s",
-					( !mpdTagItemKeys[i+1] ? "or " : ""),
-					mpdTagItemKeys[i],
-					(  mpdTagItemKeys[i+1] ? ", "   : "\n")
-			       );
+	table = get_search_type(argv[0]);
+	if (table < 0)
 		return -1;
-	}
 
 	for(i=1; i<argc && (search = toUtf8(argv[i])); i++)  {
 		mpd_startSearch(conn, 0);
@@ -896,7 +884,6 @@ int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn )
 		printErrorAndExit(conn);
 	}
 	return 0;
-
 }
 
 int cmd_version ( int argc, char ** argv, mpd_Connection * conn )
