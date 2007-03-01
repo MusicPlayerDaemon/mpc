@@ -35,18 +35,19 @@
 #include <sys/param.h>
 
 struct _mpc_table {
-	const char * command;
-	const int min, max;	/* min/max arguments allowed, -1 = unlimited */
-	int pipe;		/*
-				1: implicit pipe read, `-' optional as argv[2]
-				2: explicit pipe read `-' needed as argv[2]
-				3: explicit pipe read `-' needed as argv[3]
-				multipled by -1 if used, so that it can signal a free()
-				before the program exits
-				*/
+	const char *command;
+	const int min, max;   /* min/max arguments allowed, -1 = unlimited */
+	int pipe;             /**
+	                       * 1: implicit pipe read, `-' optional as argv[2]
+	                       * 2: explicit pipe read, `-' needed as argv[2]
+	                       * 3: explicit pipe read, `-' needed as argv[3]
+	                       *
+	                       * multipled by -1 if used, so that it can signal
+	                       * a free() before the program exits
+	                       */
 	cmdhandler handler;
-	const char * usage;
-	char * help;		/* NULL means they won't be shown in help */
+	const char *usage;
+	char *help;           /* NULL means they won't be shown in help */
 } mpc_table [] = {
 	/* command,     min, max, pipe, handler,         usage, help */
 	{"add",         0,   -1,  1,    cmd_add,         "<file>", "Add a song to the current playlist" },
