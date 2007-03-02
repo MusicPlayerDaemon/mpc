@@ -1,5 +1,13 @@
-0.12.x (????/?/??)
-1) Windows support
+0.12.1 (????/?/??)
+1) Support for compiling on Windows
+2) New output format for "mpc playlist"
+3) Support for many more search types with "mpc search"
+4) Add "mpc del 0" behaviour to remove the currently playing song
+5) Fixed compiling on Solaris
+6) Allow some predefined escape sequences in --format strings
+7) Removed support for "mpc search <type> -", as it was previously broken
+8) Allow multiple pairs of search types/queries with "mpc search"
+9) Various minor bugfixes
 
 0.12.0 (2006/9/22)
 1) Add outputs command
