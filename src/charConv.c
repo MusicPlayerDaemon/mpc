@@ -43,9 +43,12 @@ static int ignore_invalid;
 #endif
 
 #define BUFFER_SIZE	1024
+#ifdef HAVE_ICONV
 static void closeCharSetConversion();
+#endif
 
 /* code from iconv_prog.c (omiting invalid symbols): */
+#ifdef HAVE_ICONV
 static char * skip_invalid(char *to)
 {
 	const char *errhand = strchrnul(to, '/');
@@ -71,6 +74,7 @@ static char * skip_invalid(char *to)
 	memcpy(cp, "IGNORE", sizeof("IGNORE"));
 	return newp;
 }
+#endif
 
 static int setCharSetConversion(char * to, char * from) {
 #ifdef HAVE_ICONV
@@ -131,8 +135,8 @@ static char * convStrDup(char * string) {
 	return NULL;
 }
 
-static void closeCharSetConversion(void) {
 #ifdef HAVE_ICONV
+static void closeCharSetConversion(void) {
 	if(char_conv_to) {
 		iconv_close(char_conv_iconv);
 		free(char_conv_to);
@@ -140,8 +144,8 @@ static void closeCharSetConversion(void) {
 		char_conv_to = NULL;
 		char_conv_from = NULL;
 	}
-#endif
 }
+#endif
 
 void setLocaleCharset(void) {
 #ifdef HAVE_LOCALE
@@ -149,7 +153,9 @@ void setLocaleCharset(void) {
         char * originalLocale;
         char * charset = NULL;
 
+#ifdef HAVE_ICONV
 	ignore_invalid = isatty(STDOUT_FILENO) && isatty(STDIN_FILENO);
+#endif
 
 	if((originalLocale = setlocale(LC_CTYPE,""))) {
                 char * temp;
@@ -167,7 +173,6 @@ void setLocaleCharset(void) {
                 free(charset);
 		return;
         }
-	/*printf("localCharset: %s\n",localeCharset);*/
 #endif
 #endif
         localeCharset = strdup("ISO-8859-1");

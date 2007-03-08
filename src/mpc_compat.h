@@ -19,6 +19,8 @@
 #ifndef MPC_COMPAT_H
 #define MPC_COMPAT_H
 
+#include <string.h>
+
 #ifndef HAVE_STRCHRNUL
 static inline char * mpc_strchrnul(const char *s, int c)
 {
