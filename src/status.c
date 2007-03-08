@@ -1,4 +1,4 @@
-/* 
+/* mpc
  * (c)2003-2004 by Warren Dukes (warren.dukes@gmail.com)
  *                 Daniel Brown (danb@cs.utexas.edu)
  * This project's homepage is: http://www.musicpd.org
