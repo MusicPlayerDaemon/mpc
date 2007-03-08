@@ -137,15 +137,17 @@ static int mpd_connect(mpd_Connection * connection, const char * host, int port,
 	error = getaddrinfo(host, service, &hints, &addrinfo);
 
 	if (error) {
-		snprintf(connection->errorStr,MPD_ERRORSTR_MAX_LENGTH,
-				"host \"%s\" not found: %s",host, gai_strerror(error));
+		snprintf(connection->errorStr, MPD_ERRORSTR_MAX_LENGTH,
+		         "host \"%s\" not found: %s",
+		         host, gai_strerror(error));
 		connection->error = MPD_ERROR_UNKHOST;
 		return -1;
 	}
 
 	for (res = addrinfo; res; res = res->ai_next) {
 		/* create socket */
-		connection->sock = socket(res->ai_family, SOCK_STREAM, res->ai_protocol);
+		connection->sock = socket(res->ai_family, SOCK_STREAM,
+		                          res->ai_protocol);
 		if (connection->sock < 0) {
 			snprintf(connection->errorStr, MPD_ERRORSTR_MAX_LENGTH,
 			         "problems creating socket: %s",
@@ -155,22 +157,24 @@ static int mpd_connect(mpd_Connection * connection, const char * host, int port,
 			return -1;
 		}
 
-		mpd_setConnectionTimeout(connection,timeout);
+		mpd_setConnectionTimeout(connection, timeout);
 
 		/* connect stuff */
- 		if (do_connect_fail(connection, res->ai_addr, res->ai_addrlen)) {
+ 		if (do_connect_fail(connection,
+		                    res->ai_addr, res->ai_addrlen)) {
  			/* try the next address family */
  			closesocket(connection->sock);
  			connection->sock = -1;
  			continue;
 		}
 	}
+
 	freeaddrinfo(addrinfo);
 
 	if (connection->sock < 0) {
-		snprintf(connection->errorStr,MPD_ERRORSTR_MAX_LENGTH,
-				"problems connecting to \"%s\" on port"
-				" %i: %s",host,port, strerror(errno));
+		snprintf(connection->errorStr, MPD_ERRORSTR_MAX_LENGTH,
+		         "problems connecting to \"%s\" on port %i: %s",
+		         host, port, strerror(errno));
 		connection->error = MPD_ERROR_CONNPORT;
 
 		return -1;
