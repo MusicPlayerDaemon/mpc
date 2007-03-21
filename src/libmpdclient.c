@@ -1635,18 +1635,6 @@ void mpd_startSearch(mpd_Connection *connection, int exact)
 	else connection->request = strdup("search");
 }
 
-void mpd_startPlaylistSearch(mpd_Connection *connection, int exact)
-{
-	if (connection->request) {
-		strcpy(connection->errorStr, "search already in progress");
-		connection->error = 1;
-		return;
-	}
-
-	if (exact) connection->request = strdup("playlistfind");
-	else connection->request = strdup("playlistsearch");
-}
-
 void mpd_startFieldSearch(mpd_Connection *connection, int type)
 {
 	char *strtype;
@@ -1761,28 +1749,4 @@ void mpd_sendListPlaylistCommand(mpd_Connection *connection, char *path)
 	mpd_sendInfoCommand(connection, query);
 	free(arg);
 	free(query);
-}
-
-void mpd_sendPlaylistClearCommand(mpd_Connection *connection, char* path)
-{
-	char *sPath = mpd_sanitizeArg(path);
-	char *string = malloc(strlen("playlistclear")+strlen(sPath)+5);
-	sprintf(string, "playlistclear \"%s\"\n", sPath);
-	mpd_executeCommand(connection, string);
-	free(sPath);
-	free(string);
-}
-
-void mpd_sendPlaylistAddCommand(mpd_Connection *connection,
-                                char *playlist, char* path)
-{
-	char *sPlaylist = mpd_sanitizeArg(playlist);
-	char *sPath = mpd_sanitizeArg(path);
-	char *string = malloc(strlen("playlistadd")+strlen(sPlaylist)+
-	                      strlen(sPath)+8);
-	sprintf(string, "playlistadd \"%s\" \"%s\"\n", sPlaylist, sPath);
-	mpd_executeCommand(connection, string);
-	free(sPlaylist);
-	free(sPath);
-	free(string);
 }

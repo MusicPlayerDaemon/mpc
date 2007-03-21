@@ -628,13 +628,6 @@ void mpd_commitSearch(mpd_Connection *connection);
  * mpd_getNextTag to get the results
  */
 void mpd_startFieldSearch(mpd_Connection *connection, int type);
-
-void mpd_startPlaylistSearch(mpd_Connection *connection, int exact);
-
-void mpd_sendPlaylistClearCommand(mpd_Connection *connection, char* path);
-
-void mpd_sendPlaylistAddCommand(mpd_Connection *connection,
-                                char *playlist, char* path);
 #ifdef __cplusplus
 }
 #endif
