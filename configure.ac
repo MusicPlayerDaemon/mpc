@@ -1,5 +1,5 @@
 AC_PREREQ(2.58)
-AC_INIT(mpc, 0.12.1, warren.dukes@gmail.com)
+AC_INIT(mpc, 0.13.0, warren.dukes@gmail.com)
 AM_INIT_AUTOMAKE($PACKAGE_NAME, $PACKAGE_VERSION)
 
 AC_SUBST(MPC_LIBS)
