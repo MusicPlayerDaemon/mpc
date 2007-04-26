@@ -35,6 +35,7 @@ void printErrorAndExit(mpd_Connection * conn)
 {
 	if(conn->error) {
 		fprintf(stderr,"error: %s\n",fromUtf8(conn->errorStr));
+		mpd_closeConnection(conn);
 		exit(EXIT_FAILURE);
 	}
 }
