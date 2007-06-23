@@ -261,8 +261,15 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 		else
 			DIE("error parsing song numbers from: %s\n",argv[i]);
 
-		if(range[0]<=0 || range[1]<=0 || range[1]<range[0])
-			DIE("song numbers must be positive: %i-%i\n",range[0],range[1]);
+		if(range[0]<=0 || range[1]<=0) {
+			if (range[0]==range[1])
+				DIE("song number must be positive: %i\n",range[0]);
+			else
+				DIE("song numbers must be positive: %i to %i\n",range[0],range[1]);
+		}
+
+		if(range[1]<range[0])
+			DIE("song range must be from low to high: %i to %i\n",range[0],range[1]);
 
 		if(range[1]>plLength)
 			DIE("song number does not exist: %i\n",range[1]);
