@@ -357,6 +357,24 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 		} else if (strncmp("%name%", p, length) == 0) {
 			labelFound = 1;
 			temp = song->name ? fromUtf8(song->name) : NULL;
+		} else if (strncmp("%date%", p, length) == 0) {
+			labelFound = 1;
+			temp = song->date ? fromUtf8(song->date) : NULL;
+		} else if (strncmp("%genre%", p, length) == 0) {
+			labelFound = 1;
+			temp = song->genre ? fromUtf8(song->genre) : NULL;
+		} else if (strncmp("%composer%", p, length) == 0) {
+			labelFound = 1;
+			temp = song->composer ? fromUtf8(song->composer) : NULL;
+		} else if (strncmp("%performer%", p, length) == 0) {
+			labelFound = 1;
+			temp = song->performer ? fromUtf8(song->performer) : NULL;
+		} else if (strncmp("%disc%", p, length) == 0) {
+			labelFound = 1;
+			temp = song->disc ? fromUtf8(song->disc) : NULL;
+		} else if (strncmp("%comment%", p, length) == 0) {
+			labelFound = 1;
+			temp = song->comment ? fromUtf8(song->comment) : NULL;
 		} else if (strncmp("%time%", p, length) == 0) {
 			labelFound = 1;
 			if (song->time != MPD_SONG_NO_TIME) {
