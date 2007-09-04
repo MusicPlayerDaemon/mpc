@@ -345,15 +345,15 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 		} else if (strncmp("%artist%", p, length) == 0) {
 			labelFound = 1;
 			temp = song->artist ? fromUtf8(song->artist) : NULL;
-		} else if (strncmp("%title%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->title ? fromUtf8(song->title) : NULL;
 		} else if (strncmp("%album%", p, length) == 0) {
 			labelFound = 1;
 			temp = song->album ? fromUtf8(song->album) : NULL;
 		} else if (strncmp("%track%", p, length) == 0) {
 			labelFound = 1;
 			temp = song->track ? fromUtf8(song->track) : NULL;
+		} else if (strncmp("%title%", p, length) == 0) {
+			labelFound = 1;
+			temp = song->title ? fromUtf8(song->title) : NULL;
 		} else if (strncmp("%name%", p, length) == 0) {
 			labelFound = 1;
 			temp = song->name ? fromUtf8(song->name) : NULL;
