@@ -29,7 +29,14 @@ mpc $mpc_args playlist | tee "$playlist_orig" > "$playlist_new"
 if [ -n "$sortpl" ]; then
   sort -k 2 < "$playlist_orig" > "$playlist_new"
 else
-  ${EDITOR-"vi"} "$playlist_new"
+  current=`mpc | sed -n -e 's/^\[[a-z]\+\] \+#\([0-9]\+\)\/.*/\1/p'`
+  ed=${EDITOR-'vi'}
+  if test -n "$current" && test x`expr "$ed" : '\(vi\)'` != x
+  then
+    $ed +$current "$playlist_new"
+  else
+    $ed "$playlist_new"
+  fi
 fi
 
 # insert requested songs into the list, keeping track of song positions
