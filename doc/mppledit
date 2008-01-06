@@ -9,8 +9,19 @@
 # interface to do so).
 
 # avoid file name collisions
-playlist_orig=`tempfile`
-playlist_new=`tempfile`
+
+# mktemp seems to be the more portable of the two
+
+mktemp="`which mktemp 2>/dev/null`"
+if test -n "$mktemp"
+then
+  playlist_orig=`mktemp -t mppledit_orig.XXXXXXXX`
+  playlist_new=`mktemp -t mppledit_new.XXXXXXXX`
+else
+  # hope they have tempfile(1)
+  playlist_orig=`tempfile`
+  playlist_new=`tempfile`
+fi
 
 while :; do
   case "$1" in
