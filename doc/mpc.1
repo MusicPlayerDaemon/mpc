@@ -108,6 +108,13 @@ Any number of tag type and query combinations can be specified.  Possible tag
 types are: artist, album, title, track, name, genre, date, composer, performer,
 comment, disc, filename, or any (to match any tag).
 .TP
+.B find <type> <query> [<type> <query>]...
+Same as search, but match <query>s exactly.
+.TP
+.B list <type> [<type> <query>]...
+Return a list of all tags of given tag <type>.  Optional search
+<type>s/<query>s limit results in a way similar to search.
+.TP
 .B seek [+-][<HH:MM:SS>] or <[+-]<0-100>%>
 Seeks by hour, minute or seconds, hours or minutes can be omitted.
 If seeking by percentage, seeks within the current song in the specified manner.  If a "+" or "-" is used, the seek is done relative to the current song position. Absolute seeking by default.

@@ -1,5 +1,7 @@
 0.13.0 (????/??/??)
 1) Support for %date%, %genre%, %composer%, %performer%, %disc%, and %comment%
+2) Added "mpc find"
+3) Added "mpc list"
 
 0.12.1 (2007/3/21)
 1) Support for compiling on Windows
