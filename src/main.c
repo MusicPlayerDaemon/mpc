@@ -76,6 +76,8 @@ struct _mpc_table {
 	{"repeat",      0,   1,   0,    cmd_repeat,      "<on|off>", "Toggle repeat mode, or specify state"},
 	{"random",      0,   1,   0,    cmd_random,      "<on|off>", "Toggle random mode, or specify state"},
 	{"search",      2,   -1,  0,    cmd_search,      "<type> <query>", "Search for a song"},
+	{"find",        2,   -1,  0,    cmd_find,        "<type> <query>", "Find a song (exact match)"},
+	{"list",        1,   -1,  0,    cmd_list,        "<type> [<type> <query>]", "Show all tags of <type>"},
 	{"crossfade",   0,   1,   0,    cmd_crossfade,   "[<seconds>]", "Set and display crossfade settings"},
 	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scans music directory for updates"},
 	{"stats",       0,   -1,  0,    cmd_stats,       "", "Displays statistics about MPD"},

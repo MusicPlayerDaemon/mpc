@@ -747,22 +747,20 @@ int cmd_load ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_search ( int argc, char ** argv, mpd_Connection * conn ) 
+static int do_search ( int argc, char ** argv, mpd_Connection * conn, int exact ) 
 {
 	Constraint *constraints;
 	int numconstraints;
 	int i;
 
-	if (argc % 2 != 0) {
-		DIE("number of arguments must be a multiple of 2 "
-		    "(pairs of search types and queries)\n");
-	}
+	if (argc % 2 != 0)
+		DIE("arguments must be pairs of search types and queries\n");
 
 	numconstraints = get_constraints(argc, argv, &constraints);
 	if (numconstraints < 0)
 		return -1;
 
-	mpd_startSearch(conn, 0);
+	mpd_startSearch(conn, exact);
 
 	for (i = 0; i < numconstraints; i++) {
 		mpd_addConstraintSearch(conn, constraints[i].type,
@@ -775,6 +773,67 @@ int cmd_search ( int argc, char ** argv, mpd_Connection * conn )
 	printErrorAndExit(conn);
 
 	print_filenames(conn);
+
+	my_finishCommand(conn);
+
+	return 0;
+}
+
+int cmd_search ( int argc, char ** argv, mpd_Connection * conn ) 
+{
+	return do_search(argc, argv, conn, 0);
+}
+
+int cmd_find ( int argc, char ** argv, mpd_Connection * conn ) 
+{
+	return do_search(argc, argv, conn, 1);
+}
+
+int cmd_list ( int argc, char ** argv, mpd_Connection * conn ) 
+{
+	Constraint *constraints;
+	int numconstraints = 0;
+	int type;
+	int i;
+	char *tag;
+
+	type = get_search_type(argv[0]);
+	if (type < 0)
+		return -1;
+
+	argc -= 1;
+	argv += 1;
+
+	if (argc > 0) {
+		if (argc % 2 != 0) {
+			DIE("arguments must be a tag type and "
+			    "optional pairs of search types and queries\n");
+		}
+
+		numconstraints = get_constraints(argc, argv, &constraints);
+		if (numconstraints < 0)
+			return -1;
+	}
+
+	mpd_startFieldSearch(conn, type);
+
+	if (argc > 0) {
+		for (i = 0; i < numconstraints; i++) {
+			mpd_addConstraintSearch(conn, constraints[i].type,
+						toUtf8(constraints[i].query));
+		}
+
+		free(constraints);
+	}
+
+	mpd_commitSearch(conn);
+	printErrorAndExit(conn);
+
+	while ((tag = mpd_getNextTag(conn, type))) {
+		printErrorAndExit(conn);
+		printf("%s\n", fromUtf8(tag));
+		free(tag);
+	}
 
 	my_finishCommand(conn);
 
