@@ -126,6 +126,31 @@ int get_search_type(const char * arg)
 	return -1;
 }
 
+int get_constraints(int argc, char **argv, Constraint **constraints)
+{
+	int numconstraints = 0;
+	int type;
+	int i;
+
+	assert(argc > 0 && argc % 2 == 0);
+
+	*constraints = malloc(sizeof(Constraint)*argc/2);
+
+	for (i = 0; i < argc; i += 2) {
+		type = get_search_type(argv[i]);
+		if (type < 0) {
+			free(*constraints);
+			return -1;
+		}
+
+		(*constraints)[numconstraints].type = type;
+		(*constraints)[numconstraints].query = argv[i+1];
+		numconstraints++;
+	}
+
+	return numconstraints;
+}
+
 /* note - return value is success; the parsed int itself is in ret */
 
 int parse_int(const char * str, int * ret)
@@ -425,5 +450,17 @@ void pretty_print_song (mpd_Song * song)
 	else
 	{
 		print_formatted_song(song, DEFAULT_FORMAT);
+	}
+}
+
+void print_filenames(mpd_Connection *conn)
+{
+	mpd_InfoEntity *entity;
+
+	while ((entity = mpd_getNextInfoEntity(conn))) {
+		printErrorAndExit(conn);
+		if (entity->type == MPD_INFO_ENTITY_TYPE_SONG)
+			printf("%s\n", fromUtf8(entity->info.song->file));
+		mpd_freeInfoEntity(entity);
 	}
 }

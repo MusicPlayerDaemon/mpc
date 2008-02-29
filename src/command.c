@@ -582,7 +582,6 @@ int cmd_playlist ( int argc, char ** argv, mpd_Connection * conn )
 
 int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
 {
-	mpd_InfoEntity * entity;
 	char * listall = "";
 	int i=0;
 
@@ -592,13 +591,7 @@ int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
 		mpd_sendListallCommand(conn,listall);
 		printErrorAndExit(conn);
 
-		while((entity = mpd_getNextInfoEntity(conn))) {
-			if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
-				mpd_Song * song = entity->info.song;
-				printf("%s\n",fromUtf8(song->file));
-			}
-			mpd_freeInfoEntity(entity);
-		}
+		print_filenames(conn);
 
 		my_finishCommand(conn);
 
@@ -756,31 +749,18 @@ int cmd_load ( int argc, char ** argv, mpd_Connection * conn )
 
 int cmd_search ( int argc, char ** argv, mpd_Connection * conn ) 
 {
-	mpd_InfoEntity * entity;
-	int type, i, numconstraints = 0;
-	struct _constraints {
-		int type;
-		char * query;
-	} * constraints;
+	Constraint *constraints;
+	int numconstraints;
+	int i;
 
 	if (argc % 2 != 0) {
 		DIE("number of arguments must be a multiple of 2 "
 		    "(pairs of search types and queries)\n");
 	}
 
-	constraints = malloc(sizeof(struct _constraints)*argc/2);
-
-	for (i = 0; i < argc; i += 2) {
-		type = get_search_type(argv[i]);
-		if (type < 0) {
-			free(constraints);
-			return -1;
-		}
-
-		constraints[numconstraints].type = type;
-		constraints[numconstraints].query = argv[i+1];
-		numconstraints++;
-	}
+	numconstraints = get_constraints(argc, argv, &constraints);
+	if (numconstraints < 0)
+		return -1;
 
 	mpd_startSearch(conn, 0);
 
@@ -790,17 +770,11 @@ int cmd_search ( int argc, char ** argv, mpd_Connection * conn )
 	}
 
 	free(constraints);
+
 	mpd_commitSearch(conn);
 	printErrorAndExit(conn);
 
-	while ((entity = mpd_getNextInfoEntity(conn))) {
-		printErrorAndExit(conn);
-		if (entity->type == MPD_INFO_ENTITY_TYPE_DIRECTORY)
-			printf("%s\n", fromUtf8(entity->info.directory->path));
-		else if (entity->type == MPD_INFO_ENTITY_TYPE_SONG)
-			printf("%s\n", fromUtf8(entity->info.song->file));
-		mpd_freeInfoEntity(entity);
-	}
+	print_filenames(conn);
 
 	my_finishCommand(conn);
 
