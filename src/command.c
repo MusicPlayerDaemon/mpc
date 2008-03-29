@@ -346,8 +346,7 @@ int cmd_enable( int argc, char ** argv, mpd_Connection * conn )
 	}
 
 	mpd_finishCommand( conn );
-	cmd_outputs( 0, NULL, conn );
-	return( 0 );
+	return cmd_outputs(0, NULL, conn);
 }
 
 int cmd_disable( int argc, char ** argv, mpd_Connection * conn )
@@ -359,10 +358,9 @@ int cmd_disable( int argc, char ** argv, mpd_Connection * conn )
 	} else {
 		mpd_sendDisableOutputCommand( conn, ( arg - 1 ) );
 	}
-	
+
 	mpd_finishCommand( conn );
-	cmd_outputs( 0, NULL, conn );
-	return( 0 );
+	return cmd_outputs(0, NULL, conn);
 }
 
 int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
