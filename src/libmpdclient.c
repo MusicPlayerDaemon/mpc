@@ -100,18 +100,21 @@ static int do_connect_fail(mpd_Connection *connection,
                            const struct sockaddr *serv_addr, int addrlen)
 {
 	int iMode = 1; /* 0 = blocking, else non-blocking */
+	if (connect(connection->sock, serv_addr, addrlen) == SOCKET_ERROR)
+		return 1;
 	ioctlsocket(connection->sock, FIONBIO, (u_long FAR*) &iMode);
-	return (connect(connection->sock,serv_addr,addrlen) == SOCKET_ERROR
-			&& WSAGetLastError() != WSAEWOULDBLOCK);
+	return 0;
 }
 #else /* !WIN32 (sane operating systems) */
 static int do_connect_fail(mpd_Connection *connection,
                            const struct sockaddr *serv_addr, int addrlen)
 {
-	int flags = fcntl(connection->sock, F_GETFL, 0);
+	int flags;
+	if (connect(connection->sock, serv_addr, addrlen) < 0)
+		return 1;
+	flags = fcntl(connection->sock, F_GETFL, 0);
 	fcntl(connection->sock, F_SETFL, flags | O_NONBLOCK);
-	return (connect(connection->sock,serv_addr,addrlen)<0 &&
-				errno!=EINPROGRESS);
+	return 0;
 }
 #endif /* !WIN32 */
 
@@ -169,11 +172,13 @@ static int mpd_connect(mpd_Connection * connection, const char * host, int port,
 		/* connect stuff */
  		if (do_connect_fail(connection,
 		                    res->ai_addr, res->ai_addrlen)) {
- 			/* try the next address family */
+ 			/* try the next address */
  			closesocket(connection->sock);
  			connection->sock = -1;
  			continue;
 		}
+
+		break;
 	}
 
 	freeaddrinfo(addrinfo);
@@ -944,6 +949,7 @@ static void mpd_finishSong(mpd_Song * song) {
 	if(song->date) free(song->date);
 	if(song->genre) free(song->genre);
 	if(song->composer) free(song->composer);
+	if(song->performer) free(song->performer);
 	if(song->disc) free(song->disc);
 	if(song->comment) free(song->comment);
 }
@@ -973,6 +979,7 @@ mpd_Song * mpd_songDup(mpd_Song * song) {
 	if(song->date) ret->date = strdup(song->date);
 	if(song->genre) ret->genre= strdup(song->genre);
 	if(song->composer) ret->composer= strdup(song->composer);
+	if(song->performer) ret->performer = strdup(song->performer);
 	if(song->disc) ret->disc = strdup(song->disc);
 	if(song->comment) ret->comment = strdup(song->comment);
 	ret->time = song->time;
