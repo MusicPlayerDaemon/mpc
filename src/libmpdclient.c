@@ -81,6 +81,17 @@
 #  define WSACleanup()          do { /* nothing */ } while (0)
 #endif
 
+static const char *const idle_names[] = {
+	"database",
+	"stored_playlist",
+	"playlist",
+	"player",
+	"mixer",
+	"output",
+	"options",
+	NULL
+};
+
 #ifdef WIN32
 static int winsock_dll_error(mpd_Connection *connection)
 {
@@ -367,6 +378,13 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 	connection->doneListOk = 0;
 	connection->returnElement = NULL;
 	connection->request = NULL;
+#ifdef MPD_GLIB
+	connection->source_id = 0;
+#endif
+	connection->idle = 0;
+	connection->startIdle = NULL;
+	connection->stopIdle = NULL;
+	connection->notify_cb = NULL;
 
 	if (winsock_dll_error(connection))
 		return connection;
@@ -445,6 +463,9 @@ static void mpd_executeCommand(mpd_Connection * connection, char * command) {
 	fd_set fds;
 	char * commandPtr = command;
 	int commandLen = strlen(command);
+
+	if (connection->idle)
+		mpd_stopIdle(connection);
 
 	if(!connection->doneProcessing && !connection->commandList) {
 		strcpy(connection->errorStr,"not done processing current command");
@@ -1965,3 +1986,105 @@ void mpd_sendPlaylistDeleteCommand(mpd_Connection *connection,
 	free(sPlaylist);
 	free(string);
 }
+
+static void mpd_readChanges(mpd_Connection *connection)
+{
+	unsigned i;
+	unsigned flags = 0;
+	mpd_ReturnElement *re;
+
+	if (!connection->returnElement) mpd_getNextReturnElement(connection);
+
+	while (connection->returnElement) {
+		re = connection->returnElement;
+		if (re->name &&!strncmp (re->name, "changed", strlen ("changed"))) {
+			for (i = 0; idle_names[i]; ++i) {
+				if (!strcmp (re->value, idle_names[i])) {
+					flags |= (1 << i);
+				}
+			}
+		}
+		mpd_getNextReturnElement(connection);
+	}
+
+	/* Notifiy application */
+	if (connection->notify_cb && flags)
+		connection->notify_cb (connection, flags, connection->userdata);
+}
+
+void mpd_startIdle(mpd_Connection *connection, mpd_NotificationCb notify_cb, void *userdata)
+{
+        if (connection->idle)
+                return;
+
+	if (connection->startIdle)
+		connection->startIdle(connection);
+
+	mpd_executeCommand(connection, "idle\n");
+	connection->idle = 1;
+	connection->notify_cb = notify_cb;
+	connection->userdata = userdata;
+}
+
+void mpd_stopIdle(mpd_Connection *connection)
+{
+	if (connection->stopIdle)
+		connection->stopIdle(connection);
+
+	connection->idle = 0;
+	connection->notify_cb = NULL;
+	connection->doneProcessing = 1;
+	mpd_executeCommand(connection, "noidle\n");
+	mpd_readChanges(connection);
+}
+
+#ifdef MPD_GLIB
+static gboolean mpd_glibReadCb (GIOChannel *iochan, GIOCondition cond, gpointer data)
+{
+	mpd_Connection *connection = data;
+
+	if (!connection->idle) {
+		connection->source_id = 0;
+		return FALSE;
+	}
+
+	if ((cond & G_IO_IN)) {
+	     connection->idle = 0;
+	     if (connection->source_id) {
+		     g_source_remove (connection->source_id);
+		     connection->source_id = 0;
+	     }
+	     mpd_readChanges(connection);
+	}
+
+	return TRUE;
+}
+
+static void mpd_glibStartIdle(mpd_Connection *connection)
+{
+	static GIOChannel* iochan = NULL;
+
+        if (!iochan)
+	        iochan = g_io_channel_unix_new (connection->sock);
+
+        connection->source_id = g_io_add_watch (iochan,
+					        G_IO_IN | G_IO_ERR | G_IO_HUP,
+					        mpd_glibReadCb,
+					        connection);
+}
+
+static void mpd_glibStopIdle(mpd_Connection *connection)
+{
+	if (connection->source_id) {
+		g_source_remove (connection->source_id);
+		connection->source_id = 0;
+	}
+}
+
+void mpd_glibInit(mpd_Connection *connection)
+{
+	connection->startIdle = mpd_glibStartIdle;
+	connection->stopIdle = mpd_glibStopIdle;
+}
+#endif
+

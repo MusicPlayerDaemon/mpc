@@ -39,6 +39,10 @@
 
 #include <sys/time.h>
 #include <stdarg.h>
+#ifdef MPD_GLIB
+#include <glib.h>
+#endif
+
 #define MPD_BUFFER_MAX_LENGTH	50000
 #define MPD_ERRORSTR_MAX_LENGTH	1000
 #define MPD_WELCOME_MESSAGE	"OK MPD "
@@ -101,6 +105,30 @@ typedef struct _mpd_ReturnElement {
 	char * value;
 } mpd_ReturnElement;
 
+enum {
+	/** song database has been updated*/
+	IDLE_DATABASE = 0x1,
+
+	/** a stored playlist has been modified, created, deleted or
+	    renamed */
+	IDLE_STORED_PLAYLIST = 0x2,
+
+	/** the current playlist has been modified */
+	IDLE_PLAYLIST = 0x4,
+
+	/** the player state has changed: play, stop, pause, seek, ... */
+	IDLE_PLAYER = 0x8,
+
+	/** the volume has been modified */
+	IDLE_MIXER = 0x10,
+
+	/** an audio output device has been enabled or disabled */
+	IDLE_OUTPUT = 0x20,
+
+	/** options have changed: crossfade, random, repeat, ... */
+	IDLE_OPTIONS = 0x40,
+};
+
 /* mpd_Connection
  * holds info about connection to mpd
  * use error, and errorStr to detect errors
@@ -126,7 +154,17 @@ typedef struct _mpd_Connection {
 	mpd_ReturnElement * returnElement;
 	struct timeval timeout;
 	char *request;
+	int idle;
+	void (*notify_cb) (struct _mpd_Connection *connection, unsigned flags, void *userdata);
+	void (*startIdle) (struct _mpd_Connection *connection);
+	void (*stopIdle) (struct _mpd_Connection *connection);
+	void *userdata;
+#ifdef MPD_GLIB
+        int source_id;
+#endif
 } mpd_Connection;
+
+typedef void (*mpd_NotificationCb) (mpd_Connection *connection, unsigned flags, void *userdata);
 
 /* mpd_newConnection
  * use this to open a new connection
@@ -663,6 +701,15 @@ void mpd_sendPlaylistMoveCommand(mpd_Connection *connection,
 
 void mpd_sendPlaylistDeleteCommand(mpd_Connection *connection,
                                    char *playlist, int pos);
+
+void mpd_startIdle(mpd_Connection *connection, mpd_NotificationCb notify_cb, void *userdata);
+
+void mpd_stopIdle(mpd_Connection *connection);
+
+#ifdef MPD_GLIB
+void mpd_glibInit(mpd_Connection *connection);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
