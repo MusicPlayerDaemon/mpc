@@ -31,6 +31,7 @@
 */
 
 #include "libmpdclient.h"
+#include "str_pool.h"
 
 #include <errno.h>
 #include <ctype.h>
@@ -307,15 +308,15 @@ static mpd_ReturnElement * mpd_newReturnElement(const char * name, const char * 
 {
 	mpd_ReturnElement * ret = malloc(sizeof(mpd_ReturnElement));
 
-	ret->name = strdup(name);
-	ret->value = strdup(value);
+	ret->name = str_pool_get(name);
+	ret->value = str_pool_get(value);
 
 	return ret;
 }
 
 static void mpd_freeReturnElement(mpd_ReturnElement * re) {
-	free(re->name);
-	free(re->value);
+	str_pool_put(re->name);
+	str_pool_put(re->value);
 	free(re);
 }
 
@@ -1014,18 +1015,17 @@ static void mpd_initSong(mpd_Song * song) {
 }
 
 static void mpd_finishSong(mpd_Song * song) {
-	if(song->file) free(song->file);
-	if(song->artist) free(song->artist);
-	if(song->album) free(song->album);
-	if(song->title) free(song->title);
-	if(song->track) free(song->track);
-	if(song->name) free(song->name);
-	if(song->date) free(song->date);
-	if(song->genre) free(song->genre);
-	if(song->composer) free(song->composer);
-	if(song->performer) free(song->performer);
-	if(song->disc) free(song->disc);
-	if(song->comment) free(song->comment);
+	if(song->file) str_pool_put(song->file);
+	if(song->artist) str_pool_put(song->artist);
+	if(song->album) str_pool_put(song->album);
+	if(song->title) str_pool_put(song->title);
+	if(song->track) str_pool_put(song->track);
+	if(song->name) str_pool_put(song->name);
+	if(song->date) str_pool_put(song->date);
+	if(song->genre) str_pool_put(song->genre);
+	if(song->composer) str_pool_put(song->composer);
+	if(song->disc) str_pool_put(song->disc);
+	if(song->comment) str_pool_put(song->comment);
 }
 
 mpd_Song * mpd_newSong(void) {
@@ -1044,18 +1044,18 @@ void mpd_freeSong(mpd_Song * song) {
 mpd_Song * mpd_songDup(const mpd_Song * song) {
 	mpd_Song * ret = mpd_newSong();
 
-	if(song->file) ret->file = strdup(song->file);
-	if(song->artist) ret->artist = strdup(song->artist);
-	if(song->album) ret->album = strdup(song->album);
-	if(song->title) ret->title = strdup(song->title);
-	if(song->track) ret->track = strdup(song->track);
-	if(song->name) ret->name = strdup(song->name);
-	if(song->date) ret->date = strdup(song->date);
-	if(song->genre) ret->genre= strdup(song->genre);
-	if(song->composer) ret->composer= strdup(song->composer);
-	if(song->performer) ret->performer = strdup(song->performer);
-	if(song->disc) ret->disc = strdup(song->disc);
-	if(song->comment) ret->comment = strdup(song->comment);
+	if(song->file) ret->file = str_pool_dup(song->file);
+	if(song->artist) ret->artist = str_pool_dup(song->artist);
+	if(song->album) ret->album = str_pool_dup(song->album);
+	if(song->title) ret->title = str_pool_dup(song->title);
+	if(song->track) ret->track = str_pool_dup(song->track);
+	if(song->name) ret->name = str_pool_dup(song->name);
+	if(song->date) ret->date = str_pool_dup(song->date);
+	if(song->genre) ret->genre= str_pool_dup(song->genre);
+	if(song->composer) ret->composer= str_pool_dup(song->composer);
+	if(song->disc) ret->disc = str_pool_dup(song->disc);
+	if(song->comment) ret->comment = str_pool_dup(song->comment);
+
 	ret->time = song->time;
 	ret->pos = song->pos;
 	ret->id = song->id;
@@ -1069,7 +1069,7 @@ static void mpd_initDirectory(mpd_Directory * directory) {
 
 static void mpd_finishDirectory(mpd_Directory * directory) {
 	if (directory->path)
-		free(directory->path);
+		str_pool_put(directory->path);
 }
 
 mpd_Directory * mpd_newDirectory(void) {
@@ -1090,7 +1090,7 @@ mpd_Directory * mpd_directoryDup(const mpd_Directory * directory) {
 	mpd_Directory * ret = mpd_newDirectory();
 
 	if (directory->path)
-		ret->path = strdup(directory->path);
+		ret->path = str_pool_dup(directory->path);
 
 	return ret;
 }
@@ -1101,7 +1101,7 @@ static void mpd_initPlaylistFile(mpd_PlaylistFile * playlist) {
 
 static void mpd_finishPlaylistFile(mpd_PlaylistFile * playlist) {
 	if (playlist->path)
-		free(playlist->path);
+		str_pool_put(playlist->path);
 }
 
 mpd_PlaylistFile * mpd_newPlaylistFile(void) {
@@ -1121,7 +1121,7 @@ mpd_PlaylistFile * mpd_playlistFileDup(const mpd_PlaylistFile * playlist) {
 	mpd_PlaylistFile * ret = mpd_newPlaylistFile();
 
 	if (playlist->path)
-		ret->path = strdup(playlist->path);
+		ret->path = str_pool_dup(playlist->path);
 
 	return ret;
 }
@@ -1177,7 +1177,7 @@ mpd_InfoEntity * mpd_getNextInfoEntity(mpd_Connection * connection) {
 			entity->type = MPD_INFO_ENTITY_TYPE_SONG;
 			entity->info.song = mpd_newSong();
 			entity->info.song->file =
-				strdup(connection->returnElement->value);
+				str_pool_dup(connection->returnElement->value);
 		}
 		else if(strcmp(connection->returnElement->name,
 					"directory")==0) {
@@ -1185,14 +1185,14 @@ mpd_InfoEntity * mpd_getNextInfoEntity(mpd_Connection * connection) {
 			entity->type = MPD_INFO_ENTITY_TYPE_DIRECTORY;
 			entity->info.directory = mpd_newDirectory();
 			entity->info.directory->path =
-				strdup(connection->returnElement->value);
+				str_pool_dup(connection->returnElement->value);
 		}
 		else if(strcmp(connection->returnElement->name,"playlist")==0) {
 			entity = mpd_newInfoEntity();
 			entity->type = MPD_INFO_ENTITY_TYPE_PLAYLISTFILE;
 			entity->info.playlistFile = mpd_newPlaylistFile();
 			entity->info.playlistFile->path =
-				strdup(connection->returnElement->value);
+				str_pool_dup(connection->returnElement->value);
 		}
 		else if(strcmp(connection->returnElement->name, "cpos") == 0){
 			entity = mpd_newInfoEntity();
@@ -1221,23 +1221,23 @@ mpd_InfoEntity * mpd_getNextInfoEntity(mpd_Connection * connection) {
 				strlen(re->value)) {
 			if(!entity->info.song->artist &&
 					strcmp(re->name,"Artist")==0) {
-				entity->info.song->artist = strdup(re->value);
+				entity->info.song->artist = str_pool_dup(re->value);
 			}
 			else if(!entity->info.song->album &&
 					strcmp(re->name,"Album")==0) {
-				entity->info.song->album = strdup(re->value);
+				entity->info.song->album = str_pool_dup(re->value);
 			}
 			else if(!entity->info.song->title &&
 					strcmp(re->name,"Title")==0) {
-				entity->info.song->title = strdup(re->value);
+				entity->info.song->title = str_pool_dup(re->value);
 			}
 			else if(!entity->info.song->track &&
 					strcmp(re->name,"Track")==0) {
-				entity->info.song->track = strdup(re->value);
+				entity->info.song->track = str_pool_dup(re->value);
 			}
 			else if(!entity->info.song->name &&
 					strcmp(re->name,"Name")==0) {
-				entity->info.song->name = strdup(re->value);
+				entity->info.song->name = str_pool_dup(re->value);
 			}
 			else if(entity->info.song->time==MPD_SONG_NO_TIME &&
 					strcmp(re->name,"Time")==0) {
@@ -1253,15 +1253,15 @@ mpd_InfoEntity * mpd_getNextInfoEntity(mpd_Connection * connection) {
 			}
 			else if(!entity->info.song->date &&
 					strcmp(re->name, "Date") == 0) {
-				entity->info.song->date = strdup(re->value);
+				entity->info.song->date = str_pool_dup(re->value);
 			}
 			else if(!entity->info.song->genre &&
 					strcmp(re->name, "Genre") == 0) {
-				entity->info.song->genre = strdup(re->value);
+				entity->info.song->genre = str_pool_dup(re->value);
 			}
 			else if(!entity->info.song->composer &&
 					strcmp(re->name, "Composer") == 0) {
-				entity->info.song->composer = strdup(re->value);
+				entity->info.song->composer = str_pool_dup(re->value);
 			}
 			else if(!entity->info.song->performer &&
 					strcmp(re->name, "Performer") == 0) {
@@ -1269,11 +1269,11 @@ mpd_InfoEntity * mpd_getNextInfoEntity(mpd_Connection * connection) {
 			}
 			else if(!entity->info.song->disc &&
 					strcmp(re->name, "Disc") == 0) {
-				entity->info.song->disc = strdup(re->value);
+				entity->info.song->disc = str_pool_dup(re->value);
 			}
 			else if(!entity->info.song->comment &&
 					strcmp(re->name, "Comment") == 0) {
-				entity->info.song->comment = strdup(re->value);
+				entity->info.song->comment = str_pool_dup(re->value);
 			}
 		}
 		else if(entity->type == MPD_INFO_ENTITY_TYPE_DIRECTORY) {
