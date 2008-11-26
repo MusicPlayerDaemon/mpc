@@ -97,7 +97,7 @@ typedef enum mpd_TagItems
 	MPD_TAG_NUM_OF_ITEM_TYPES
 } mpd_TagItems;
 
-extern char * mpdTagItemKeys[MPD_TAG_NUM_OF_ITEM_TYPES];
+extern const char *const mpdTagItemKeys[MPD_TAG_NUM_OF_ITEM_TYPES];
 
 /* internal stuff don't touch this struct */
 typedef struct _mpd_ReturnElement {
@@ -346,7 +346,7 @@ void mpd_freeSong(mpd_Song * song);
 /* mpd_songDup
  * works like strDup, but for a mpd_Song
  */
-mpd_Song * mpd_songDup(mpd_Song * song);
+mpd_Song * mpd_songDup(const mpd_Song * song);
 
 /* DIRECTORY STUFF */
 
@@ -372,7 +372,7 @@ void mpd_freeDirectory(mpd_Directory * directory);
 /* mpd_directoryDup
  * works like strdup, but for mpd_Directory
  */
-mpd_Directory * mpd_directoryDup(mpd_Directory * directory);
+mpd_Directory * mpd_directoryDup(const mpd_Directory * directory);
 
 /* PLAYLISTFILE STUFF */
 
@@ -398,7 +398,7 @@ void mpd_freePlaylistFile(mpd_PlaylistFile * playlist);
 /* mpd_playlistFileDup
  * works like strdup, but for mpd_PlaylistFile
  */
-mpd_PlaylistFile * mpd_playlistFileDup(mpd_PlaylistFile * playlist);
+mpd_PlaylistFile * mpd_playlistFileDup(const mpd_PlaylistFile * playlist);
 
 /* INFO ENTITY STUFF */
 
@@ -554,7 +554,7 @@ void mpd_sendVolumeCommand(mpd_Connection * connection, int volumeChange);
 
 void mpd_sendCrossfadeCommand(mpd_Connection * connection, int seconds);
 
-void mpd_sendUpdateCommand(mpd_Connection * connection, char * path);
+void mpd_sendUpdateCommand(mpd_Connection * connection, const char *path);
 
 /* returns the update job id, call this after a update command*/
 int mpd_getUpdateId(mpd_Connection * connection);
