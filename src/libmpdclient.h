@@ -46,7 +46,6 @@
 #include <glib.h>
 #endif
 
-#define MPD_BUFFER_MAX_LENGTH	50000
 #define MPD_WELCOME_MESSAGE	"OK MPD "
 
 #define MPD_ERROR_TIMEOUT	10 /* timeout trying to talk to mpd */
@@ -146,7 +145,7 @@ typedef struct _mpd_Connection {
 	int error;
 	/* DON'T TOUCH any of the rest of this stuff */
 	int sock;
-	char buffer[MPD_BUFFER_MAX_LENGTH+1];
+	char buffer[16384];
 	size_t buflen;
 	size_t bufstart;
 	int doneProcessing;

@@ -453,7 +453,7 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 			ssize_t readed;
 			readed = recv(connection->sock,
 				      &(connection->buffer[connection->buflen]),
-				      MPD_BUFFER_MAX_LENGTH-connection->buflen,0);
+				      sizeof(connection->buffer) - connection->buflen, 0);
 			if(readed<=0) {
 				snprintf(connection->errorStr,
 					 sizeof(connection->errorStr),
@@ -593,14 +593,14 @@ static void mpd_getNextReturnElement(mpd_Connection * connection) {
 	       !(rt = memchr(bufferCheck, '\n',
 			     connection->buffer + connection->buflen -
 			     bufferCheck))) {
-		if (connection->buflen >= MPD_BUFFER_MAX_LENGTH) {
+		if (connection->buflen >= sizeof(connection->buffer)) {
 			memmove(connection->buffer,
 				connection->buffer + connection->bufstart,
 				connection->buflen - connection->bufstart);
 			connection->buflen -= connection->bufstart;
 			connection->bufstart = 0;
 		}
-		if (connection->buflen >= MPD_BUFFER_MAX_LENGTH) {
+		if (connection->buflen >= sizeof(connection->buffer)) {
 			strcpy(connection->errorStr,"buffer overrun");
 			connection->error = MPD_ERROR_BUFFEROVERRUN;
 			connection->doneProcessing = 1;
@@ -615,7 +615,7 @@ static void mpd_getNextReturnElement(mpd_Connection * connection) {
 		if((err = select(connection->sock+1,&fds,NULL,NULL,&tv) == 1)) {
 			readed = recv(connection->sock,
 				      connection->buffer+connection->buflen,
-				      MPD_BUFFER_MAX_LENGTH-connection->buflen,
+				      sizeof(connection->buffer) - connection->buflen,
 				      MSG_DONTWAIT);
 			if(readed<0 && SENDRECV_ERRNO_IGNORE) {
 				continue;
