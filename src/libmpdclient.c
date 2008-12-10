@@ -414,7 +414,7 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 	mpd_Connection * connection = malloc(sizeof(mpd_Connection));
 	struct timeval tv;
 	fd_set fds;
-	strcpy(connection->buffer,"");
+
 	connection->sock = -1;
 	connection->buflen = 0;
 	connection->bufstart = 0;
@@ -446,7 +446,7 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 	if (err < 0)
 		return connection;
 
-	while(!(rt = strstr(connection->buffer,"\n"))) {
+	while(!(rt = memchr(connection->buffer, '\n', connection->buflen))) {
 		tv.tv_sec = connection->timeout.tv_sec;
 		tv.tv_usec = connection->timeout.tv_usec;
 		FD_ZERO(&fds);
@@ -465,7 +465,6 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 				return connection;
 			}
 			connection->buflen+=readed;
-			connection->buffer[connection->buflen] = '\0';
 		}
 		else if(err<0) {
 			if (SELECT_ERRNO_IGNORE)
@@ -490,8 +489,8 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 	if (mpd_parseWelcome(connection, host, port, connection->buffer) == 0)
 		connection->doneProcessing = 1;
 
-	strcpy(connection->buffer,rt+1);
-	connection->buflen = strlen(connection->buffer);
+	connection->buflen -= rt + 1 - connection->buffer;
+	memmove(connection->buffer, rt + 1, connection->buflen);
 
 	return connection;
 }
@@ -592,11 +591,13 @@ static void mpd_getNextReturnElement(mpd_Connection * connection) {
 
 	bufferCheck = connection->buffer+connection->bufstart;
 	while (connection->bufstart >= connection->buflen ||
-	       !(rt = strchr(bufferCheck, '\n'))) {
+	       !(rt = memchr(bufferCheck, '\n',
+			     connection->buffer + connection->buflen -
+			     bufferCheck))) {
 		if (connection->buflen >= MPD_BUFFER_MAX_LENGTH) {
 			memmove(connection->buffer,
 				connection->buffer + connection->bufstart,
-				connection->buflen - connection->bufstart + 1);
+				connection->buflen - connection->bufstart);
 			connection->buflen -= connection->bufstart;
 			connection->bufstart = 0;
 		}
@@ -629,7 +630,6 @@ static void mpd_getNextReturnElement(mpd_Connection * connection) {
 				return;
 			}
 			connection->buflen+=readed;
-			connection->buffer[connection->buflen] = '\0';
 		}
 		else if(err<0 && SELECT_ERRNO_IGNORE) continue;
 		else {
