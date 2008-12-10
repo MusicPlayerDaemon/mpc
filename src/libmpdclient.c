@@ -453,7 +453,7 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 		FD_ZERO(&fds);
 		FD_SET(connection->sock,&fds);
 		if((err = select(connection->sock+1,&fds,NULL,NULL,&tv)) == 1) {
-			int readed;
+			ssize_t readed;
 			readed = recv(connection->sock,
 				      &(connection->buffer[connection->buflen]),
 				      MPD_BUFFER_MAX_LENGTH-connection->buflen,0);
@@ -578,7 +578,7 @@ static void mpd_getNextReturnElement(mpd_Connection * connection) {
 	fd_set fds;
 	struct timeval tv;
 	char * tok = NULL;
-	int readed;
+	ssize_t readed;
 	char * bufferCheck = NULL;
 	int err;
 	int pos;

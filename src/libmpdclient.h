@@ -39,6 +39,7 @@
 #  define __W32API_USE_DLLIMPORT__ 1
 #endif
 
+#include <stddef.h>
 #include <sys/time.h>
 #include <stdarg.h>
 #ifdef MPD_GLIB
@@ -147,8 +148,8 @@ typedef struct _mpd_Connection {
 	/* DON'T TOUCH any of the rest of this stuff */
 	int sock;
 	char buffer[MPD_BUFFER_MAX_LENGTH+1];
-	int buflen;
-	int bufstart;
+	size_t buflen;
+	size_t bufstart;
 	int doneProcessing;
 	int listOks;
 	int doneListOk;
