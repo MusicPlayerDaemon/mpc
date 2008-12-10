@@ -94,6 +94,4 @@ void freeList(void * list);
 
 void clearList(List * list);
 
-void sortList(List * list);
-
 #endif
