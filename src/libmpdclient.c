@@ -231,6 +231,8 @@ static int mpd_wait(mpd_Connection *connection)
 	fd_set fds;
 	int ret;
 
+	assert(connection->sock >= 0);
+
 	while (1) {
 		tv = connection->timeout;
 		FD_ZERO(&fds);
@@ -282,6 +284,14 @@ static int mpd_recv(mpd_Connection *connection)
 	assert(connection != NULL);
 	assert(connection->buflen <= sizeof(connection->buffer));
 	assert(connection->bufstart <= connection->buflen);
+
+	if (connection->sock < 0) {
+		strcpy(connection->errorStr, "not connected");
+		connection->error = MPD_ERROR_CONNCLOSED;
+		connection->doneProcessing = 1;
+		connection->doneListOk = 0;
+		return -1;
+	}
 
 	if (connection->buflen >= sizeof(connection->buffer)) {
 		/* delete consumed data from beginning of buffer */
@@ -466,6 +476,12 @@ static void mpd_executeCommand(mpd_Connection *connection,
 	fd_set fds;
 	const char *commandPtr = command;
 	int commandLen = strlen(command);
+
+	if (connection->sock < 0) {
+		strcpy(connection->errorStr, "not connected");
+		connection->error = MPD_ERROR_CONNCLOSED;
+		return;
+	}
 
 	if (connection->idle)
 		mpd_stopIdle(connection);
