@@ -79,7 +79,7 @@ static mpd_Status * getStatus(mpd_Connection * conn) {
 	return ret;
 }
 
-int isUrl(char * s) {
+static int isUrl(char * s) {
 	char * t;
 
 	t = strstr(s,"://");
@@ -1045,7 +1045,7 @@ int cmd_tab ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-char * DHMS(unsigned long t)
+static char * DHMS(unsigned long t)
 {
 	static char buf[32];	/* Ugh */
 	int days, hours, mins, secs;

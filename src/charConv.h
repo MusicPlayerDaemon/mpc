@@ -23,6 +23,6 @@ char * toUtf8(const char * from);
 
 char * fromUtf8(const char * to);
 
-void setLocaleCharset();
+void setLocaleCharset(void);
 
 #endif

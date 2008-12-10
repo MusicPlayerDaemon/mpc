@@ -44,7 +44,7 @@ static int ignore_invalid;
 
 #define BUFFER_SIZE	1024
 #ifdef HAVE_ICONV
-static void closeCharSetConversion();
+static void closeCharSetConversion(void);
 #endif
 
 /* code from iconv_prog.c (omiting invalid symbols): */

@@ -52,7 +52,7 @@ struct mpc_option *get_option(const char *option)
 }
 
 /* removes the index-th element from arr (*size gets decremented) */
-void remove_index (int index, char ** arr, int * size)
+static void remove_index (int index, char ** arr, int * size)
 {
 	int i;
 

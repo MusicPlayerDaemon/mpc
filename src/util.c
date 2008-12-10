@@ -214,7 +214,7 @@ int parse_int_value_change(const char * str, struct int_value_change * ret)
         return 1;
 }
 
-char * appendToString(char * dest, const char * src, int len) {
+static char * appendToString(char * dest, const char * src, int len) {
 	int destlen;
 
 	if(dest == NULL) {
@@ -233,7 +233,7 @@ char * appendToString(char * dest, const char * src, int len) {
 	return dest;
 }
 
-const char * skipFormatting(const char * p) {
+static const char * skipFormatting(const char * p) {
 	int stack = 0;
 		
 	while (*p != '\0') {
@@ -257,7 +257,7 @@ const char * skipFormatting(const char * p) {
 }
 
 /* this is a little ugly... */
-char *
+static char *
 songToFormatedString(struct mpd_song *song,
 		     const char *format, const char ** last)
 {
@@ -429,7 +429,7 @@ songToFormatedString(struct mpd_song *song,
 	return ret;
 }
 
-void print_formatted_song(struct mpd_song *song, const char * format)
+static void print_formatted_song(struct mpd_song *song, const char * format)
 {
 	char * str = songToFormatedString(song, format, NULL);
 

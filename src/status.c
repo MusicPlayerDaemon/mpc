@@ -17,7 +17,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-
+#include "status.h"
 #include "libmpdclient.h"
 #include "charConv.h"
 #include "util.h"

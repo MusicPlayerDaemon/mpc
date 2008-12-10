@@ -25,7 +25,7 @@
 #include <time.h>
 #include <stdio.h>
 
-void makeListNodesArray(List * list) {
+static void makeListNodesArray(List * list) {
 	ListNode * node = list->firstNode;
 	long i;
 
@@ -37,7 +37,7 @@ void makeListNodesArray(List * list) {
 	}
 }
 
-void freeListNodesArray(List * list) {
+static void freeListNodesArray(List * list) {
 	free(list->nodesArray);
 	list->nodesArray = NULL;
 }
@@ -276,7 +276,7 @@ void clearList(List * list) {
 	list->numberOfNodes = 0;
 }
 
-void swapNodes(ListNode * nodeA, ListNode * nodeB) {
+static void swapNodes(ListNode * nodeA, ListNode * nodeB) {
 	char * key;
 	void * data;
 	
