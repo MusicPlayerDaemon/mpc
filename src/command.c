@@ -100,7 +100,7 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 	ListNode * node;
 	struct mpd_song *song;
 	char * sp;
-	char * dup;
+	char * duplicated;
 	int i;
 	int * arglens;
 	int len;
@@ -124,9 +124,9 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 	while((entity = mpd_getNextInfoEntity(conn))) {
 		if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
 			song = entity->info.song;
-			sp = dup = strdup(fromUtf8(song->file));
+			sp = duplicated = strdup(fromUtf8(song->file));
 			while((sp = strchr(sp,' '))) *sp = '_';
-			len = strlen(dup);
+			len = strlen(duplicated);
 			for(i=0;i<argc;i++) {
 				if (strcmp(argv[i], "/") == 0) {
 					insertInListWithoutKey(lists[i],
@@ -134,11 +134,11 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 					continue;
 				}
 				if(len<arglens[i]) continue;
-				ret = strncmp(argv[i],dup,
+				ret = strncmp(argv[i], duplicated,
 						arglens[i]);
 				if(ret==0 && (argv[i][arglens[i]-1] == '/' ||
-						dup[arglens[i]] == '\0' || 
-						dup[arglens[i]] == '/')) 
+					      duplicated[arglens[i]] == '\0' ||
+					      duplicated[arglens[i]] == '/'))
 				{
 					insertInListWithoutKey(
 							lists[i],
@@ -146,7 +146,7 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 									song->file)));
 				}
 			}
-			free(dup);
+			free(duplicated);
 		}
 		mpd_freeInfoEntity(entity);
 	}

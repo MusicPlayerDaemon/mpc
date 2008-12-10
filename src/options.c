@@ -52,19 +52,19 @@ struct mpc_option *get_option(const char *option)
 }
 
 /* removes the index-th element from arr (*size gets decremented) */
-static void remove_index (int index, char ** arr, int * size)
+static void remove_index (int idx, char ** arr, int * size)
 {
 	int i;
 
 	/* these would be dumb... */
 	assert(arr);
 	assert(size);
-	assert(index >= 0);
+	assert(idx >= 0);
 	assert(*size >= 0);
-	assert(index < *size);
+	assert(idx < *size);
 
 	/* shift everything past index one to the left and decrement the size */
-	for (i = index; i < *size - 1; ++i)
+	for (i = idx; i < *size - 1; ++i)
 		arr[i] = arr[i + 1];
 	--*size;
 }
