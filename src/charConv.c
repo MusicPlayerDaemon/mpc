@@ -102,6 +102,22 @@ static int setCharSetConversion(const char * to, const char * from) {
 	return -1;
 }
 
+#ifdef HAVE_ICONV
+static inline size_t deconst_iconv(iconv_t cd,
+				   const char **inbuf, size_t *inbytesleft,
+				   char **outbuf, size_t *outbytesleft)
+{
+	union {
+		const char **a;
+		char **b;
+	} deconst;
+
+	deconst.a = inbuf;
+
+	return iconv(cd, deconst.b, inbytesleft, outbuf, outbytesleft);
+}
+#endif
+
 static char * convStrDup(const char * string) {
 #ifdef HAVE_ICONV
 	char buffer[BUFFER_SIZE];
@@ -119,8 +135,8 @@ static char * convStrDup(const char * string) {
 	while(inleft) {
 		bufferPtr = buffer;
 		outleft = BUFFER_SIZE;
-		err = iconv(char_conv_iconv,&string,&inleft,&bufferPtr,
-					&outleft);
+		err = deconst_iconv(char_conv_iconv,&string,&inleft,&bufferPtr,
+				    &outleft);
 		if (outleft == BUFFER_SIZE ||
 		    (err == (size_t)-1 && errno != E2BIG)) {
 			free(ret);
