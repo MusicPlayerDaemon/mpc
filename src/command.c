@@ -370,6 +370,8 @@ int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 
 	if(0==argc) song = MPD_PLAY_AT_BEGINNING;
 	else {
+		mpd_Status *status;
+
 		for(i=0;i<argc-1;i++)
 			printf("skipping: %s\n",argv[i]);
 
@@ -379,7 +381,7 @@ int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 		song--;
 
 		/* This is necessary, otherwise mpc will output the wrong playlist number */
-		mpd_Status * status = getStatus(conn);
+		status = getStatus(conn);
 		i = status->playlistLength;
 		mpd_freeStatus(status);
 		if(song >= i)
