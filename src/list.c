@@ -275,20 +275,3 @@ void clearList(List * list) {
 	list->lastNode = NULL;
 	list->numberOfNodes = 0;
 }
-
-static void swapNodes(ListNode * nodeA, ListNode * nodeB) {
-	char * key;
-	void * data;
-	
-	assert(nodeA!=NULL);
-	assert(nodeB!=NULL);
-
-	key = nodeB->key;
-	data = nodeB->data;
-	
-	nodeB->key = nodeA->key;
-	nodeB->data = nodeA->data;
-
-	nodeA->key = key;
-	nodeA->data = data;
-}

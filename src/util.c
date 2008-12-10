@@ -78,7 +78,7 @@ void free_pipe_array (int max, char ** array)
 int get_boolean (const char * arg)
 {
 	int i;
-	struct _bool_table {
+	static const struct _bool_table {
 		const char * on;
 		const char * off;
 	} bool_table [] = {
