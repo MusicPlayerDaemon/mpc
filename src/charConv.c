@@ -121,7 +121,8 @@ static char * convStrDup(const char * string) {
 		outleft = BUFFER_SIZE;
 		err = iconv(char_conv_iconv,&string,&inleft,&bufferPtr,
 					&outleft);
-		if(outleft==BUFFER_SIZE || (err<0 && errno!=E2BIG)) {
+		if (outleft == BUFFER_SIZE ||
+		    (err == (size_t)-1 && errno != E2BIG)) {
 			free(ret);
 			return NULL;
 		}
