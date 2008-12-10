@@ -33,6 +33,8 @@
 #ifndef LIBMPDCLIENT_H
 #define LIBMPDCLIENT_H
 
+#include "song.h"
+
 #ifdef WIN32
 #  define __W32API_USE_DLLIMPORT__ 1
 #endif
@@ -279,74 +281,6 @@ void mpd_freeStats(mpd_Stats * stats);
 mpd_SearchStats * mpd_getSearchStats(mpd_Connection * connection);
 
 void mpd_freeSearchStats(mpd_SearchStats * stats);
-
-/* SONG STUFF */
-
-#define MPD_SONG_NO_TIME	-1
-#define MPD_SONG_NO_NUM		-1
-#define MPD_SONG_NO_ID		-1
-
-/* mpd_Song
- * for storing song info returned by mpd
- */
-typedef struct _mpd_Song {
-	/* filename of song */
-	char * file;
-	/* artist, maybe NULL if there is no tag */
-	char * artist;
-	/* title, maybe NULL if there is no tag */
-	char * title;
-	/* album, maybe NULL if there is no tag */
-	char * album;
-	/* track, maybe NULL if there is no tag */
-	char * track;
-	/* name, maybe NULL if there is no tag; it's the name of the current
-	 * song, f.e. the icyName of the stream */
-	char * name;
-	/* date */
-	char *date;
-
-	/* added by qball */
-	/* Genre */
-	char *genre;
-	/* Composer */
-	char *composer;
-	/* Performer */
-	char *performer;
-	/* Disc */
-	char *disc;
-	/* Comment */
-	char *comment;
-
-	/* length of song in seconds, check that it is not MPD_SONG_NO_TIME  */
-	int time;
-	/* if plchanges/playlistinfo/playlistid used, is the position of the
-	 * song in the playlist */
-	int pos;
-	/* song id for a song in the playlist */
-	int id;
-} mpd_Song;
-
-/* mpd_newSong
- * use to allocate memory for a new mpd_Song
- * file, artist, etc all initialized to NULL
- * if your going to assign values to file, artist, etc
- * be sure to malloc or strdup the memory
- * use mpd_freeSong to free the memory for the mpd_Song, it will also
- * free memory for file, artist, etc, so don't do it yourself
- */
-mpd_Song * mpd_newSong(void);
-
-/* mpd_freeSong
- * use to free memory allocated by mpd_newSong
- * also it will free memory pointed to by file, artist, etc, so be careful
- */
-void mpd_freeSong(mpd_Song * song);
-
-/* mpd_songDup
- * works like strDup, but for a mpd_Song
- */
-mpd_Song * mpd_songDup(const mpd_Song * song);
 
 /* DIRECTORY STUFF */
 
