@@ -23,7 +23,6 @@ mpc_SOURCES += command.c
 mpc_SOURCES += options.c
 mpc_SOURCES += $(mpc_headers)
 
-mpc_CFLAGS = $(MPC_CFLAGS)
 mpc_LDADD = $(MPC_LIBS)
 
 # sparse is a semantic parser
