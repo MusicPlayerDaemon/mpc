@@ -166,7 +166,7 @@ void setLocaleCharset(void) {
                 if((temp = nl_langinfo(CODESET))) {
                         charset = strdup(temp);
                 }
-                if(!setlocale(LC_CTYPE,originalLocale));
+		setlocale(LC_CTYPE,originalLocale);
         }
 	
 	if(localeCharset) free(localeCharset);
