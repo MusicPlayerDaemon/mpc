@@ -91,7 +91,7 @@ struct _mpc_table {
 	/* status was added for pedantic reasons */
 	{"status",      0,   -1,  0,    cmd_status,      "", NULL},
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */
-	{NULL}
+	{ .command = NULL }
 };
 
 static int print_help(char * progname, char * command)

@@ -36,7 +36,7 @@ struct mpc_option mpc_options [] =
 	{ "verbose", 0, 0, NULL },
 	*/
 
-	{ NULL }
+	{ .name = NULL }
 };
 
 /* why don't all languages have dictionary built-ins...? */

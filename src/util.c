@@ -86,7 +86,7 @@ int get_boolean (const char * arg)
 		{ "1", "0" },
 		{ "true", "false" },
 		{ "yes", "no" },
-		{ NULL }
+		{ .on = NULL }
 	};
 
 	for (i=0; bool_table[i].on; ++i) {
