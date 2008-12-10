@@ -44,7 +44,7 @@ int get_constraints(int argc, char **argv, Constraint **constraints);
 int parse_int(const char *, int *);
 int parse_songnum(const char *, int *);
 int parse_int_value_change(const char *, struct int_value_change *);
-void pretty_print_song (mpd_Song * song);
+void pretty_print_song(struct mpd_song *song);
 void print_filenames(mpd_Connection *conn);
 
 #endif /* MPC_UTIL_H */	

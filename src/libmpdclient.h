@@ -354,7 +354,7 @@ typedef struct mpd_InfoEntity {
 	/* the actual data you want, mpd_Song, mpd_Directory, etc */
 	union {
 		mpd_Directory * directory;
-		mpd_Song * song;
+		struct mpd_song *song;
 		mpd_PlaylistFile * playlistFile;
 	} info;
 } mpd_InfoEntity;

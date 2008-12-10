@@ -98,7 +98,7 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 	List ** lists;
 	mpd_InfoEntity * entity;
 	ListNode * node;
-	mpd_Song * song;
+	struct mpd_song *song;
 	char * sp;
 	char * dup;
 	int i;
@@ -561,7 +561,7 @@ int cmd_playlist ( int argc, char ** argv, mpd_Connection * conn )
 
 	while((entity = mpd_getNextInfoEntity(conn))) {
 		if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
-			mpd_Song * song = entity->info.song;
+			struct mpd_song *song = entity->info.song;
 
 			printf("%s%i) ", (status->song == count)?">":" ", 1+count);
 			pretty_print_song(song);
@@ -662,7 +662,7 @@ int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
 				printf("%s\n",fromUtf8(dir->path));
 			}
 			else if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
-				mpd_Song * song = entity->info.song;
+				struct mpd_song *song = entity->info.song;
 				printf("%s\n",fromUtf8(song->file));
 			}
 			mpd_freeInfoEntity(entity);
@@ -1015,7 +1015,7 @@ int cmd_tab ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_InfoEntity * entity;
 	char * sp;
-	mpd_Song * song;
+	struct mpd_song *song;
 
 	mpd_sendListallCommand(conn,"");
 	printErrorAndExit(conn);

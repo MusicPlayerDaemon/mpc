@@ -35,7 +35,7 @@
 
 #include <stdlib.h>
 
-static void mpd_initSong(mpd_Song * song) {
+static void mpd_initSong(struct mpd_song *song) {
 	song->file = NULL;
 	song->artist = NULL;
 	song->album = NULL;
@@ -55,7 +55,7 @@ static void mpd_initSong(mpd_Song * song) {
 	song->id = MPD_SONG_NO_ID;
 }
 
-static void mpd_finishSong(mpd_Song * song) {
+static void mpd_finishSong(struct mpd_song *song) {
 	if (song->file)
 		str_pool_put(song->file);
 	if (song->artist)
@@ -82,21 +82,23 @@ static void mpd_finishSong(mpd_Song * song) {
 		str_pool_put(song->comment);
 }
 
-mpd_Song * mpd_newSong(void) {
-	mpd_Song * ret = malloc(sizeof(mpd_Song));
+struct mpd_song *mpd_newSong(void) {
+	struct mpd_song *ret = malloc(sizeof(*ret));
 
 	mpd_initSong(ret);
 
 	return ret;
 }
 
-void mpd_freeSong(mpd_Song * song) {
+void mpd_freeSong(struct mpd_song *song) {
 	mpd_finishSong(song);
 	free(song);
 }
 
-mpd_Song * mpd_songDup(const mpd_Song * song) {
-	mpd_Song * ret = mpd_newSong();
+struct mpd_song *
+mpd_songDup(const struct mpd_song *song)
+{
+	struct mpd_song *ret = mpd_newSong();
 
 	if (song->file)
 		ret->file = str_pool_dup(song->file);

@@ -40,7 +40,7 @@
 /* mpd_Song
  * for storing song info returned by mpd
  */
-typedef struct _mpd_Song {
+struct mpd_song {
 	/* filename of song */
 	char * file;
 	/* artist, maybe NULL if there is no tag */
@@ -76,7 +76,7 @@ typedef struct _mpd_Song {
 	int pos;
 	/* song id for a song in the playlist */
 	int id;
-} mpd_Song;
+};
 
 /* mpd_newSong
  * use to allocate memory for a new mpd_Song
@@ -86,17 +86,18 @@ typedef struct _mpd_Song {
  * use mpd_freeSong to free the memory for the mpd_Song, it will also
  * free memory for file, artist, etc, so don't do it yourself
  */
-mpd_Song * mpd_newSong(void);
+struct mpd_song *mpd_newSong(void);
 
 /* mpd_freeSong
  * use to free memory allocated by mpd_newSong
  * also it will free memory pointed to by file, artist, etc, so be careful
  */
-void mpd_freeSong(mpd_Song * song);
+void mpd_freeSong(struct mpd_song *song);
 
 /* mpd_songDup
  * works like strDup, but for a mpd_Song
  */
-mpd_Song * mpd_songDup(const mpd_Song * song);
+struct mpd_song *
+mpd_songDup(const struct mpd_song *song);
 
 #endif

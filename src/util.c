@@ -257,7 +257,9 @@ char * skipFormatting(char * p) {
 }
 
 /* this is a little ugly... */
-char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
+char *
+songToFormatedString(struct mpd_song *song,
+		     const char *format, char ** last)
 {
 	char * ret = NULL;
 	char *p, *end;
@@ -427,7 +429,7 @@ char * songToFormatedString (mpd_Song * song, const char * format, char ** last)
 	return ret;
 }
 
-void print_formatted_song (mpd_Song * song, const char * format)
+void print_formatted_song(struct mpd_song *song, const char * format)
 {
 	char * str = songToFormatedString(song, format, NULL);
 
@@ -439,7 +441,7 @@ void print_formatted_song (mpd_Song * song, const char * format)
 
 #define DEFAULT_FORMAT "[%name%: &[%artist% - ]%title%]|%name%|[%artist% - ]%title%|%file%"
 
-void pretty_print_song (mpd_Song * song)
+void pretty_print_song(struct mpd_song *song)
 {
 	/* was a format string specified? */
 	if (get_option("format")->set)

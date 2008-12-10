@@ -53,7 +53,7 @@ void print_status (mpd_Connection *conn)
 		printErrorAndExit(conn);
 			
 		while((entity = mpd_getNextInfoEntity(conn))) {
-			mpd_Song * song = entity->info.song;
+			struct mpd_song *song = entity->info.song;
 			
 			if(entity->type!=MPD_INFO_ENTITY_TYPE_SONG) {
 				mpd_freeInfoEntity(entity);
