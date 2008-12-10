@@ -48,16 +48,40 @@
 
 #define MPD_WELCOME_MESSAGE	"OK MPD "
 
-#define MPD_ERROR_TIMEOUT	10 /* timeout trying to talk to mpd */
-#define MPD_ERROR_SYSTEM	11 /* system error */
-#define MPD_ERROR_UNKHOST	12 /* unknown host */
-#define MPD_ERROR_CONNPORT	13 /* problems connecting to port on host */
-#define MPD_ERROR_NOTMPD	14 /* mpd not running on port at host */
-#define MPD_ERROR_NORESPONSE	15 /* no response on attempting to connect */
-#define MPD_ERROR_SENDING	16 /* error sending command */
-#define MPD_ERROR_CONNCLOSED	17 /* connection closed by mpd */
-#define MPD_ERROR_ACK		18 /* ACK returned! */
-#define MPD_ERROR_BUFFEROVERRUN	19 /* Buffer was overrun! */
+enum mpd_error {
+	/** no error */
+	MPD_ERROR_SUCCESS = 0,
+
+	/** timeout trying to talk to mpd */
+	MPD_ERROR_TIMEOUT = 10,
+
+	/** system error */
+	MPD_ERROR_SYSTEM,
+
+	/** unknown host */
+	MPD_ERROR_UNKHOST,
+
+	/** problems connecting to port on host */
+	MPD_ERROR_CONNPORT,
+
+	/** mpd not running on port at host */
+	MPD_ERROR_NOTMPD,
+
+	/** no response on attempting to connect */
+	MPD_ERROR_NORESPONSE,
+
+	/** error sending command */
+	MPD_ERROR_SENDING,
+
+	/** connection closed by mpd */
+	MPD_ERROR_CONNCLOSED,
+
+	/** ACK returned! */
+	MPD_ERROR_ACK,
+
+	/** Buffer was overrun! */
+	MPD_ERROR_BUFFEROVERRUN,
+};
 
 #define MPD_ERROR_AT_UNK	-1
 
@@ -145,7 +169,7 @@ typedef struct _mpd_Connection {
 	enum mpd_ack errorCode;
 	int errorAt;
 	/* this will be set to MPD_ERROR_* if there is an error, 0 if not */
-	int error;
+	enum mpd_error error;
 	/* DON'T TOUCH any of the rest of this stuff */
 	int sock;
 	char buffer[16384];
