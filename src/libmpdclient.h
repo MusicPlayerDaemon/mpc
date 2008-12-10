@@ -59,22 +59,25 @@
 #define MPD_ERROR_ACK		18 /* ACK returned! */
 #define MPD_ERROR_BUFFEROVERRUN	19 /* Buffer was overrun! */
 
-#define MPD_ACK_ERROR_UNK	-1
 #define MPD_ERROR_AT_UNK	-1
 
-#define MPD_ACK_ERROR_NOT_LIST			1
-#define MPD_ACK_ERROR_ARG			2
-#define MPD_ACK_ERROR_PASSWORD			3
-#define MPD_ACK_ERROR_PERMISSION		4
-#define MPD_ACK_ERROR_UNKNOWN_CMD		5
+enum mpd_ack {
+	MPD_ACK_ERROR_UNK = -1,
 
-#define MPD_ACK_ERROR_NO_EXIST			50
-#define MPD_ACK_ERROR_PLAYLIST_MAX		51
-#define MPD_ACK_ERROR_SYSTEM			52
-#define MPD_ACK_ERROR_PLAYLIST_LOAD		53
-#define MPD_ACK_ERROR_UPDATE_ALREADY		54
-#define MPD_ACK_ERROR_PLAYER_SYNC		55
-#define MPD_ACK_ERROR_EXIST			56
+	MPD_ACK_ERROR_NOT_LIST = 1,
+	MPD_ACK_ERROR_ARG = 2,
+	MPD_ACK_ERROR_PASSWORD = 3,
+	MPD_ACK_ERROR_PERMISSION = 4,
+	MPD_ACK_ERROR_UNKNOWN_CMD = 5,
+
+	MPD_ACK_ERROR_NO_EXIST = 50,
+	MPD_ACK_ERROR_PLAYLIST_MAX = 51,
+	MPD_ACK_ERROR_SYSTEM = 52,
+	MPD_ACK_ERROR_PLAYLIST_LOAD = 53,
+	MPD_ACK_ERROR_UPDATE_ALREADY = 54,
+	MPD_ACK_ERROR_PLAYER_SYNC = 55,
+	MPD_ACK_ERROR_EXIST = 56,
+};
 
 #ifdef __cplusplus
 extern "C" {
@@ -139,7 +142,7 @@ typedef struct _mpd_Connection {
 	int version[3];
 	/* IMPORTANT, you want to get the error messages from here */
 	char errorStr[512];
-	int errorCode;
+	enum mpd_ack errorCode;
 	int errorAt;
 	/* this will be set to MPD_ERROR_* if there is an error, 0 if not */
 	int error;
