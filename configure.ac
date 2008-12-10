@@ -119,4 +119,25 @@ AC_CHECK_HEADER(locale.h,AC_DEFINE(HAVE_LOCALE,1,[Define for locale]),)
 AC_DEFINE_UNQUOTED(DEFAULT_HOST,"$DEFAULT_HOST",[Define default host])
 AC_DEFINE_UNQUOTED(DEFAULT_PORT,"$DEFAULT_PORT",[Define default port])
 
+
+dnl
+dnl CFLAGS
+dnl
+
+AC_SUBST(AM_CFLAGS)
+
+CHECK_CFLAG([-Wall])
+CHECK_CFLAG([-Wextra])
+CHECK_CFLAG([-Wno-deprecated-declarations])
+CHECK_CFLAG([-Wmissing-prototypes])
+CHECK_CFLAG([-Wdeclaration-after-statement])
+CHECK_CFLAG([-Wshadow])
+CHECK_CFLAG([-Wpointer-arith])
+CHECK_CFLAG([-Wstrict-prototypes])
+CHECK_CFLAG([-Wcast-qual])
+CHECK_CFLAG([-Wwrite-strings])
+
+
+dnl
+
 AC_OUTPUT(doc/Makefile src/Makefile Makefile)
