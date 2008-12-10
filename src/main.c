@@ -46,7 +46,9 @@ struct _mpc_table {
 	                       */
 	cmdhandler handler;
 	const char *usage;
-	char *help;           /* NULL means they won't be shown in help */
+
+	/** NULL means they won't be shown in help */
+	const char *help;
 } mpc_table [] = {
 	/* command,     min, max, pipe, handler,         usage, help */
 	{"add",         0,   -1,  1,    cmd_add,         "<file>", "Add a song to the current playlist"},
@@ -138,8 +140,8 @@ static int print_help(char * progname, char * command)
 
 static mpd_Connection * setup_connection (void)
 {
-	char * host = DEFAULT_HOST;
-	char * port = DEFAULT_PORT;
+	const char * host = DEFAULT_HOST;
+	const char * port = DEFAULT_PORT;
 	int iport;
 	char * test;
 	int port_env = 0;

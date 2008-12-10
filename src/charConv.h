@@ -19,9 +19,9 @@
 #ifndef CHAR_CONV_H
 #define CHAR_CONV_H
 
-char * toUtf8(char * from);
+char * toUtf8(const char * from);
 
-char * fromUtf8(char * to);
+char * fromUtf8(const char * to);
 
 void setLocaleCharset();
 

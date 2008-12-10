@@ -233,7 +233,7 @@ char * appendToString(char * dest, const char * src, int len) {
 	return dest;
 }
 
-char * skipFormatting(char * p) {
+const char * skipFormatting(const char * p) {
 	int stack = 0;
 		
 	while (*p != '\0') {
@@ -259,17 +259,17 @@ char * skipFormatting(char * p) {
 /* this is a little ugly... */
 char *
 songToFormatedString(struct mpd_song *song,
-		     const char *format, char ** last)
+		     const char *format, const char ** last)
 {
 	char * ret = NULL;
-	char *p, *end;
+	const char *p, *end;
 	char * temp;
 	int length;
 	int found = 0;
 	int labelFound = 0;
 
 	/* we won't mess up format, we promise... */
-	for (p = (char *)format; *p != '\0'; )
+	for (p = format; *p != '\0'; )
 	{
 		if (p[0] == '|') {
 			++p;

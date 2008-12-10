@@ -31,7 +31,7 @@ struct mpc_option
     - danb */
 extern struct mpc_option mpc_options [];
 
-struct mpc_option * get_option (char option[]);
+struct mpc_option *get_option(const char *option);
 int parse_options (int * argc_p, char ** argv);
 
 #endif /* OPTIONS_H */	

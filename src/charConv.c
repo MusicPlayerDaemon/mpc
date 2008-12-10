@@ -49,7 +49,7 @@ static void closeCharSetConversion();
 
 /* code from iconv_prog.c (omiting invalid symbols): */
 #ifdef HAVE_ICONV
-static char * skip_invalid(char *to)
+static char * skip_invalid(const char *to)
 {
 	const char *errhand = strchrnul(to, '/');
 	int nslash = 2;
@@ -76,10 +76,12 @@ static char * skip_invalid(char *to)
 }
 #endif
 
-static int setCharSetConversion(char * to, char * from) {
+static int setCharSetConversion(const char * to, const char * from) {
 #ifdef HAVE_ICONV
+	char *allocated = NULL;
+
 	if (ignore_invalid)
-		to = skip_invalid(to);
+		to = allocated = skip_invalid(to);
 	if(char_conv_to && strcmp(to,char_conv_to)==0 &&
 			char_conv_from && strcmp(from,char_conv_from)==0)
 		return 0;
@@ -92,15 +94,15 @@ static int setCharSetConversion(char * to, char * from) {
 	char_conv_to = strdup(to);
 	char_conv_from = strdup(from);
 
-	if (ignore_invalid)
-		free(to);
+	if (allocated != NULL)
+		free(allocated);
 
 	return 0;
 #endif
 	return -1;
 }
 
-static char * convStrDup(char * string) {
+static char * convStrDup(const char * string) {
 #ifdef HAVE_ICONV
 	char buffer[BUFFER_SIZE];
 	size_t inleft = strlen(string);
@@ -178,7 +180,7 @@ void setLocaleCharset(void) {
         localeCharset = strdup("ISO-8859-1");
 }
 
-char * toUtf8(char * from) {
+char * toUtf8(const char * from) {
 	static char * to = NULL;
 
 	if(to) free(to);
@@ -191,7 +193,7 @@ char * toUtf8(char * from) {
 	return to;
 }
 
-char * fromUtf8(char * from) {
+char * fromUtf8(const char * from) {
 	static char * to = NULL;
 
 	if(to) free(to);

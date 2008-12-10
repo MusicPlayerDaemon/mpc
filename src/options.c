@@ -40,7 +40,7 @@ struct mpc_option mpc_options [] =
 };
 
 /* why don't all languages have dictionary built-ins...? */
-struct mpc_option * get_option (char option[])
+struct mpc_option *get_option(const char *option)
 {
 	int i;
 

@@ -580,7 +580,7 @@ int cmd_playlist ( int argc, char ** argv, mpd_Connection * conn )
 
 int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
 {
-	char * listall = "";
+	const char * listall = "";
 	int i=0;
 
 	if(argc>0) listall = toUtf8(argv[i]);
@@ -600,7 +600,7 @@ int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
 
 int cmd_update ( int argc, char ** argv, mpd_Connection * conn) 
 {
-	char * update = "";
+	const char * update = "";
 	int i = 0;
 
 	mpd_sendCommandListBegin(conn);
@@ -623,12 +623,15 @@ int cmd_update ( int argc, char ** argv, mpd_Connection * conn)
 int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_InfoEntity * entity;
-	char * ls = "";
+	char * ls;
 	int i = 0;
 	char * sp;
 	char * dp;
 
-	if(argc>0) ls = toUtf8(argv[i]);
+	if (argc > 0)
+		ls = toUtf8(argv[i]);
+	else
+		ls = strdup("");
 
 	do {
 		mpd_sendListallCommand(conn,"");
@@ -678,7 +681,7 @@ int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
 int cmd_lsplaylists ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_InfoEntity * entity;
-	char * ls = "";
+	const char * ls = "";
 	int i = 0;
 
 	if(argc>0) ls = toUtf8(argv[i]);
