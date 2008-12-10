@@ -33,6 +33,7 @@
 #include "libmpdclient.h"
 #include "str_pool.h"
 
+#include <assert.h>
 #include <errno.h>
 #include <ctype.h>
 #include <sys/types.h>
@@ -407,12 +408,116 @@ static int mpd_connect_un(mpd_Connection * connection,
 }
 #endif /* WIN32 */
 
+/**
+ * Wait for the socket to become readable.
+ */
+static int mpd_wait(mpd_Connection *connection)
+{
+	struct timeval tv;
+	fd_set fds;
+	int ret;
+
+	while (1) {
+		tv = connection->timeout;
+		FD_ZERO(&fds);
+		FD_SET(connection->sock, &fds);
+
+		ret = select(connection->sock + 1, &fds, NULL, NULL, &tv);
+		if (ret > 0)
+			return 0;
+
+		if (ret == 0 || !SELECT_ERRNO_IGNORE)
+			return -1;
+	}
+}
+
+/**
+ * Wait until the socket is connected and check its result.  Returns 1
+ * on success, 0 on timeout, -errno on error.
+ */
+static int mpd_wait_connected(mpd_Connection *connection)
+{
+	int ret;
+	int s_err = 0;
+	socklen_t s_err_size = sizeof(s_err);
+
+	ret = mpd_wait(connection);
+	if (ret < 0)
+		return 0;
+
+	ret = getsockopt(connection->sock, SOL_SOCKET, SO_ERROR,
+			 (char*)&s_err, &s_err_size);
+	if (ret < 0)
+		return -errno;
+
+	if (s_err != 0)
+		return -s_err;
+
+	return 1;
+}
+
+/**
+ * Attempt to read data from the socket into the input buffer.
+ * Returns 0 on success, -1 on error.
+ */
+static int mpd_recv(mpd_Connection *connection)
+{
+	int ret;
+	ssize_t nbytes;
+
+	assert(connection != NULL);
+	assert(connection->buflen <= sizeof(connection->buffer));
+	assert(connection->bufstart <= connection->buflen);
+
+	if (connection->buflen >= sizeof(connection->buffer)) {
+		/* delete consumed data from beginning of buffer */
+		connection->buflen -= connection->bufstart;
+		memmove(connection->buffer,
+			connection->buffer + connection->bufstart,
+			connection->buflen);
+		connection->bufstart = 0;
+	}
+
+	if (connection->buflen >= sizeof(connection->buffer)) {
+		strcpy(connection->errorStr, "buffer overrun");
+		connection->error = MPD_ERROR_BUFFEROVERRUN;
+		connection->doneProcessing = 1;
+		connection->doneListOk = 0;
+		return -1;
+	}
+
+	while (1) {
+		ret = mpd_wait(connection);
+		if (ret < 0) {
+			strcpy(connection->errorStr, "connection timeout");
+			connection->error = MPD_ERROR_TIMEOUT;
+			connection->doneProcessing = 1;
+			connection->doneListOk = 0;
+			return -1;
+		}
+
+		nbytes = read(connection->sock,
+			      connection->buffer + connection->buflen,
+			      sizeof(connection->buffer) - connection->buflen);
+		if (nbytes > 0) {
+			connection->buflen += nbytes;
+			return 0;
+		}
+
+		if (nbytes == 0 || !SENDRECV_ERRNO_IGNORE) {
+			strcpy(connection->errorStr, "connection closed");
+			connection->error = MPD_ERROR_CONNCLOSED;
+			connection->doneProcessing = 1;
+			connection->doneListOk = 0;
+			return -1;
+		}
+	}
+}
+
 mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 	int err;
 	char * rt;
 	mpd_Connection * connection = malloc(sizeof(mpd_Connection));
-	struct timeval tv;
-	fd_set fds;
 
 	connection->sock = -1;
 	connection->buflen = 0;
@@ -444,44 +549,26 @@ mpd_Connection * mpd_newConnection(const char * host, int port, float timeout) {
 	if (err < 0)
 		return connection;
 
+	err = mpd_wait_connected(connection);
+	if (err == 0) {
+		snprintf(connection->errorStr, sizeof(connection->errorStr),
+			 "timeout in attempting to get a response from"
+			 " \"%s\" on port %i",host,port);
+		connection->error = MPD_ERROR_NORESPONSE;
+		return connection;
+	} else if (err < 0) {
+		snprintf(connection->errorStr,
+			 sizeof(connection->errorStr),
+			 "problems connecting to \"%s\" on port %i: %s",
+			 host, port, strerror(-err));
+		connection->error = MPD_ERROR_CONNPORT;
+		return connection;
+	}
+
 	while(!(rt = memchr(connection->buffer, '\n', connection->buflen))) {
-		tv.tv_sec = connection->timeout.tv_sec;
-		tv.tv_usec = connection->timeout.tv_usec;
-		FD_ZERO(&fds);
-		FD_SET(connection->sock,&fds);
-		if((err = select(connection->sock+1,&fds,NULL,NULL,&tv)) == 1) {
-			ssize_t readed;
-			readed = recv(connection->sock,
-				      &(connection->buffer[connection->buflen]),
-				      sizeof(connection->buffer) - connection->buflen, 0);
-			if(readed<=0) {
-				snprintf(connection->errorStr,
-					 sizeof(connection->errorStr),
-					 "problems getting a response from"
-					 " \"%s\" on port %i : %s",
-					 host, port, strerror(errno));
-				connection->error = MPD_ERROR_NORESPONSE;
-				return connection;
-			}
-			connection->buflen+=readed;
-		}
-		else if(err<0) {
-			if (SELECT_ERRNO_IGNORE)
-				continue;
-			snprintf(connection->errorStr, sizeof(connection->errorStr),
-				 "problems connecting to \"%s\" on port %i",
-				 host,port);
-			connection->error = MPD_ERROR_CONNPORT;
+		err = mpd_recv(connection);
+		if (err < 0)
 			return connection;
-		}
-		else {
-			snprintf(connection->errorStr, sizeof(connection->errorStr),
-				 "timeout in attempting to get a response from"
-				 " \"%s\" on port %i",
-				 host, port);
-			connection->error = MPD_ERROR_NORESPONSE;
-			return connection;
-		}
 	}
 
 	*rt = '\0';
@@ -570,11 +657,7 @@ static void mpd_getNextReturnElement(mpd_Connection * connection) {
 	char * rt = NULL;
 	char * name = NULL;
 	char * value = NULL;
-	fd_set fds;
-	struct timeval tv;
 	char * tok = NULL;
-	ssize_t readed;
-	char * bufferCheck = NULL;
 	int err;
 	int pos;
 
@@ -588,56 +671,11 @@ static void mpd_getNextReturnElement(mpd_Connection * connection) {
 		return;
 	}
 
-	bufferCheck = connection->buffer+connection->bufstart;
-	while (connection->bufstart >= connection->buflen ||
-	       !(rt = memchr(bufferCheck, '\n',
-			     connection->buffer + connection->buflen -
-			     bufferCheck))) {
-		if (connection->buflen >= sizeof(connection->buffer)) {
-			memmove(connection->buffer,
-				connection->buffer + connection->bufstart,
-				connection->buflen - connection->bufstart);
-			connection->buflen -= connection->bufstart;
-			connection->bufstart = 0;
-		}
-		if (connection->buflen >= sizeof(connection->buffer)) {
-			strcpy(connection->errorStr,"buffer overrun");
-			connection->error = MPD_ERROR_BUFFEROVERRUN;
-			connection->doneProcessing = 1;
-			connection->doneListOk = 0;
+	while (!(rt = memchr(connection->buffer + connection->bufstart, '\n',
+			     connection->buflen - connection->bufstart))) {
+		err = mpd_recv(connection);
+		if (err < 0)
 			return;
-		}
-		bufferCheck = connection->buffer+connection->buflen;
-		tv.tv_sec = connection->timeout.tv_sec;
-		tv.tv_usec = connection->timeout.tv_usec;
-		FD_ZERO(&fds);
-		FD_SET(connection->sock,&fds);
-		if((err = select(connection->sock+1,&fds,NULL,NULL,&tv) == 1)) {
-			readed = recv(connection->sock,
-				      connection->buffer+connection->buflen,
-				      sizeof(connection->buffer) - connection->buflen,
-				      MSG_DONTWAIT);
-			if(readed<0 && SENDRECV_ERRNO_IGNORE) {
-				continue;
-			}
-			if(readed<=0) {
-				strcpy(connection->errorStr,"connection"
-				       " closed");
-				connection->error = MPD_ERROR_CONNCLOSED;
-				connection->doneProcessing = 1;
-				connection->doneListOk = 0;
-				return;
-			}
-			connection->buflen+=readed;
-		}
-		else if(err<0 && SELECT_ERRNO_IGNORE) continue;
-		else {
-			strcpy(connection->errorStr,"connection timeout");
-			connection->error = MPD_ERROR_TIMEOUT;
-			connection->doneProcessing = 1;
-			connection->doneListOk = 0;
-			return;
-		}
 	}
 
 	*rt = '\0';
