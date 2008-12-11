@@ -25,6 +25,7 @@
 #include "status.h"
 #include "command.h"
 #include "mpc.h"
+#include "gcc.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -36,14 +37,15 @@
 #define DIE(args...) do { fprintf(stderr, ##args); return -1; } while(0)
 
 #define SIMPLE_CMD(funcname, libmpdclient_funcname, ret) \
-int funcname ( int argc, char ** argv, mpd_Connection * conn) { \
+int funcname(mpd_unused int argc, mpd_unused char **argv, \
+	     mpd_Connection *conn) { \
         libmpdclient_funcname(conn); \
         my_finishCommand(conn); \
         return ret; \
 }
 
 #define SIMPLE_ONEARG_CMD(funcname, libmpdclient_funcname, ret) \
-int funcname ( int argc, char ** argv, mpd_Connection * conn) { \
+int funcname (mpd_unused int argc, char **argv, mpd_Connection *conn) { \
         libmpdclient_funcname(conn, toUtf8(argv[0])); \
         my_finishCommand(conn); \
         return ret; \
@@ -181,7 +183,8 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_crop( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_crop(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 {
 	mpd_Status *status = getStatus( conn );
 	int length = ( status->playlistLength - 1 );
@@ -294,7 +297,8 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_toggle( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_toggle(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 {
 	mpd_Status * status;
 	status = getStatus(conn);
@@ -307,7 +311,8 @@ int cmd_toggle( int argc, char ** argv, mpd_Connection * conn )
 	return 1;
 }
 
-int cmd_outputs( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_outputs(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 {
 	mpd_OutputEntity * output;
 
@@ -335,7 +340,8 @@ int cmd_outputs( int argc, char ** argv, mpd_Connection * conn )
 	return( 0 );
 }
 
-int cmd_enable( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_enable(mpd_unused int argc, char **argv, mpd_Connection *conn)
 {
 	int arg;
 
@@ -349,7 +355,8 @@ int cmd_enable( int argc, char ** argv, mpd_Connection * conn )
 	return cmd_outputs(0, NULL, conn);
 }
 
-int cmd_disable( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_disable(mpd_unused int argc, char **argv, mpd_Connection *conn)
 {
 	int arg;
 
@@ -394,7 +401,8 @@ int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 	return 1;
 }
 
-int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_seek(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 {
 	mpd_Status * status;
 	char * arg = argv[0];
@@ -526,7 +534,8 @@ int cmd_seek ( int argc, char ** argv, mpd_Connection * conn )
 	return 1;
 }
 
-int cmd_move ( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_move(mpd_unused int argc, char **argv, mpd_Connection *conn)
 {
 	int from;
 	int to;
@@ -547,7 +556,8 @@ int cmd_move ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_playlist ( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_playlist(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 {
 	mpd_InfoEntity * entity;
 	mpd_Status * status;
@@ -871,7 +881,8 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 	return 1;
 }
 
-int cmd_pause ( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_pause(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 {
 	mpd_sendPauseCommand(conn,1);
 	my_finishCommand(conn);
@@ -949,7 +960,8 @@ int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_version ( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_version(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 {
 	printf("mpd version: %i.%i.%i\n",conn->version[0],
 			conn->version[1],conn->version[2]);
@@ -1075,7 +1087,8 @@ static char * DHMS(unsigned long t)
 	return buf;
 }
 
-int cmd_stats ( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_stats(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 {
 	mpd_Stats *stats;
 	time_t t;
@@ -1101,7 +1114,8 @@ int cmd_stats ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_status ( int argc, char ** argv, mpd_Connection * conn )
+int
+cmd_status(mpd_unused  int argc, mpd_unused char **argv, mpd_Connection *conn)
 {
 	print_status(conn);
 	return 0;
