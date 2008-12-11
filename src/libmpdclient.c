@@ -320,9 +320,10 @@ static int mpd_recv(mpd_Connection *connection)
 			return -1;
 		}
 
-		nbytes = read(connection->sock,
+		nbytes = recv(connection->sock,
 			      connection->buffer + connection->buflen,
-			      sizeof(connection->buffer) - connection->buflen);
+			      sizeof(connection->buffer) - connection->buflen,
+			      0);
 		if (nbytes > 0) {
 			connection->buflen += nbytes;
 			return 0;
