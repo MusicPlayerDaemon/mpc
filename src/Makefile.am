@@ -1,7 +1,8 @@
 bin_PROGRAMS = mpc
 # lots of += lines makes diffs easier to apply :)
 
-mpc_headers  = libmpdclient.h str_pool.h song.h resolver.h
+mpc_headers  = libmpdclient.h str_pool.h song.h resolver.h \
+	gcc.h
 mpc_headers += list.h
 mpc_headers += password.h
 mpc_headers += charConv.h
