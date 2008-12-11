@@ -24,7 +24,6 @@ esac
 case "$host" in
 *-mingw32* | *-windows*)
 	CFLAGS="$CFLAGS -mno-cygwin -mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
-	LDFLAGS="$LDFLAGS -no-undefined"
 	LIBS="$LIBS -lws2_32"
 	;;
 *-cygwin*)
