@@ -50,15 +50,23 @@ static void closeCharSetConversion(void);
 
 /* code from iconv_prog.c (omiting invalid symbols): */
 #ifdef HAVE_ICONV
+static inline char * mpc_strchrnul(const char *s, int c)
+{
+	char *ret = strchr(s, c);
+	if (!ret)
+		ret = strchr(s, '\0');
+	return ret;
+}
+
 static char * skip_invalid(const char *to)
 {
-	const char *errhand = strchrnul(to, '/');
+	const char *errhand = mpc_strchrnul(to, '/');
 	int nslash = 2;
 	char *newp, *cp;
 
 	if (*errhand == '/') {
 		--nslash;
-		errhand = strchrnul (errhand, '/');
+		errhand = mpc_strchrnul(errhand, '/');
 
 		if (*errhand == '/') {
 			--nslash;
@@ -67,7 +75,8 @@ static char * skip_invalid(const char *to)
 	}
 
 	newp = (char *)malloc(errhand - to + nslash + 7 + 1);
-	cp = mempcpy(newp, to, errhand - to);
+	memcpy(newp, to, errhand - to);
+	cp = newp + (errhand - to);
 	while (nslash-- > 0)
 		*cp++ = '/';
 	if (cp[-1] != '/')

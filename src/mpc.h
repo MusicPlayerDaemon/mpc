@@ -21,7 +21,6 @@
 
 #include "../config.h"
 
-#include "mpc_compat.h"
 #include "libmpdclient.h"
 #define STRING_LENGTH	(8192)
 
