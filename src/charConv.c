@@ -19,6 +19,7 @@
 #include "charConv.h"
 
 #include "mpc.h"
+#include "gcc.h"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -76,7 +77,9 @@ static char * skip_invalid(const char *to)
 }
 #endif
 
-static int setCharSetConversion(const char * to, const char * from) {
+static int
+setCharSetConversion(mpd_unused const char *to, mpd_unused const char *from)
+{
 #ifdef HAVE_ICONV
 	char *allocated = NULL;
 
@@ -118,7 +121,9 @@ static inline size_t deconst_iconv(iconv_t cd,
 }
 #endif
 
-static char * convStrDup(const char * string) {
+static char *
+convStrDup(mpd_unused const char *string)
+{
 #ifdef HAVE_ICONV
 	char buffer[BUFFER_SIZE];
 	size_t inleft = strlen(string);
