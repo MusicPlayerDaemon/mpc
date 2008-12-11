@@ -150,6 +150,9 @@ By default, mpc connects to localhost:6600.  This can be changed
 either at compile-time, or by exporting the MPD_HOST and MPD_PORT
 environment variables.
 .br
+If you specify an absolute path in MPD_HOST, mpc attempts a connection
+via Unix Domain Socket.
+.br
 To use a password with mpd, set MPD_HOST to password@host.
 .SH "EXAMPLES"
 .TP
