@@ -1450,18 +1450,18 @@ void mpd_sendSwapIdCommand(mpd_Connection * connection, int id1, int id2) {
 	free(string);
 }
 
-void mpd_sendSeekCommand(mpd_Connection * connection, int song, int time) {
+void mpd_sendSeekCommand(mpd_Connection * connection, int song, int t) {
 	int len = strlen("seek")+2+INTLEN+3+INTLEN+3;
 	char *string = malloc(len);
-	snprintf(string, len, "seek \"%i\" \"%i\"\n", song, time);
+	snprintf(string, len, "seek \"%i\" \"%i\"\n", song, t);
 	mpd_sendInfoCommand(connection,string);
 	free(string);
 }
 
-void mpd_sendSeekIdCommand(mpd_Connection * connection, int id, int time) {
+void mpd_sendSeekIdCommand(mpd_Connection * connection, int id, int t) {
 	int len = strlen("seekid")+2+INTLEN+3+INTLEN+3;
 	char *string = malloc(len);
-	snprintf(string, len, "seekid \"%i\" \"%i\"\n", id, time);
+	snprintf(string, len, "seekid \"%i\" \"%i\"\n", id, t);
 	mpd_sendInfoCommand(connection,string);
 	free(string);
 }
