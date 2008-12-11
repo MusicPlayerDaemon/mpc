@@ -93,8 +93,9 @@ resolver_new(const char *host, int port)
 		resolver->current.addrlen = sizeof(resolver->sun);
 		resolver->current.addr = (const struct sockaddr *)&resolver->sun;
 		resolver->type = TYPE_ONE;
-	} else {
+	} else
 #endif
+	{
 #ifdef MPD_HAVE_GAI
 		struct addrinfo hints;
 		char service[20];
@@ -144,9 +145,7 @@ resolver_new(const char *host, int port)
 
 		resolver->type = TYPE_ONE;
 #endif
-#ifndef WIN32
 	}
-#endif
 
 	return resolver;
 }
