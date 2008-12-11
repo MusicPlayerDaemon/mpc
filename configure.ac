@@ -139,5 +139,30 @@ CHECK_CFLAG([-Wwrite-strings])
 
 
 dnl
+dnl build options
+dnl
+
+AC_ARG_ENABLE(werror,
+	AS_HELP_STRING([--enable-werror],
+		[Treat warnings as errors (default: disabled)]),
+	ENABLE_WERROR=$enableval,
+	ENABLE_WERROR=no)
+
+if test x$ENABLE_WERROR = xyes; then
+	AM_CFLAGS="$AM_CFLAGS -Werror -pedantic-errors"
+fi
+
+AC_ARG_ENABLE(debug,
+	AS_HELP_STRING([--enable-debug],
+		[Enable debugging (default: disabled)]),
+	ENABLE_DEBUG=$enableval,
+	ENABLE_DEBUG=no)
+
+if test x$ENABLE_DEBUG = xno; then
+	AM_CFLAGS="$AM_CFLAGS -DNDEBUG"
+fi
+
+
+dnl
 
 AC_OUTPUT(doc/Makefile src/Makefile Makefile)
