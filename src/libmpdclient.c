@@ -236,7 +236,7 @@ static int mpd_wait(mpd_Connection *connection)
 	while (1) {
 		tv = connection->timeout;
 		FD_ZERO(&fds);
-		FD_SET(connection->sock, &fds);
+		FD_SET((unsigned)connection->sock, &fds);
 
 		ret = select(connection->sock + 1, &fds, NULL, NULL, &tv);
 		if (ret > 0)
@@ -496,7 +496,7 @@ static void mpd_executeCommand(mpd_Connection *connection,
 	mpd_clearError(connection);
 
 	FD_ZERO(&fds);
-	FD_SET(connection->sock,&fds);
+	FD_SET((unsigned)connection->sock, &fds);
 	tv.tv_sec = connection->timeout.tv_sec;
 	tv.tv_usec = connection->timeout.tv_usec;
 
