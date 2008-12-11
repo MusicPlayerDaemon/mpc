@@ -34,7 +34,7 @@
 #include <time.h>
 #include <sys/param.h>
 
-#define DIE(args...) do { fprintf(stderr, ##args); return -1; } while(0)
+#define DIE(...) do { fprintf(stderr, __VA_ARGS__); return -1; } while(0)
 
 #define SIMPLE_CMD(funcname, libmpdclient_funcname, ret) \
 int funcname(mpd_unused int argc, mpd_unused char **argv, \
