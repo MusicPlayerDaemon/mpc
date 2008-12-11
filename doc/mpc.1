@@ -143,14 +143,14 @@ the volume relative to the current volume.
 .SH "ENVIRONMENT"
 .TP
 This section describes some environment variables that affect how mpc operates.
+.PP
+MPD_HOST, MPD_PORT
+.RS 3n
+By default, mpc connects to localhost:6600.  This can be changed
+either at compile-time, or by exporting the MPD_HOST and MPD_PORT
+environment variables.
 .br
-	MPD_HOST
-.br
-	MPD_PORT
-.br
-		By default, mpc connects to localhost:6600. This can be changed either at compile-time, or by exporting the MPD_HOST and MPD_PORT environment variables.
-.br
-		To use a password with mpd, set MPD_HOST to password@host.
+To use a password with mpd, set MPD_HOST to password@host.
 .SH "EXAMPLES"
 .TP
 Here is a script to load and play m3u playlists (useful for mozilla):
