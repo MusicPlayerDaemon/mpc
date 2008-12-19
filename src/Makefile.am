@@ -10,7 +10,6 @@ mpc_headers += status.h
 mpc_headers += util.h
 mpc_headers += command.h
 mpc_headers += mpc.h
-mpc_headers += mpc_compat.h
 mpc_headers += options.h
 
 mpc_SOURCES  = libmpdclient.c str_pool.c song.c resolver.c
