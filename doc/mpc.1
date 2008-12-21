@@ -156,30 +156,8 @@ via Unix Domain Socket.
 To use a password with mpd, set MPD_HOST to password@host.
 .SH "EXAMPLES"
 .TP
-Here is a script to load and play m3u playlists (useful for mozilla):
 .br
-
-.br
-#!/bin/bash
-.br
-mpc clear
-.br
-cat $1 | mpc add
-.br
-mpc play
-.br
-.TP
-This script can be used to load and play pls playlists (again, useful for mozilla):
-.br
-
-.br
-#!/bin/bash
-.br
-mpc clear
-.br
-grep '^File[0-9]*' $1 | sed -e 's/^File[0-9]*=//' | mpc add
-.br
-mpc play
+For useful examples of mpc use in playlist parsing, see mpd-m3u-playlist.sh and mpd-pls-playlist.sh.
 .br
 .SH "BUGS"
 Report bugs on http://www.musicpd.org/mantis/
