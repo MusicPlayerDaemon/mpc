@@ -1,4 +1,4 @@
-                       Music Player Command (mpc) - INSTALL
+Music Player Command (mpc) - INSTALL
 
 
 Requirements
@@ -51,61 +51,10 @@ If a password is need for accessing mpd:
 
 $ export MPD_HOST=password@<host/ip>
 
-mpc reads specified arguments to act upon:
+Commands
+--------
 
-$ mpc
-Displays current playing song and MPD settings
-
-$ mpc play [<number>]
-Starts playing the song-number specified. If none is specified, plays number 1.
-
-$ mpc stop
-Stops playing
-
-$ mpc pause
-Pauses playing
-
-$ mpc next
-Starts playing next song on playlist
-
-$ mpc prev
-Starts playing previous song
-
-$ mpc shuffle
-Shuffles all songs on the playlist
-
-$ mpc add <song>
-Adds a song from the music database to the playlist. Use 'mpc add ""' to add all. Can also read input from pipes.
-
-$ mpc del <song>
-Removes a song from the playlist. Can also read input from pipes.
-
-$ mpc clear
-Empties playlist
-
-$ mpc playlist
-Prints entire playlist
-
-$ mpc volume <value>
-Sets the volume to <value> (0-100)
-
-$ mpc ls [<directory>]
-Lists all files/folders in <directory>. If no <directory> is specified, lists all files in music directory.
-
-$ mpc listall [<song>]
-Lists <song> from playlist. If no <song> is specified, lists all songs.
-
-$ mpc lsplaylists
-Lists available playlists
-
-$ mpc load <file>
-Loads <file> as playlist
-
-$ mpc save <file>
-Saves the playlist to <file>
-
-$ mpc rm <file>
-Deletes a specific playlist
+For more information about which commands do what, refer either to the help (mpc -h) or for more detailed information refer to the manual page at man 1 mpc.
 
 
 Bash-completion
@@ -118,4 +67,4 @@ Using mpc
 ---------
 
 To use mpc, you should run MPD on a machine. You can download MPD at 
-http://www.musicpd.org .
+http://www.musicpd.org.
