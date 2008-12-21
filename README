@@ -2,11 +2,14 @@
 		       Music Player Command (mpc)
 			http://www.musicpd.org
 
-A client for MPD, the Music Player Daemon. mpc connects to a MPD running on a
-machine via a network. Read more about MPD on http://www.musicpd.org .
+mpc is a client for MPD, the Music Player Daemon. mpc provides a command line
+user interface for controlling an MPD server running on the local network.
 
-mpc is released under the GNU Public License.
+For more information about MPD and other clients visit http://www.musicpd.org.
+
+mpc is released under the GPLv2. For the full license text, please see the 
+COPYING file for more detailed information.
+
 You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-For the full license, see COPYING.
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
