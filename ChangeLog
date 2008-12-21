@@ -1,13 +1,25 @@
-0.13.0 (????/??/??)
+These are really random things that appeared to stick out from our repository logs. To get full details about changes check our repository's logs.
+
+0.14.0 (2008/12/20)
 1) Support for %date%, %genre%, %composer%, %performer%, %disc%, and %comment%
-2) Added "mpc find"
-3) Added "mpc list"
+2) Added the following new commands: find, list, crop, toggle
+3) Man and documentation updates
+4) mpc add / which is an exception, adds the entire database
+5) Add necessary stuff for a windows build
+6) As usual tons of fixes merely from a newer libmpdclient
+7) Character encoding fixes
+8) Add ability to disable iconv
+9) Fix percent bug
+10) Remove addurl, replace by adding with add
+11) Fix default port
+
+0.13.0 (Skipped)
 
 0.12.1 (2007/3/21)
 1) Support for compiling on Windows
 2) New output format for "mpc playlist"
 3) Support for many more search types with "mpc search"
-4) Add "mpc del 0" behaviour to remove the currently playing song
+4) Add "mpc del 0" behavior to remove the currently playing song
 5) Fixed compiling on Solaris
 6) Allow some predefined escape sequences in --format strings
 7) Removed support for "mpc search <type> -", as it was previously broken
