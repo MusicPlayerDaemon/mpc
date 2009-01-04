@@ -10,13 +10,14 @@
 	first=${COMP_WORDS[1]}
 	hold="";
 	
-	# add more escape stuff as needed:
-	scrub='s/\([\\\>\\\<\\\(\\\)\\\";]\)/\\\1/g';
+	# add more escape stuff as it's needed
+	# because bash is a woman:
+	scrub="s/\([><()\";\`']\)/\\\1/g";
 	
 	case "$first" in
 		add) 
-		hold=`mpc tab ${cur}`;
-		COMPREPLY=($(compgen -W "${hold}" | sed "$scrub"))
+		hold=`mpc tab ${cur} | sed "$scrub"`;
+		COMPREPLY=($(compgen -W "${hold}"))
 		return 0
 		;;
 		play|del|move)
