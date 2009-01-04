@@ -1,6 +1,9 @@
 These are really random things that appeared to stick out from our repository
 logs. To get full details about changes check our repository's logs.
 
+mpc 0.15 (not yet released)
+
+
 0.14.0 (2008/12/20)
 1) Support for %date%, %genre%, %composer%, %performer%, %disc%, and %comment%
 2) Added the following new commands: find, list, crop, toggle
