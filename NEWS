@@ -2,6 +2,8 @@ These are really random things that appeared to stick out from our repository
 logs. To get full details about changes check our repository's logs.
 
 mpc 0.15 (not yet released)
+* optimized and simplified the "add" command, don't obtain and print
+  song list when adding directories
 
 
 0.14.0 (2008/12/20)

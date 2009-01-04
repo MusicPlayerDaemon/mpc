@@ -100,89 +100,20 @@ static int isUrl(char * s) {
 
 int cmd_add (int argc, char ** argv, mpd_Connection * conn ) 
 {
-	List ** lists;
-	mpd_InfoEntity * entity;
-	ListNode * node;
-	struct mpd_song *song;
-	char * sp;
-	char * duplicated;
 	int i;
-	int * arglens;
-	int len;
-	int ret;
 
-	lists = malloc(sizeof(List *)*(argc));
-	arglens = malloc(sizeof(int)*(argc));
-
-	/* convert ' ' to '_' */
-	for(i=0;i<argc;i++) {
-		lists[i] = makeList(free);
-		sp = argv[i];
-		while((sp = strchr(sp,' '))) *sp = '_';
-		arglens[i] = strlen(argv[i]);
-	}
-
-	 /* get list of songs to add */
-	 mpd_sendListallCommand(conn,"");
-	 printErrorAndExit(conn);
-
-	while((entity = mpd_getNextInfoEntity(conn))) {
-		if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
-			song = entity->info.song;
-			sp = duplicated = strdup(fromUtf8(song->file));
-			while((sp = strchr(sp,' '))) *sp = '_';
-			len = strlen(duplicated);
-			for(i=0;i<argc;i++) {
-				if (strcmp(argv[i], "/") == 0) {
-					insertInListWithoutKey(lists[i],
-					                       strdup(fromUtf8(song->file)));
-					continue;
-				}
-				if(len<arglens[i]) continue;
-				ret = strncmp(argv[i], duplicated,
-						arglens[i]);
-				if(ret==0 && (argv[i][arglens[i]-1] == '/' ||
-					      duplicated[arglens[i]] == '\0' ||
-					      duplicated[arglens[i]] == '/'))
-				{
-					insertInListWithoutKey(
-							lists[i],
-							strdup(fromUtf8(
-									song->file)));
-				}
-			}
-			free(duplicated);
-		}
-		mpd_freeInfoEntity(entity);
-	}
-	my_finishCommand(conn);
-
-	/* send list of songs */
 	mpd_sendCommandListBegin(conn);
 	printErrorAndExit(conn);
-	for(i=0;i<argc;i++) {
-		if(0 == lists[i]->numberOfNodes && isUrl(argv[i])) {
-			printf("adding: %s\n",argv[i]);
-			mpd_sendAddCommand(conn,toUtf8(argv[i]));
-			printErrorAndExit(conn);
-			continue;
-		}	
 
-		node = lists[i]->firstNode;
-		while(node) {
-			printf("adding: %s\n",(char *)node->data);
-			mpd_sendAddCommand(conn,toUtf8(node->data));
-			printErrorAndExit(conn);
-			node = node->nextNode;
-		}
-		freeList(lists[i]);
+	for(i=0;i<argc;i++) {
+		printf("adding: %s\n", argv[i]);
+		mpd_sendAddCommand(conn, toUtf8(argv[i]));
+		printErrorAndExit(conn);
 	}
+
 	mpd_sendCommandListEnd(conn);
 	my_finishCommand(conn);
 
-	/* clean up */
-	free(lists);
-	free(arglens);
 	return 0;
 }
 
