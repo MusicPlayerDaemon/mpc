@@ -19,6 +19,9 @@ dnl
 dnl declare variables
 dnl
 
+AC_SUBST(AM_CFLAGS)
+AC_SUBST(AM_CPPFLAGS)
+
 AC_SUBST(MPC_LIBS)
 MPC_LIBS=""
 
@@ -29,11 +32,13 @@ dnl
 
 case "$host" in
 *-mingw32* | *-windows*)
-	CFLAGS="$CFLAGS -mno-cygwin -mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
-	LIBS="$LIBS -lws2_32"
+	AM_CFLAGS="$AM_CFLAGS -mno-cygwin -mms-bitfields -fno-strict-aliasing"
+	AM_CPPFLAGS="$AM_CPPFLAGS -DMPD_NO_GAI"
+	MPC_LIBS="$MPC_LIBS -lws2_32"
 	;;
 *-cygwin*)
-	CFLAGS="$CFLAGS -mms-bitfields -fno-strict-aliasing -DMPD_NO_GAI"
+	AM_CFLAGS="$AM_CFLAGS -mms-bitfields -fno-strict-aliasing"
+	AM_CPPFLAGS="$AM_CPPFLAGS -DMPD_NO_GAI"
 	;;
 esac
 
@@ -153,8 +158,6 @@ dnl
 dnl CFLAGS
 dnl
 
-AC_SUBST(AM_CFLAGS)
-
 CHECK_CFLAG([-Wall])
 CHECK_CFLAG([-Wextra])
 CHECK_CFLAG([-Wno-deprecated-declarations])
@@ -188,7 +191,7 @@ AC_ARG_ENABLE(debug,
 	ENABLE_DEBUG=no)
 
 if test x$ENABLE_DEBUG = xno; then
-	AM_CFLAGS="$AM_CFLAGS -DNDEBUG"
+	AM_CPPFLAGS="$AM_CPPFLAGS -DNDEBUG"
 fi
 
 
