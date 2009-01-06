@@ -117,8 +117,17 @@ CPPFLAGS="$my_CPPFLAGS"
 
 if test x$enable_iconv = xyes; then
 	AM_LANGINFO_CODESET
+	if test x$am_cv_langinfo_codeset != xyes; then
+		enable_iconv=no
+		AC_MSG_WARN(nl_langinfo and CODESET not available - disabling iconv)
+	fi
+fi
 
-	AC_CHECK_HEADERS(locale.h)
+if test x$enable_iconv = xyes; then
+	AC_CHECK_HEADER([locale.h],, [enable_iconv=no])
+	if test x$enable_iconv != xyes; then
+		AC_MSG_WARN(locale.h not available - disabling iconv)
+	fi
 fi
 
 if test x$enable_iconv != xyes; then

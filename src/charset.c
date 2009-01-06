@@ -30,11 +30,9 @@
 #include <errno.h>
 #include <string.h>
 
-#ifdef HAVE_LOCALE_H
 #ifdef HAVE_LANGINFO_CODESET
 #include <locale.h>
 #include <langinfo.h>
-#endif
 #endif
 
 static char *locale_charset;
@@ -189,7 +187,6 @@ charset_close(void)
 #endif
 
 void charset_init(void) {
-#ifdef HAVE_LOCALE_H
 #ifdef HAVE_LANGINFO_CODESET
 	char *original_locale;
         char * charset = NULL;
@@ -216,7 +213,6 @@ void charset_init(void) {
                 free(charset);
 		return;
         }
-#endif
 #endif
         locale_charset = strdup("ISO-8859-1");
 }
