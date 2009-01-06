@@ -33,7 +33,8 @@ src_mpc_SOURCES = src/libmpdclient.c src/str_pool.c \
 	src/options.c \
 	$(mpc_headers)
 
-src_mpc_LDADD = $(MPC_LIBS)
+src_mpc_CPPFLAGS = $(AM_CPPFLAGS) $(ICONV_CFLAGS)
+src_mpc_LDADD = $(MPC_LIBS) $(ICONV_LIBS)
 
 # sparse is a semantic parser
 # URL: git://www.kernel.org/pub/scm/devel/sparse/sparse.git

@@ -96,42 +96,36 @@ AC_ARG_ENABLE(iconv,
 		[disable iconv support (default: enable)]),,
 	[enable_iconv=yes])
 
-AC_ARG_WITH(iconv,[  --with-iconv=PFX   Prefix where iconv is installed (optional)], iconv_prefix="$withval", iconv_prefix="")
-AC_ARG_WITH(iconv-libraries,[  --with-iconv-libraries=DIR   Directory where libiconv library is installed (optional)], iconv_libraries="$withval", iconv_libraries="")
-AC_ARG_WITH(iconv-includes,[  --with-iconv-includes=DIR   Directory where libiconv header files are installed (optional)], iconv_includes="$withval", iconv_includes="")
+my_CPPFLAGS="$CPPFLAGS"
 
 if test x$enable_iconv = xyes; then
-  	if test "x$iconv_libraries" != "x" ; then
-  		ICONV_LIBS="-L$iconv_libraries"
-  	elif test "x$iconv_prefix" != "x" ; then
-    		ICONV_LIBS="-L$iconv_prefix/lib"
-  	elif test "x$prefix" != "xNONE"; then
-    		ICONV_LIBS="-L$libdir"
-  	fi
+	CPPFLAGS=""
 
-  	ICONV_LIBS="$ICONV_LIBS -liconv"
+	AM_ICONV
 
-  	if test "x$iconv_includes" != "x" ; then
-  		ICONV_CFLAGS="-I$iconv_includes"
-  	elif test "x$iconv_prefix" != "x" ; then
-    		ICONV_CFLAGS="-I$iconv_prefix/include"
-  	elif test "x$prefix" != "xNONE"; then
-    		ICONV_CFLAGS="-I$includedir"
-  	fi
-
-	CFLAGS="$CFLAGS $ICONV_CFLAGS"
-	LIBS="$LIBS $ICONV_LIBS"
-	CPPFLAGS=$CFLAGS
-	AC_CHECK_HEADER(iconv.h,,[CFLAGS=$oldcflags;enable_iconv=no])
-	if test x$enable_iconv = xyes; then
-		AC_CHECK_LIB(iconv, main,,LIBS=$oldlibs)
-		AC_DEFINE(HAVE_ICONV,1,[Define to use iconv])
+	if test "x$am_cv_func_iconv" != xyes; then
+		enable_iconv=no
 	fi
 fi
+
+if test x$enable_iconv = xyes; then
+	ICONV_CPPFLAGS="$CPPFLAGS"
+	ICONV_LIBS="$LIBICONV"
+fi
+
+CPPFLAGS="$my_CPPFLAGS"
 
 AM_LANGINFO_CODESET
 
 AC_CHECK_HEADERS(locale.h)
+
+if test x$enable_iconv != xyes; then
+	ICONV_CPPFLAGS=""
+	ICONV_LIBS=""
+fi
+
+AC_SUBST(ICONV_CPPFLAGS)
+AC_SUBST(ICONV_LIBS)
 
 
 dnl
