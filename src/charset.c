@@ -223,7 +223,9 @@ void charset_init(void) {
 
 void charset_deinit(void)
 {
+#ifdef HAVE_ICONV
 	charset_close();
+#endif
 
 	free(locale_charset);
 }
