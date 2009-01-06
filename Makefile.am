@@ -13,7 +13,7 @@ src_mpc_headers = src/libmpdclient.h src/str_pool.h \
 	src/song.h src/resolver.h \
 	src/list.h \
 	src/password.h \
-	src/charConv.h \
+	src/charset.h \
 	src/status.h \
 	src/util.h \
 	src/command.h \
@@ -26,7 +26,7 @@ src_mpc_SOURCES = src/libmpdclient.c src/str_pool.c \
 	src/main.c \
 	src/list.c \
 	src/password.c \
-	src/charConv.c \
+	src/charset.c \
 	src/status.c \
 	src/util.c \
 	src/command.c \

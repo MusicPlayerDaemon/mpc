@@ -22,7 +22,7 @@
 
 #include "libmpdclient.h"
 #include "list.h"
-#include "charConv.h"
+#include "charset.h"
 #include "password.h"
 #include "util.h"
 #include "status.h"
