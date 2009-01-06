@@ -30,7 +30,7 @@
 #include <errno.h>
 #include <string.h>
 
-#ifdef HAVE_LOCALE
+#ifdef HAVE_LOCALE_H
 #ifdef HAVE_LANGINFO_CODESET
 #include <locale.h>
 #include <langinfo.h>
@@ -189,7 +189,7 @@ charset_close(void)
 #endif
 
 void charset_init(void) {
-#ifdef HAVE_LOCALE
+#ifdef HAVE_LOCALE_H
 #ifdef HAVE_LANGINFO_CODESET
 	char *original_locale;
         char * charset = NULL;
