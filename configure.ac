@@ -115,9 +115,11 @@ fi
 
 CPPFLAGS="$my_CPPFLAGS"
 
-AM_LANGINFO_CODESET
+if test x$enable_iconv = xyes; then
+	AM_LANGINFO_CODESET
 
-AC_CHECK_HEADERS(locale.h)
+	AC_CHECK_HEADERS(locale.h)
+fi
 
 if test x$enable_iconv != xyes; then
 	ICONV_CPPFLAGS=""
