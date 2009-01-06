@@ -84,20 +84,6 @@ static mpd_Status * getStatus(mpd_Connection * conn) {
 	return ret;
 }
 
-static int isUrl(char * s) {
-	char * t;
-
-	t = strstr(s,"://");
-	if(!t) return 0;
-
-	while(s!=t) {
-		if(!(*s >= 'A' && *s <= 'z')) return 0;
-		s++;
-	}
-
-	return 1;
-}
-
 int cmd_add (int argc, char ** argv, mpd_Connection * conn ) 
 {
 	int i;
