@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include <sys/param.h>
 
-struct _mpc_table {
+static struct _mpc_table {
 	const char *command;
 	const int min, max;   /* min/max arguments allowed, -1 = unlimited */
 	int pipe;             /**
