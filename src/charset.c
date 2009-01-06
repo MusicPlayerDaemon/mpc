@@ -221,6 +221,13 @@ void charset_init(void) {
         locale_charset = strdup("ISO-8859-1");
 }
 
+void charset_deinit(void)
+{
+	charset_close();
+
+	free(locale_charset);
+}
+
 char * charset_to_utf8(const char * from) {
 	static char * to = NULL;
 

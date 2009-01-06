@@ -223,14 +223,12 @@ static char ** check_args(int idx, int * argc, char ** argv)
 	return array;
 }
 
-int main(int argc, char ** argv)
+static int
+run(int argc, char **argv)
 {
 	int i, ret;
 	const char *cmd;
 	charset_init();
-
-	if(parse_options(&argc, argv) < 0)
-		return print_help(argv[0],NULL);
 
 	if (argc==1)
 		return print_status_and_exit();
@@ -259,3 +257,24 @@ int main(int argc, char ** argv)
 	return print_help(argv[0],argv[1]);
 }
 
+int main(int argc, char ** argv)
+{
+	int ret;
+
+	if(parse_options(&argc, argv) < 0)
+		return print_help(argv[0],NULL);
+
+	/* initialization */
+
+	charset_init();
+
+	/* run */
+
+	ret = run(argc, argv);
+
+	/* cleanup */
+
+	charset_deinit();
+
+	return ret;
+}
