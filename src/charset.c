@@ -37,7 +37,7 @@
 #endif
 #endif
 
-static char * localeCharset;
+static char *locale_charset;
 
 #ifdef HAVE_ICONV
 #include <iconv.h>
@@ -48,8 +48,10 @@ static int ignore_invalid;
 #endif
 
 #define BUFFER_SIZE	1024
+
 #ifdef HAVE_ICONV
-static void closeCharSetConversion(void);
+static void
+charset_close(void);
 #endif
 
 /* code from iconv_prog.c (omiting invalid symbols): */
@@ -91,7 +93,7 @@ static char * skip_invalid(const char *to)
 #endif
 
 static int
-setCharSetConversion(mpd_unused const char *to, mpd_unused const char *from)
+charset_set(mpd_unused const char *to, mpd_unused const char *from)
 {
 #ifdef HAVE_ICONV
 	char *allocated = NULL;
@@ -102,7 +104,7 @@ setCharSetConversion(mpd_unused const char *to, mpd_unused const char *from)
 			char_conv_from && strcmp(from,char_conv_from)==0)
 		return 0;
 
-	closeCharSetConversion();
+	charset_close();
 
 	if ((char_conv_iconv = iconv_open(to,from))==(iconv_t)(-1))
 		return -1;
@@ -135,7 +137,7 @@ static inline size_t deconst_iconv(iconv_t cd,
 #endif
 
 static char *
-convStrDup(mpd_unused const char *string)
+charset_conv_strdup(mpd_unused const char *string)
 {
 #ifdef HAVE_ICONV
 	char buffer[BUFFER_SIZE];
@@ -173,7 +175,9 @@ convStrDup(mpd_unused const char *string)
 }
 
 #ifdef HAVE_ICONV
-static void closeCharSetConversion(void) {
+static void
+charset_close(void)
+{
 	if(char_conv_to) {
 		iconv_close(char_conv_iconv);
 		free(char_conv_to);
@@ -184,57 +188,59 @@ static void closeCharSetConversion(void) {
 }
 #endif
 
-void setLocaleCharset(void) {
+void charset_init(void) {
 #ifdef HAVE_LOCALE
 #ifdef HAVE_LANGINFO_CODESET
-        char * originalLocale;
+	char *original_locale;
         char * charset = NULL;
 
 #ifdef HAVE_ICONV
 	ignore_invalid = isatty(STDOUT_FILENO) && isatty(STDIN_FILENO);
 #endif
 
-	if((originalLocale = setlocale(LC_CTYPE,""))) {
+	original_locale = setlocale(LC_CTYPE,"");
+	if (original_locale != NULL) {
                 char * temp;
                                                                                 
                 if((temp = nl_langinfo(CODESET))) {
                         charset = strdup(temp);
                 }
-		setlocale(LC_CTYPE,originalLocale);
+		setlocale(LC_CTYPE,original_locale);
         }
 	
-	if(localeCharset) free(localeCharset);
+	if (locale_charset != NULL)
+		free(locale_charset);
                                                                                 
         if(charset) {
-		localeCharset = strdup(charset);
+		locale_charset = strdup(charset);
                 free(charset);
 		return;
         }
 #endif
 #endif
-        localeCharset = strdup("ISO-8859-1");
+        locale_charset = strdup("ISO-8859-1");
 }
 
-char * toUtf8(const char * from) {
+char * charset_to_utf8(const char * from) {
 	static char * to = NULL;
 
 	if(to) free(to);
 
-	setCharSetConversion("UTF-8", localeCharset);
-	to = convStrDup(from);
+	charset_set("UTF-8", locale_charset);
+	to = charset_conv_strdup(from);
 
 	if(!to) to = strdup(from);
 
 	return to;
 }
 
-char * fromUtf8(const char * from) {
+char * charset_from_utf8(const char * from) {
 	static char * to = NULL;
 
 	if(to) free(to);
 
-	setCharSetConversion(localeCharset, "UTF-8");
-	to = convStrDup(from);
+	charset_set(locale_charset, "UTF-8");
+	to = charset_conv_strdup(from);
 
 	if(!to) {
 		/*printf("not able to convert: %s\n",from);*/

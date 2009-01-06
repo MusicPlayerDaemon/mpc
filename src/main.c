@@ -227,7 +227,7 @@ int main(int argc, char ** argv)
 {
 	int i, ret;
 	const char *cmd;
-	setLocaleCharset();
+	charset_init();
 
 	if(parse_options(&argc, argv) < 0)
 		return print_help(argv[0],NULL);

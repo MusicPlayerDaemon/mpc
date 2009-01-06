@@ -23,10 +23,10 @@
 #ifndef CHAR_CONV_H
 #define CHAR_CONV_H
 
-char * toUtf8(const char * from);
+void charset_init(void);
 
-char * fromUtf8(const char * to);
+char * charset_to_utf8(const char * from);
 
-void setLocaleCharset(void);
+char * charset_from_utf8(const char * to);
 
 #endif

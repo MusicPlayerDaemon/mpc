@@ -37,7 +37,7 @@
 void printErrorAndExit(mpd_Connection * conn)
 {
 	if(conn->error) {
-		fprintf(stderr,"error: %s\n",fromUtf8(conn->errorStr));
+		fprintf(stderr,"error: %s\n",charset_from_utf8(conn->errorStr));
 		mpd_closeConnection(conn);
 		exit(EXIT_FAILURE);
 	}
@@ -371,40 +371,40 @@ songToFormatedString(struct mpd_song *song,
 		if (*end != '%') {
 			length--;
 		} else if (strncmp("%file%", p, length) == 0) {
-			temp = fromUtf8(song->file);
+			temp = charset_from_utf8(song->file);
 		} else if (strncmp("%artist%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->artist ? fromUtf8(song->artist) : NULL;
+			temp = song->artist ? charset_from_utf8(song->artist) : NULL;
 		} else if (strncmp("%album%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->album ? fromUtf8(song->album) : NULL;
+			temp = song->album ? charset_from_utf8(song->album) : NULL;
 		} else if (strncmp("%track%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->track ? fromUtf8(song->track) : NULL;
+			temp = song->track ? charset_from_utf8(song->track) : NULL;
 		} else if (strncmp("%title%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->title ? fromUtf8(song->title) : NULL;
+			temp = song->title ? charset_from_utf8(song->title) : NULL;
 		} else if (strncmp("%name%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->name ? fromUtf8(song->name) : NULL;
+			temp = song->name ? charset_from_utf8(song->name) : NULL;
 		} else if (strncmp("%date%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->date ? fromUtf8(song->date) : NULL;
+			temp = song->date ? charset_from_utf8(song->date) : NULL;
 		} else if (strncmp("%genre%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->genre ? fromUtf8(song->genre) : NULL;
+			temp = song->genre ? charset_from_utf8(song->genre) : NULL;
 		} else if (strncmp("%composer%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->composer ? fromUtf8(song->composer) : NULL;
+			temp = song->composer ? charset_from_utf8(song->composer) : NULL;
 		} else if (strncmp("%performer%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->performer ? fromUtf8(song->performer) : NULL;
+			temp = song->performer ? charset_from_utf8(song->performer) : NULL;
 		} else if (strncmp("%disc%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->disc ? fromUtf8(song->disc) : NULL;
+			temp = song->disc ? charset_from_utf8(song->disc) : NULL;
 		} else if (strncmp("%comment%", p, length) == 0) {
 			labelFound = 1;
-			temp = song->comment ? fromUtf8(song->comment) : NULL;
+			temp = song->comment ? charset_from_utf8(song->comment) : NULL;
 		} else if (strncmp("%time%", p, length) == 0) {
 			labelFound = 1;
 			if (song->time != MPD_SONG_NO_TIME) {
@@ -412,7 +412,7 @@ songToFormatedString(struct mpd_song *song,
 				snprintf(s, 9, "%d:%02d", song->time / 60, 
 				                          song->time % 60);
 				/* nasty hack to use static buffer */
-				temp = fromUtf8(s);
+				temp = charset_from_utf8(s);
 			}
 		}
 
@@ -465,7 +465,7 @@ void print_filenames(mpd_Connection *conn)
 	while ((entity = mpd_getNextInfoEntity(conn))) {
 		printErrorAndExit(conn);
 		if (entity->type == MPD_INFO_ENTITY_TYPE_SONG)
-			printf("%s\n", fromUtf8(entity->info.song->file));
+			printf("%s\n", charset_from_utf8(entity->info.song->file));
 		mpd_freeInfoEntity(entity);
 	}
 }

@@ -116,7 +116,7 @@ void print_status (mpd_Connection *conn)
 	else printf("off\n");
 
 	if (status->error != NULL)
-		printf("ERROR: %s\n", fromUtf8(status->error));
+		printf("ERROR: %s\n", charset_from_utf8(status->error));
 
 	mpd_freeStatus(status);
 }

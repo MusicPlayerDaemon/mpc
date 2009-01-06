@@ -49,7 +49,7 @@ int funcname(mpd_unused int argc, mpd_unused char **argv, \
 
 #define SIMPLE_ONEARG_CMD(funcname, libmpdclient_funcname, ret) \
 int funcname (mpd_unused int argc, char **argv, mpd_Connection *conn) { \
-        libmpdclient_funcname(conn, toUtf8(argv[0])); \
+        libmpdclient_funcname(conn, charset_to_utf8(argv[0])); \
         my_finishCommand(conn); \
         return ret; \
 }
@@ -93,7 +93,7 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 
 	for(i=0;i<argc;i++) {
 		printf("adding: %s\n", argv[i]);
-		mpd_sendAddCommand(conn, toUtf8(argv[i]));
+		mpd_sendAddCommand(conn, charset_to_utf8(argv[i]));
 		printErrorAndExit(conn);
 	}
 
@@ -515,7 +515,8 @@ int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
 	const char * listall = "";
 	int i=0;
 
-	if(argc>0) listall = toUtf8(argv[i]);
+	if (argc > 0)
+		listall = charset_to_utf8(argv[i]);
 
 	do {
 		mpd_sendListallCommand(conn,listall);
@@ -525,7 +526,7 @@ int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
 
 		my_finishCommand(conn);
 
-	} while(++i<argc&& (listall = toUtf8(argv[i])));
+	} while (++i < argc && (listall = charset_to_utf8(argv[i])) != NULL);
 
 	return 0;
 }
@@ -538,11 +539,11 @@ int cmd_update ( int argc, char ** argv, mpd_Connection * conn)
 	mpd_sendCommandListBegin(conn);
 	printErrorAndExit(conn);
 
-	if(argc > 0) update = toUtf8(argv[i]);
+	if(argc > 0) update = charset_to_utf8(argv[i]);
 
 	do {
 		mpd_sendUpdateCommand(conn, update);
-	} while(++i<argc && (update = toUtf8(argv[i])));
+	} while (++i < argc && (update = charset_to_utf8(argv[i])) != NULL);
 
 	mpd_sendCommandListEnd(conn);
 	printErrorAndExit(conn);
@@ -561,7 +562,7 @@ int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
 	char * dp;
 
 	if (argc > 0)
-		ls = toUtf8(argv[i]);
+		ls = charset_to_utf8(argv[i]);
 	else
 		ls = strdup("");
 
@@ -594,18 +595,18 @@ int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
 		while((entity = mpd_getNextInfoEntity(conn))) {
 			if(entity->type==MPD_INFO_ENTITY_TYPE_DIRECTORY) {
 				mpd_Directory * dir = entity->info.directory;
-				printf("%s\n",fromUtf8(dir->path));
+				printf("%s\n", charset_from_utf8(dir->path));
 			}
 			else if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
 				struct mpd_song *song = entity->info.song;
-				printf("%s\n",fromUtf8(song->file));
+				printf("%s\n", charset_from_utf8(song->file));
 			}
 			mpd_freeInfoEntity(entity);
 		}
 
 		my_finishCommand(conn);
 
-	} while(++i<argc && (ls = toUtf8(argv[i])));
+	} while (++i < argc && (ls = charset_to_utf8(argv[i])) != NULL);
 
 	return 0;
 }
@@ -616,7 +617,7 @@ int cmd_lsplaylists ( int argc, char ** argv, mpd_Connection * conn )
 	const char * ls = "";
 	int i = 0;
 
-	if(argc>0) ls = toUtf8(argv[i]);
+	if(argc>0) ls = charset_to_utf8(argv[i]);
 
 	do {
 		mpd_sendLsInfoCommand(conn,ls);
@@ -626,14 +627,14 @@ int cmd_lsplaylists ( int argc, char ** argv, mpd_Connection * conn )
 			if(entity->type==
 					MPD_INFO_ENTITY_TYPE_PLAYLISTFILE) {
 				mpd_PlaylistFile * pl = entity->info.playlistFile;
-				printf("%s\n",fromUtf8(pl->path));
+				printf("%s\n", charset_from_utf8(pl->path));
 			}
 			mpd_freeInfoEntity(entity);
 		}
 
 		my_finishCommand(conn);
 
-	} while(++i<argc && (ls = toUtf8(argv[i])));
+	} while (++i < argc && (ls = charset_to_utf8(argv[i])) != NULL);
 	return 0;
 }
 
@@ -655,11 +656,11 @@ int cmd_load ( int argc, char ** argv, mpd_Connection * conn )
 	while((entity = mpd_getNextInfoEntity(conn))) {
 		if(entity->type==MPD_INFO_ENTITY_TYPE_PLAYLISTFILE) {
 			pl = entity->info.playlistFile;
-			dp = sp = strdup(fromUtf8(pl->path));
+			dp = sp = strdup(charset_from_utf8(pl->path));
 			while((sp = strchr(sp,' '))) *sp = '_';
 			for(i=0;i<argc;i++) {
 				if(strcmp(dp,argv[i])==0)
-					strcpy(argv[i], fromUtf8(pl->path));
+					strcpy(argv[i], charset_from_utf8(pl->path));
 			}
 			free(dp);
 			mpd_freeInfoEntity(entity);
@@ -671,7 +672,7 @@ int cmd_load ( int argc, char ** argv, mpd_Connection * conn )
 	printErrorAndExit(conn);
 	for(i=0;i<argc;i++) {
 		printf("loading: %s\n",argv[i]);
-		mpd_sendLoadCommand(conn,toUtf8(argv[i]));
+		mpd_sendLoadCommand(conn,charset_to_utf8(argv[i]));
 		printErrorAndExit(conn);
 	}
 	mpd_sendCommandListEnd(conn);
@@ -697,7 +698,7 @@ static int do_search ( int argc, char ** argv, mpd_Connection * conn, int exact 
 
 	for (i = 0; i < numconstraints; i++) {
 		mpd_addConstraintSearch(conn, constraints[i].type,
-		                        toUtf8(constraints[i].query));
+		                        charset_to_utf8(constraints[i].query));
 	}
 
 	free(constraints);
@@ -753,7 +754,7 @@ int cmd_list ( int argc, char ** argv, mpd_Connection * conn )
 	if (argc > 0) {
 		for (i = 0; i < numconstraints; i++) {
 			mpd_addConstraintSearch(conn, constraints[i].type,
-						toUtf8(constraints[i].query));
+						charset_to_utf8(constraints[i].query));
 		}
 
 		free(constraints);
@@ -764,7 +765,7 @@ int cmd_list ( int argc, char ** argv, mpd_Connection * conn )
 
 	while ((tag = mpd_getNextTag(conn, type))) {
 		printErrorAndExit(conn);
-		printf("%s\n", fromUtf8(tag));
+		printf("%s\n", charset_from_utf8(tag));
 		free(tag);
 	}
 
@@ -906,7 +907,7 @@ int cmd_loadtab ( int argc, char ** argv, mpd_Connection * conn )
 				if(strncmp(pl->path,argv[0],
 							strlen(argv[0]))==0) {
 					printf("%s\n",
-							fromUtf8(pl->path));
+					       charset_from_utf8(pl->path));
 				}
 			}
 		}
@@ -936,7 +937,7 @@ int cmd_lstab ( int argc, char ** argv, mpd_Connection * conn )
 				if(strncmp(dir->path,argv[0],
 							strlen(argv[0]))==0) {
 					printf("%s\n",
-							fromUtf8(dir->path));
+					       charset_from_utf8(dir->path));
 				}
 			}
 		}
@@ -967,10 +968,10 @@ int cmd_tab ( int argc, char ** argv, mpd_Connection * conn )
 				if(strncmp(song->file,argv[0],
 							strlen(argv[0]))==0) {
 					printf("%s\n",
-							fromUtf8(song->file));
+					       charset_from_utf8(song->file));
 				}
-			}
-			else printf("%s\n",fromUtf8(song->file));
+			} else
+				printf("%s\n", charset_from_utf8(song->file));
 		}
 		mpd_freeInfoEntity(entity);
 	}
