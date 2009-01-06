@@ -39,8 +39,13 @@ src_mpc_LDADD = $(MPC_LIBS)
 # URL: git://www.kernel.org/pub/scm/devel/sparse/sparse.git
 SPARSE = sparse
 SPARSE_FLAGS =
+SPARSE_CPPFLAGS = $(DEFAULT_INCLUDES) \
+	-I$(shell $(CC) -print-file-name=include) \
+	-I$(shell $(CC) -print-file-name=include-fixed)
 sparse-check:
 	for i in $(src_mpc_SOURCES); \
 	do \
-		$(SPARSE) -I. $(src_mpc_CFLAGS) $(SPARSE_FLAGS) $(srcdir)/$$i || exit; \
+		$(SPARSE) -I. $(SPARSE_FLAGS) $(SPARSE_CPPFLAGS) \
+			$(src_mpc_CFLAGS) $(src_mpc_CPPFLAGS) \
+			$(srcdir)/$$i || exit; \
 	done
