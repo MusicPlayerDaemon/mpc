@@ -3,23 +3,29 @@ AC_INIT(mpc, 0.15~git, max@duempel.org)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR(src/main.c)
 AM_INIT_AUTOMAKE([foreign 1.9 dist-bzip2])
+AM_CONFIG_HEADER(config.h)
 
-AC_SUBST(MPC_LIBS)
 
-MPC_LIBS=""
+dnl
+dnl programs
+dnl
 
 AC_PROG_CC_C99
 AC_PROG_INSTALL
+AC_PROG_MAKE_SET
 
-AM_CONFIG_HEADER(config.h)
 
-set -- $CFLAGS
+dnl
+dnl declare variables
+dnl
 
-case "$CC" in
-*gcc*)
-	CFLAGS="$CFLAGS -Wall"
-	;;
-esac
+AC_SUBST(MPC_LIBS)
+MPC_LIBS=""
+
+
+dnl
+dnl OS specific defaults
+dnl
 
 case "$host" in
 *-mingw32* | *-windows*)
