@@ -101,7 +101,11 @@ my_CPPFLAGS="$CPPFLAGS"
 if test x$enable_iconv = xyes; then
 	CPPFLAGS=""
 
-	AM_ICONV
+	AC_CHECK_FUNC(iconv,
+		[ICONV_CFLAGS="" ICONV_LIBS=""],
+		AC_CHECK_LIB(intl, iconv,
+			[ICONV_CFLAGS="" ICONV_LIBS="-lintl"],
+			[enable_iconv=no]))
 
 	if test "x$am_cv_func_iconv" != xyes; then
 		enable_iconv=no
