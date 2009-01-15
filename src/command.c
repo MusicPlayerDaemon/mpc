@@ -921,7 +921,6 @@ int cmd_loadtab ( int argc, char ** argv, mpd_Connection * conn )
 int cmd_lstab ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_InfoEntity * entity;
-	char * sp;
 	mpd_Directory * dir;
 
 	mpd_sendListallCommand(conn,"");
@@ -930,9 +929,6 @@ int cmd_lstab ( int argc, char ** argv, mpd_Connection * conn )
 	while((entity = mpd_getNextInfoEntity(conn))) {
 		if(entity->type==MPD_INFO_ENTITY_TYPE_DIRECTORY) {
 			dir = entity->info.directory;
-			sp = dir->path;
-			/* replace all ' ' with '_' */
-			while((sp = strchr(sp,' '))) *sp = '_';
 			if(argc==1) {
 				if(strncmp(dir->path,argv[0],
 							strlen(argv[0]))==0) {
@@ -952,7 +948,6 @@ int cmd_lstab ( int argc, char ** argv, mpd_Connection * conn )
 int cmd_tab ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_InfoEntity * entity;
-	char * sp;
 	struct mpd_song *song;
 
 	mpd_sendListallCommand(conn,"");
@@ -961,9 +956,6 @@ int cmd_tab ( int argc, char ** argv, mpd_Connection * conn )
 	while((entity = mpd_getNextInfoEntity(conn))) {
 		if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
 			song = entity->info.song;
-			sp = song->file;
-			/* replace all ' ' with '_' */
-			while((sp = strchr(sp,' '))) *sp = '_';
 			if(argc==1) {
 				if(strncmp(song->file,argv[0],
 							strlen(argv[0]))==0) {
