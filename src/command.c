@@ -556,10 +556,8 @@ int cmd_update ( int argc, char ** argv, mpd_Connection * conn)
 int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_InfoEntity * entity;
-	char * ls;
+	const char *ls;
 	int i = 0;
-	char * sp;
-	char * dp;
 
 	if (argc > 0)
 		ls = charset_to_utf8(argv[i]);
@@ -567,28 +565,6 @@ int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
 		ls = strdup("");
 
 	do {
-		mpd_sendListallCommand(conn,"");
-
-		sp = ls;
-		while((sp = strchr(sp,' '))) *sp = '_';
-
-		while((entity = mpd_getNextInfoEntity(conn))) {
-			if(entity->type==MPD_INFO_ENTITY_TYPE_DIRECTORY) {
-				mpd_Directory * dir = entity->info.directory;
-				sp = dp = strdup(dir->path);
-				while((sp = strchr(sp,' '))) *sp = '_';
-				if(strcmp(dp,ls)==0) {
-					free(dp);
-					ls = dir->path;
-					break;
-				}
-				free(dp);
-			}
-			mpd_freeInfoEntity(entity);
-		}
-
-		my_finishCommand(conn);
-
 		mpd_sendLsInfoCommand(conn,ls);
 		printErrorAndExit(conn);
 

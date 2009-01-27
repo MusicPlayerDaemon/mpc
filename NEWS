@@ -4,6 +4,8 @@ logs. To get full details about changes check our repository's logs.
 mpc 0.15 (not yet released)
 * optimized and simplified the "add" command, don't obtain and print
   song list when adding directories
+* same optimization for the "ls" command, which did some very
+  expensive underscore matching logic using "listall"
 * show MPD error message in "status"
 * fixed special character handling in bash completion
 * fixed two crash bugs due to wrong string pool usage
