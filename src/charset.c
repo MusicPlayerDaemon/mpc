@@ -30,30 +30,24 @@
 #include <errno.h>
 #include <string.h>
 
-#ifdef HAVE_LANGINFO_CODESET
+#ifdef HAVE_ICONV
 #include <locale.h>
 #include <langinfo.h>
-#endif
+#include <iconv.h>
 
 static char *locale_charset;
 
-#ifdef HAVE_ICONV
-#include <iconv.h>
 static iconv_t char_conv_iconv;
 static char * char_conv_to;
 static char * char_conv_from;
 static int ignore_invalid;
-#endif
 
 #define BUFFER_SIZE	1024
 
-#ifdef HAVE_ICONV
 static void
 charset_close(void);
-#endif
 
 /* code from iconv_prog.c (omiting invalid symbols): */
-#ifdef HAVE_ICONV
 static inline char * mpc_strchrnul(const char *s, int c)
 {
 	char *ret = strchr(s, c);
@@ -88,12 +82,10 @@ static char * skip_invalid(const char *to)
 	memcpy(cp, "IGNORE", sizeof("IGNORE"));
 	return newp;
 }
-#endif
 
 static int
 charset_set(mpd_unused const char *to, mpd_unused const char *from)
 {
-#ifdef HAVE_ICONV
 	char *allocated = NULL;
 
 	if (ignore_invalid)
@@ -114,11 +106,8 @@ charset_set(mpd_unused const char *to, mpd_unused const char *from)
 		free(allocated);
 
 	return 0;
-#endif
-	return -1;
 }
 
-#ifdef HAVE_ICONV
 static inline size_t deconst_iconv(iconv_t cd,
 				   const char **inbuf, size_t *inbytesleft,
 				   char **outbuf, size_t *outbytesleft)
@@ -132,12 +121,10 @@ static inline size_t deconst_iconv(iconv_t cd,
 
 	return iconv(cd, deconst.b, inbytesleft, outbuf, outbytesleft);
 }
-#endif
 
 static char *
 charset_conv_strdup(mpd_unused const char *string)
 {
-#ifdef HAVE_ICONV
 	char buffer[BUFFER_SIZE];
 	size_t inleft = strlen(string);
 	char * ret;
@@ -168,11 +155,8 @@ charset_conv_strdup(mpd_unused const char *string)
 	}
 
 	return ret;
-#endif
-	return NULL;
 }
 
-#ifdef HAVE_ICONV
 static void
 charset_close(void)
 {
@@ -187,13 +171,11 @@ charset_close(void)
 #endif
 
 void charset_init(void) {
-#ifdef HAVE_LANGINFO_CODESET
+#ifdef HAVE_ICONV
 	char *original_locale;
         char * charset = NULL;
 
-#ifdef HAVE_ICONV
 	ignore_invalid = isatty(STDOUT_FILENO) && isatty(STDIN_FILENO);
-#endif
 
 	original_locale = setlocale(LC_CTYPE,"");
 	if (original_locale != NULL) {
@@ -213,17 +195,18 @@ void charset_init(void) {
                 free(charset);
 		return;
         }
-#endif
+
         locale_charset = strdup("ISO-8859-1");
+#endif
 }
 
 void charset_deinit(void)
 {
 #ifdef HAVE_ICONV
 	charset_close();
-#endif
 
 	free(locale_charset);
+#endif
 }
 
 char * charset_to_utf8(const char * from) {
@@ -231,10 +214,13 @@ char * charset_to_utf8(const char * from) {
 
 	if(to) free(to);
 
+#ifdef HAVE_ICONV
 	charset_set("UTF-8", locale_charset);
 	to = charset_conv_strdup(from);
 
-	if(!to) to = strdup(from);
+	if (to == NULL)
+#endif
+		to = strdup(from);
 
 	return to;
 }
@@ -244,13 +230,13 @@ char * charset_from_utf8(const char * from) {
 
 	if(to) free(to);
 
+#ifdef HAVE_ICONV
 	charset_set(locale_charset, "UTF-8");
 	to = charset_conv_strdup(from);
 
-	if(!to) {
-		/*printf("not able to convert: %s\n",from);*/
+	if (to == NULL)
+#endif
 		to = strdup(from);
-	}
 
 	return to;
 }
