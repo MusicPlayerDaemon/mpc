@@ -134,7 +134,9 @@ if test x$enable_iconv = xyes; then
 	fi
 fi
 
-if test x$enable_iconv != xyes; then
+if test x$enable_iconv = xyes; then
+	AC_DEFINE(HAVE_ICONV, 1, [Define if iconv() support is enabled])
+else
 	ICONV_CPPFLAGS=""
 	ICONV_LIBS=""
 fi
