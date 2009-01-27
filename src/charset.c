@@ -197,7 +197,8 @@ void charset_deinit(void)
 #endif
 }
 
-char * charset_to_utf8(const char * from) {
+const char *
+charset_to_utf8(const char *from) {
 	static char * to = NULL;
 
 	if(to) free(to);
@@ -213,7 +214,8 @@ char * charset_to_utf8(const char * from) {
 	return to;
 }
 
-char * charset_from_utf8(const char * from) {
+const char *
+charset_from_utf8(const char *from) {
 	static char * to = NULL;
 
 	if(to) free(to);

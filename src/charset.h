@@ -27,8 +27,10 @@ void charset_init(void);
 
 void charset_deinit(void);
 
-char * charset_to_utf8(const char * from);
+const char *
+charset_to_utf8(const char *from);
 
-char * charset_from_utf8(const char * to);
+const char *
+charset_from_utf8(const char *from);
 
 #endif

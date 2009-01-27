@@ -266,7 +266,7 @@ songToFormatedString(struct mpd_song *song,
 {
 	char * ret = NULL;
 	const char *p, *end;
-	char * temp;
+	const char *temp;
 	int length;
 	int found = 0;
 	int labelFound = 0;
