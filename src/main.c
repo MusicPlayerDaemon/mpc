@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include <sys/param.h>
 
-static struct _mpc_table {
+static struct command {
 	const char *command;
 	const int min, max;   /* min/max arguments allowed, -1 = unlimited */
 	int pipe;             /**
@@ -195,18 +195,29 @@ static int print_status_and_exit (void)
 	return EXIT_SUCCESS;
 }
 
+static struct command *
+find_command(const char *name)
+{
+	for (unsigned i = 0; mpc_table[i].command != NULL; ++i)
+		if (strcmp(name, mpc_table[i].command) == 0)
+			return &mpc_table[i];
+
+	return NULL;
+}
+
 /* check arguments to see if they are valid */
-static char ** check_args(int idx, int * argc, char ** argv)
+static char **
+check_args(struct command *command, int * argc, char ** argv)
 {
 	char ** array;
 	int i;
 
-	if ( ( mpc_table[idx].pipe==1 &&
+	if ((command->pipe == 1 &&
 		(2==*argc || (3==*argc && 0==strcmp(argv[2],STDIN_SYMBOL) )))
-	|| (mpc_table[idx].pipe==2 && (3==*argc && 0==strcmp(argv[2],STDIN_SYMBOL)))
-	){
+	    || (command->pipe == 2 && (3 == *argc &&
+				       0 == strcmp(argv[2],STDIN_SYMBOL)))){
 		*argc = stdinToArgArray(&array);
-		mpc_table[idx].pipe *= -1;
+		command->pipe *= -1;
 	} else {
 		*argc -= 2;
 		array = malloc( (*argc * (sizeof(char *))));
@@ -214,10 +225,10 @@ static char ** check_args(int idx, int * argc, char ** argv)
 			array[i]=argv[i+2];
 		}
 	}
-	if (	(-1!=mpc_table[idx].min && (*argc)<mpc_table[idx].min)
-	||	(-1!=mpc_table[idx].max && (*argc)>mpc_table[idx].max) ) {
-		fprintf(stderr,"usage: %s %s %s\n", argv[0], mpc_table[idx].command,
-			mpc_table[idx].usage);
+	if ((-1 != command->min && *argc < command->min) ||
+	    (-1 != command->max && *argc > command->max)) {
+		fprintf(stderr,"usage: %s %s %s\n", argv[0], command->command,
+			command->usage);
 			exit (EXIT_FAILURE);
 	}
 	return array;
@@ -226,34 +237,34 @@ static char ** check_args(int idx, int * argc, char ** argv)
 static int
 run(int argc, char **argv)
 {
-	int i, ret;
-	const char *cmd;
+	int ret;
+	struct command *command;
+	char **array;
+	mpd_Connection *conn;
 
 	if (argc==1)
 		return print_status_and_exit();
 
-	cmd = argv[1];
-	for (i = 0; mpc_table[i].command; ++i) {
-		if ( ! strcmp(cmd, mpc_table[i].command) ) {
-			char ** array = check_args (i, &argc , argv);
-			mpd_Connection * conn = setup_connection();
+	command = find_command(argv[1]);
+	if (command == NULL)
+		return print_help(argv[0], argv[1]);
 
-			/* not a typo, assignment intended */
-			if( (ret=mpc_table[i].handler(argc, array, conn))) {
-				struct mpc_option* nostatus = get_option ("no-status");
-				if (! nostatus->set)
-					print_status(conn);
-			}
+	array = check_args(command, &argc, argv);
+	conn = setup_connection();
 
-			if (0>mpc_table[i].pipe)
-				free_pipe_array(argc,array);
-
-			free(array);
-			mpd_closeConnection(conn);
-			return (ret >= 0) ? EXIT_SUCCESS : EXIT_FAILURE;
-		}
+	ret = command->handler(argc, array, conn);
+	if (ret != 0) {
+		struct mpc_option* nostatus = get_option("no-status");
+		if (!nostatus->set)
+			print_status(conn);
 	}
-	return print_help(argv[0],argv[1]);
+
+	if (command->pipe < 0)
+		free_pipe_array(argc, array);
+
+	free(array);
+	mpd_closeConnection(conn);
+	return (ret >= 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 int main(int argc, char ** argv)
