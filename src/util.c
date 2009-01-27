@@ -301,9 +301,10 @@ songToFormatedString(struct mpd_song *song,
 		
 		if (p[0] == '[')
 		{
-			temp = songToFormatedString(song, p+1, &p);
-			if(temp) {
-				ret = appendToString(ret, temp, strlen(temp));
+			char *t = songToFormatedString(song, p+1, &p);
+			if(t != NULL) {
+				ret = appendToString(ret, t, strlen(t));
+				free(t);
 				found = 1;
 			}
 			continue;
