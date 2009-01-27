@@ -10,6 +10,7 @@ mpc 0.15 (not yet released)
 * fixed special character handling in bash completion
 * fixed two crash bugs due to wrong string pool usage
 * don't fall back to ISO-Latin-1 in unknown locale
+* disable character set conversion to/from pipe
 
 
 0.14.0 (2008/12/20)

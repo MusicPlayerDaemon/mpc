@@ -34,6 +34,8 @@
 #include <langinfo.h>
 #include <iconv.h>
 
+static bool charset_enable_input;
+static bool charset_enable_output;
 static char *locale_charset;
 
 static iconv_t char_conv_iconv;
@@ -168,8 +170,13 @@ charset_close(void)
 	}
 }
 
-void charset_init(void) {
+void
+charset_init(bool enable_input, bool enable_output)
+{
 	const char *original_locale, *charset;
+
+	if (!enable_input && !enable_output)
+		return;
 
 	ignore_invalid = isatty(STDOUT_FILENO) && isatty(STDIN_FILENO);
 
@@ -182,6 +189,11 @@ void charset_init(void) {
 		locale_charset = strdup(charset);
 
 	setlocale(LC_CTYPE,original_locale);
+
+	if (locale_charset != NULL) {
+		charset_enable_input = enable_input;
+		charset_enable_output = enable_output;
+	}
 }
 
 void charset_deinit(void)
@@ -195,7 +207,7 @@ const char *
 charset_to_utf8(const char *from) {
 	static char * to = NULL;
 
-	if (locale_charset == NULL)
+	if (!charset_enable_input)
 		/* no locale: return raw input */
 		return from;
 
@@ -214,7 +226,7 @@ const char *
 charset_from_utf8(const char *from) {
 	static char * to = NULL;
 
-	if (locale_charset == NULL)
+	if (!charset_enable_output)
 		/* no locale: return raw UTF-8 */
 		return from;
 

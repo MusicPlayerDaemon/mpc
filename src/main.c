@@ -275,7 +275,8 @@ int main(int argc, char ** argv)
 
 	/* initialization */
 
-	charset_init();
+	charset_init(command->pipe >= 0 || isatty(STDIN_FILENO),
+		     isatty(STDOUT_FILENO));
 
 	/* run */
 
