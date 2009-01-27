@@ -129,6 +129,8 @@ fi
 AC_SUBST(ICONV_CPPFLAGS)
 AC_SUBST(ICONV_LIBS)
 
+AM_CONDITIONAL(HAVE_ICONV, test x$enable_iconv = xyes)
+
 
 dnl
 dnl MPD protocol features

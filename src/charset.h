@@ -23,6 +23,10 @@
 #ifndef CHAR_CONV_H
 #define CHAR_CONV_H
 
+#include "config.h"
+
+#ifdef HAVE_ICONV
+
 void charset_init(void);
 
 void charset_deinit(void);
@@ -32,5 +36,31 @@ charset_to_utf8(const char *from);
 
 const char *
 charset_from_utf8(const char *from);
+
+#else
+
+static inline void
+charset_init(void)
+{
+}
+
+static inline void
+charset_deinit(void)
+{
+}
+
+static inline const char *
+charset_to_utf8(const char *from)
+{
+	return from;
+}
+
+static inline const char *
+charset_from_utf8(const char *from)
+{
+	return from;
+}
+
+#endif
 
 #endif

@@ -30,7 +30,6 @@
 #include <errno.h>
 #include <string.h>
 
-#ifdef HAVE_ICONV
 #include <locale.h>
 #include <langinfo.h>
 #include <iconv.h>
@@ -168,10 +167,8 @@ charset_close(void)
 		char_conv_from = NULL;
 	}
 }
-#endif
 
 void charset_init(void) {
-#ifdef HAVE_ICONV
 	const char *original_locale, *charset;
 
 	ignore_invalid = isatty(STDOUT_FILENO) && isatty(STDIN_FILENO);
@@ -185,16 +182,13 @@ void charset_init(void) {
 		locale_charset = strdup(charset);
 
 	setlocale(LC_CTYPE,original_locale);
-#endif
 }
 
 void charset_deinit(void)
 {
-#ifdef HAVE_ICONV
 	charset_close();
 
 	free(locale_charset);
-#endif
 }
 
 const char *
@@ -203,12 +197,10 @@ charset_to_utf8(const char *from) {
 
 	if(to) free(to);
 
-#ifdef HAVE_ICONV
 	charset_set("UTF-8", locale_charset);
 	to = charset_conv_strdup(from);
 
 	if (to == NULL)
-#endif
 		to = strdup(from);
 
 	return to;
@@ -220,12 +212,10 @@ charset_from_utf8(const char *from) {
 
 	if(to) free(to);
 
-#ifdef HAVE_ICONV
 	charset_set(locale_charset, "UTF-8");
 	to = charset_conv_strdup(from);
 
 	if (to == NULL)
-#endif
 		to = strdup(from);
 
 	return to;

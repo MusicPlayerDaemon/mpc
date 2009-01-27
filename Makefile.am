@@ -26,12 +26,15 @@ src_mpc_SOURCES = src/libmpdclient.c src/str_pool.c \
 	src/main.c \
 	src/list.c \
 	src/password.c \
-	src/charset.c \
 	src/status.c \
 	src/util.c \
 	src/command.c \
 	src/options.c \
 	$(mpc_headers)
+
+if HAVE_ICONV
+src_mpc_SOURCES += src/charset.c
+endif
 
 src_mpc_CPPFLAGS = $(AM_CPPFLAGS) $(ICONV_CFLAGS)
 src_mpc_LDADD = $(MPC_LIBS) $(ICONV_LIBS)
