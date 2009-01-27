@@ -228,7 +228,6 @@ run(int argc, char **argv)
 {
 	int i, ret;
 	const char *cmd;
-	charset_init();
 
 	if (argc==1)
 		return print_status_and_exit();
