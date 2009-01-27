@@ -96,28 +96,13 @@ AC_ARG_ENABLE(iconv,
 		[disable iconv support (default: enable)]),,
 	[enable_iconv=yes])
 
-my_CPPFLAGS="$CPPFLAGS"
-
 if test x$enable_iconv = xyes; then
-	CPPFLAGS=""
-
 	AC_CHECK_FUNC(iconv,
 		[ICONV_CFLAGS="" ICONV_LIBS=""],
 		AC_CHECK_LIB(intl, iconv,
 			[ICONV_CFLAGS="" ICONV_LIBS="-lintl"],
 			[enable_iconv=no]))
-
-	if test "x$am_cv_func_iconv" != xyes; then
-		enable_iconv=no
-	fi
 fi
-
-if test x$enable_iconv = xyes; then
-	ICONV_CPPFLAGS="$CPPFLAGS"
-	ICONV_LIBS="$LIBICONV"
-fi
-
-CPPFLAGS="$my_CPPFLAGS"
 
 if test x$enable_iconv = xyes; then
 	AM_LANGINFO_CODESET
