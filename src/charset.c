@@ -195,13 +195,17 @@ const char *
 charset_to_utf8(const char *from) {
 	static char * to = NULL;
 
+	if (locale_charset == NULL)
+		/* no locale: return raw input */
+		return from;
+
 	if(to) free(to);
 
 	charset_set("UTF-8", locale_charset);
 	to = charset_conv_strdup(from);
 
 	if (to == NULL)
-		to = strdup(from);
+		return from;
 
 	return to;
 }
@@ -210,13 +214,17 @@ const char *
 charset_from_utf8(const char *from) {
 	static char * to = NULL;
 
+	if (locale_charset == NULL)
+		/* no locale: return raw UTF-8 */
+		return from;
+
 	if(to) free(to);
 
 	charset_set(locale_charset, "UTF-8");
 	to = charset_conv_strdup(from);
 
 	if (to == NULL)
-		to = strdup(from);
+		return from;
 
 	return to;
 }
