@@ -12,6 +12,7 @@ mpc 0.15 (not yet released)
 * don't fall back to ISO-Latin-1 in unknown locale
 * disable character set conversion to/from pipe
 * fix memory leak in songToFormatedString()
+* fix memory leak in charset_set()
 
 
 0.14.0 (2008/12/20)

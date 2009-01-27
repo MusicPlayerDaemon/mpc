@@ -85,12 +85,8 @@ static char * skip_invalid(const char *to)
 }
 
 static int
-charset_set(mpd_unused const char *to, mpd_unused const char *from)
+charset_set2(const char *to, const char *from)
 {
-	char *allocated = NULL;
-
-	if (ignore_invalid)
-		to = allocated = skip_invalid(to);
 	if(char_conv_to && strcmp(to,char_conv_to)==0 &&
 			char_conv_from && strcmp(from,char_conv_from)==0)
 		return 0;
@@ -102,11 +98,26 @@ charset_set(mpd_unused const char *to, mpd_unused const char *from)
 
 	char_conv_to = strdup(to);
 	char_conv_from = strdup(from);
+	return 0;
+}
+
+static int
+charset_set(const char *to, const char *from)
+{
+	char *allocated;
+	int ret;
+
+	if (ignore_invalid)
+		to = allocated = skip_invalid(to);
+	else
+		allocated = NULL;
+
+	ret = charset_set2(to, from);
 
 	if (allocated != NULL)
 		free(allocated);
 
-	return 0;
+	return ret;
 }
 
 static inline size_t deconst_iconv(iconv_t cd,
