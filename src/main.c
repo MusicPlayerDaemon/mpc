@@ -187,14 +187,6 @@ static mpd_Connection * setup_connection (void)
 	return conn;
 }
 
-static int print_status_and_exit (void)
-{
-	mpd_Connection * conn = setup_connection();
-	print_status(conn);
-	mpd_closeConnection(conn);
-	return EXIT_SUCCESS;
-}
-
 static struct command *
 find_command(const char *name)
 {
@@ -235,21 +227,11 @@ check_args(struct command *command, int * argc, char ** argv)
 }
 
 static int
-run(int argc, char **argv)
+run(const struct command *command, int argc, char **array)
 {
 	int ret;
-	struct command *command;
-	char **array;
 	mpd_Connection *conn;
 
-	if (argc==1)
-		return print_status_and_exit();
-
-	command = find_command(argv[1]);
-	if (command == NULL)
-		return print_help(argv[0], argv[1]);
-
-	array = check_args(command, &argc, argv);
 	conn = setup_connection();
 
 	ret = command->handler(argc, array, conn);
@@ -259,10 +241,6 @@ run(int argc, char **argv)
 			print_status(conn);
 	}
 
-	if (command->pipe < 0)
-		free_pipe_array(argc, array);
-
-	free(array);
 	mpd_closeConnection(conn);
 	return (ret >= 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
@@ -270,9 +248,30 @@ run(int argc, char **argv)
 int main(int argc, char ** argv)
 {
 	int ret;
+	const char *command_name;
+	struct command *command;
 
 	if(parse_options(&argc, argv) < 0)
 		return print_help(argv[0],NULL);
+
+	/* parse command and arguments */
+
+	if (argc >= 2)
+		command_name = argv[1];
+	else {
+		command_name = "status";
+
+		/* this is a hack, so check_args() won't complain; the
+		   arguments won't we used anyway, so this is quite
+		   safe */
+		argc = 2;
+	}
+
+	command = find_command(command_name);
+	if (command == NULL)
+		return print_help(argv[0], argv[1]);
+
+	argv = check_args(command, &argc, argv);
 
 	/* initialization */
 
@@ -280,11 +279,15 @@ int main(int argc, char ** argv)
 
 	/* run */
 
-	ret = run(argc, argv);
+	ret = run(command, argc, argv);
 
 	/* cleanup */
 
 	charset_deinit();
+
+	if (command->pipe < 0)
+		free_pipe_array(argc, argv);
+	free(argv);
 
 	return ret;
 }
