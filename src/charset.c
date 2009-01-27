@@ -187,9 +187,6 @@ void charset_init(void) {
 		setlocale(LC_CTYPE,original_locale);
         }
 	
-	if (locale_charset != NULL)
-		free(locale_charset);
-                                                                                
         if(charset) {
 		locale_charset = strdup(charset);
                 free(charset);
