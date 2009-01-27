@@ -172,26 +172,19 @@ charset_close(void)
 
 void charset_init(void) {
 #ifdef HAVE_ICONV
-	char *original_locale;
-        char * charset = NULL;
+	const char *original_locale, *charset;
 
 	ignore_invalid = isatty(STDOUT_FILENO) && isatty(STDIN_FILENO);
 
 	original_locale = setlocale(LC_CTYPE,"");
-	if (original_locale != NULL) {
-                char * temp;
-                                                                                
-                if((temp = nl_langinfo(CODESET))) {
-                        charset = strdup(temp);
-                }
-		setlocale(LC_CTYPE,original_locale);
-        }
-	
-        if(charset) {
-		locale_charset = strdup(charset);
-                free(charset);
+	if (original_locale == NULL)
 		return;
-        }
+
+	charset = nl_langinfo(CODESET);
+	if (charset != NULL)
+		locale_charset = strdup(charset);
+
+	setlocale(LC_CTYPE,original_locale);
 #endif
 }
 
