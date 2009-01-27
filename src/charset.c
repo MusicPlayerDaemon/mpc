@@ -192,8 +192,6 @@ void charset_init(void) {
                 free(charset);
 		return;
         }
-
-        locale_charset = strdup("ISO-8859-1");
 #endif
 }
 
