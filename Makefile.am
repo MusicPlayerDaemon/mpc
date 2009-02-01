@@ -30,7 +30,7 @@ src_mpc_SOURCES = src/libmpdclient.c src/str_pool.c \
 	src/util.c \
 	src/command.c \
 	src/options.c \
-	$(mpc_headers)
+	$(src_mpc_headers)
 
 if HAVE_ICONV
 src_mpc_SOURCES += src/charset.c
