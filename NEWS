@@ -1,7 +1,4 @@
-These are really random things that appeared to stick out from our repository
-logs. To get full details about changes check our repository's logs.
-
-mpc 0.15 (not yet released)
+0.15 (2009/02/01)
 * optimized and simplified the "add" command, don't obtain and print
   song list when adding directories
 * same optimization for the "ls" command, which did some very
@@ -13,7 +10,6 @@ mpc 0.15 (not yet released)
 * disable character set conversion to/from pipe
 * fix memory leak in songToFormatedString()
 * fix memory leak in charset_set()
-
 
 0.14.0 (2008/12/20)
 1) Support for %date%, %genre%, %composer%, %performer%, %disc%, and %comment%
