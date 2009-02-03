@@ -26,6 +26,7 @@
 int cmd_status ( int argc, char ** argv, mpd_Connection *conn );
 int cmd_add ( int argc, char ** argv, mpd_Connection * conn ) ;
 int cmd_crop ( int argc, char ** argv, mpd_Connection * conn );
+int cmd_current ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_del ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_play ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_next ( int argc, char ** argv, mpd_Connection * conn );

@@ -142,6 +142,54 @@ cmd_crop(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 	}
 }
 
+int cmd_current(mpd_unused int argc, mpd_unused char ** argv, mpd_Connection *conn)
+{
+	mpd_Status * status;
+	mpd_InfoEntity * entity;
+
+	mpd_sendCommandListOkBegin(conn);
+	printErrorAndExit(conn);
+	mpd_sendStatusCommand(conn);
+	printErrorAndExit(conn);
+	mpd_sendCurrentSongCommand(conn);
+	printErrorAndExit(conn);
+	mpd_sendCommandListEnd(conn);
+	printErrorAndExit(conn);
+
+	status = mpd_getStatus(conn);
+	printErrorAndExit(conn);
+
+	if (status->state == MPD_STATUS_STATE_PLAY ||
+	    status->state == MPD_STATUS_STATE_PAUSE) {
+		mpd_nextListOkCommand(conn);
+		printErrorAndExit(conn);
+
+		while((entity = mpd_getNextInfoEntity(conn))) {
+			struct mpd_song *song = entity->info.song;
+
+			if(entity->type!=MPD_INFO_ENTITY_TYPE_SONG) {
+				mpd_freeInfoEntity(entity);
+				continue;
+			}
+
+			pretty_print_song(song);
+			printf("\n");
+
+			mpd_freeInfoEntity(entity);
+
+			break;
+		}
+
+		printErrorAndExit(conn);
+
+		mpd_finishCommand(conn);
+		printErrorAndExit(conn);
+	}
+	mpd_freeStatus(status);
+
+	return 0;
+}
+
 int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 {
 	int i,j;

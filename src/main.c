@@ -56,6 +56,8 @@ static struct command {
 	/* command,     min, max, pipe, handler,         usage, help */
 	{"add",         0,   -1,  1,    cmd_add,         "<file>", "Add a song to the current playlist"},
 	{"crop",        0,   0,   0,    cmd_crop,        "", "Remove all but the currently playing song"},
+	{ "current", 0, 0, 0, cmd_current,
+	  "", "Show the currently playing song"},
 	{"del",         0,   -1,  1,    cmd_del,         "<position>", "Remove a song from the current playlist"},
 	{"play",        0,   -1,  2,    cmd_play,        "[<position>]", "Start playing at <position> (default: 1)"},
 	{"next",        0,   0,   0,    cmd_next,        "", "Play the next song in the current playlist"},
