@@ -9,7 +9,7 @@ controls it according to commands and arguments passed to it.  If no arguments
 are passed, current status is given.
 .SH "OPTIONS"
 .TP
-.BI --format
+.BI -f,--format
 .br
 Configure the format of song display for status and the playlist.  The metadata delimiters are "%name%", "%artist%", "%album%", "%title%", "%track%", "%time%", and "%file%".  The [] operator is used to group output such that if no metadata delimiters are found or matched between '[' and ']', then none of the characters between '[' and ']' are output.  '&' and '|' are logical operators for and and or.  '#' is used to escape characters.  Some useful examples for format are: "%file%" and "[[%artist% - ]%title%]|[%file%]".
 This command also takes the following defined escape sequences:
@@ -30,10 +30,25 @@ This command also takes the following defined escape sequences:
 .br
 \\r - carriage return
 .TP
-.BI --no-status
+.BI -q,--quiet,--no-status
 .br
 Prevents the current song status from being printed on completion of some of
 the commands.
+.TP
+.BI -v,--verbose
+.br
+Verbose output.
+.TP
+.BI -h,--host
+The host to connect to; if not given, the value of the environment variable MPD_HOST is checked before defaulting to localhost.  This default can be changed at compile-time.
+
+To use a password, provide a value of the form "password@host".
+
+If you specify an absolute path, mpc attempts a connection via Unix Domain Socket.
+.TP
+.BI -p,--port
+The port to connect to; if not given, the value of the environment variable MPD_PORT is checked before defaulting to 6600.  This default can be changed at compile-time.
+.br
 .SH COMMANDS
 .TP
 .B add <file>
@@ -153,20 +168,6 @@ Reports the version of MPD.
 .B volume [+-]<num>
 Sets the volume to <num> (0-100).  If "+" or "-" is used, then it adjusts
 the volume relative to the current volume.
-.SH "ENVIRONMENT"
-.TP
-This section describes some environment variables that affect how mpc operates.
-.PP
-MPD_HOST, MPD_PORT
-.RS 3n
-By default, mpc connects to localhost:6600.  This can be changed
-either at compile-time, or by exporting the MPD_HOST and MPD_PORT
-environment variables.
-.br
-If you specify an absolute path in MPD_HOST, mpc attempts a connection
-via Unix Domain Socket.
-.br
-To use a password with MPD, set MPD_HOST to password@host.
 .SH "EXAMPLES"
 .TP
 .br

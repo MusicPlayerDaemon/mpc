@@ -447,16 +447,7 @@ static void print_formatted_song(struct mpd_song *song, const char * format)
 
 void pretty_print_song(struct mpd_song *song)
 {
-	/* was a format string specified? */
-	if (get_option("format")->set)
-	{
-		print_formatted_song(song, get_option("format")->value);
-	}
-	/* just do something pretty */
-	else
-	{
-		print_formatted_song(song, DEFAULT_FORMAT);
-	}
+	print_formatted_song(song, options.format);
 }
 
 void print_filenames(mpd_Connection *conn)
