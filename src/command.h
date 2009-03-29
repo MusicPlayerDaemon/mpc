@@ -51,6 +51,7 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn ) ;
 int cmd_repeat ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_random ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_single ( int argc, char ** argv, mpd_Connection * conn );
+int cmd_consume ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_enable( int argc, char ** argv, mpd_Connection * conn );
 int cmd_disable( int argc, char ** argv, mpd_Connection * conn );

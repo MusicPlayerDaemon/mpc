@@ -904,6 +904,28 @@ int cmd_single ( int argc, char ** argv, mpd_Connection * conn )
 	return 1;
 }
 
+int cmd_consume ( int argc, char ** argv, mpd_Connection * conn )
+{
+	int mode;
+
+	if(argc==1) {
+		mode = get_boolean(argv[0]);
+		if (mode < 0)
+			return -1;
+	}
+	else {
+		mpd_Status * status;
+		status = getStatus(conn);
+		mode = !status->consume;
+		mpd_freeStatus(status);
+	}
+
+	mpd_sendConsumeCommand(conn,mode);
+	my_finishCommand(conn);
+
+	return 1;
+}
+
 int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn )
 {
 	int seconds;

@@ -57,7 +57,7 @@
 		COMPREPLY=($(compgen -W "${hold}" | sed "$scrub"))
 		return 0
 		;;
-		repeat|random|single)
+		repeat|random|single|consume)
 		COMPREPLY=($(compgen -W "0 1 true false yes no on off" "${cur}"))
 		return 0
 		;;

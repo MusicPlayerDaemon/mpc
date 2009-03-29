@@ -116,7 +116,11 @@ void print_status (mpd_Connection *conn)
 	else printf("off   ");
 
 	printf("single: ");
-	if(status->single) printf("on \n");
+	if(status->single) printf("on    ");
+	else printf("off   ");
+
+	printf("consume: ");
+	if(status->consume) printf("on \n");
 	else printf("off\n");
 
 	if (status->error != NULL)
