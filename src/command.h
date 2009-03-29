@@ -4,7 +4,7 @@
 				Daniel Brown <danb@cs.utexas.edu>
  * Copyright (C) 2008-2009 Max Kellermann <max@duempel.org>
  * Project homepage: http://musicpd.org
- 
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -50,6 +50,7 @@ int cmd_rm ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_volume ( int argc, char ** argv, mpd_Connection * conn ) ;
 int cmd_repeat ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_random ( int argc, char ** argv, mpd_Connection * conn );
+int cmd_single ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn );
 int cmd_enable( int argc, char ** argv, mpd_Connection * conn );
 int cmd_disable( int argc, char ** argv, mpd_Connection * conn );

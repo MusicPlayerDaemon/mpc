@@ -4,7 +4,7 @@
 				Daniel Brown <danb@cs.utexas.edu>
  * Copyright (C) 2008-2009 Max Kellermann <max@duempel.org>
  * Project homepage: http://musicpd.org
- 
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -84,7 +84,7 @@ static mpd_Status * getStatus(mpd_Connection * conn) {
 	return ret;
 }
 
-int cmd_add (int argc, char ** argv, mpd_Connection * conn ) 
+int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 {
 	int i;
 
@@ -136,7 +136,7 @@ cmd_crop(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 
 	} else {
 
-		mpd_freeStatus(status);	
+		mpd_freeStatus(status);
 		DIE( "You need to be playing to crop the playlist\n" );
 
 	}
@@ -579,7 +579,7 @@ int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_update ( int argc, char ** argv, mpd_Connection * conn) 
+int cmd_update ( int argc, char ** argv, mpd_Connection * conn)
 {
 	const char * update = "";
 	int i = 0;
@@ -705,7 +705,7 @@ int cmd_load ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-static int do_search ( int argc, char ** argv, mpd_Connection * conn, int exact ) 
+static int do_search ( int argc, char ** argv, mpd_Connection * conn, int exact )
 {
 	Constraint *constraints;
 	int numconstraints;
@@ -737,17 +737,17 @@ static int do_search ( int argc, char ** argv, mpd_Connection * conn, int exact 
 	return 0;
 }
 
-int cmd_search ( int argc, char ** argv, mpd_Connection * conn ) 
+int cmd_search ( int argc, char ** argv, mpd_Connection * conn )
 {
 	return do_search(argc, argv, conn, 0);
 }
 
-int cmd_find ( int argc, char ** argv, mpd_Connection * conn ) 
+int cmd_find ( int argc, char ** argv, mpd_Connection * conn )
 {
 	return do_search(argc, argv, conn, 1);
 }
 
-int cmd_list ( int argc, char ** argv, mpd_Connection * conn ) 
+int cmd_list ( int argc, char ** argv, mpd_Connection * conn )
 {
 	Constraint *constraints;
 	int numconstraints = 0;
@@ -798,7 +798,7 @@ int cmd_list ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_volume ( int argc, char ** argv, mpd_Connection * conn ) 
+int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 {
         struct int_value_change ch;
 
@@ -819,7 +819,7 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 
 	if (ch.is_relative)
 		mpd_sendVolumeCommand(conn,ch.value);
-	else 
+	else
 		mpd_sendSetvolCommand(conn,ch.value);
 
 	my_finishCommand(conn);
@@ -877,6 +877,28 @@ int cmd_random ( int argc, char ** argv, mpd_Connection * conn )
 	}
 
 	mpd_sendRandomCommand(conn,mode);
+	my_finishCommand(conn);
+
+	return 1;
+}
+
+int cmd_single ( int argc, char ** argv, mpd_Connection * conn )
+{
+	int mode;
+
+	if(argc==1) {
+		mode = get_boolean(argv[0]);
+		if (mode < 0)
+			return -1;
+	}
+	else {
+		mpd_Status * status;
+		status = getStatus(conn);
+		mode = !status->single;
+		mpd_freeStatus(status);
+	}
+
+	mpd_sendSingleCommand(conn,mode);
 	my_finishCommand(conn);
 
 	return 1;

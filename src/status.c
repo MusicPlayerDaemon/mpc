@@ -4,7 +4,7 @@
 				Daniel Brown <danb@cs.utexas.edu>
  * Copyright (C) 2008-2009 Max Kellermann <max@duempel.org>
  * Project homepage: http://musicpd.org
- 
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -47,17 +47,17 @@ void print_status (mpd_Connection *conn)
 	status = mpd_getStatus(conn);
 	printErrorAndExit(conn);
 
-	if(status->state == MPD_STATUS_STATE_PLAY || 
-			status->state == MPD_STATUS_STATE_PAUSE) 
+	if(status->state == MPD_STATUS_STATE_PLAY ||
+			status->state == MPD_STATUS_STATE_PAUSE)
 	{
 		float perc;
 
 		mpd_nextListOkCommand(conn);
 		printErrorAndExit(conn);
-			
+
 		while((entity = mpd_getNextInfoEntity(conn))) {
 			struct mpd_song *song = entity->info.song;
-			
+
 			if(entity->type!=MPD_INFO_ENTITY_TYPE_SONG) {
 				mpd_freeInfoEntity(entity);
 				continue;
@@ -112,7 +112,11 @@ void print_status (mpd_Connection *conn)
 	else printf("off   ");
 
 	printf("random: ");
-	if(status->random) printf("on \n");
+	if(status->random) printf("on    ");
+	else printf("off   ");
+
+	printf("single: ");
+	if(status->single) printf("on \n");
 	else printf("off\n");
 
 	if (status->error != NULL)

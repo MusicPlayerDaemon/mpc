@@ -4,7 +4,7 @@
 				Daniel Brown <danb@cs.utexas.edu>
  * Copyright (C) 2008-2009 Max Kellermann <max@duempel.org>
  * Project homepage: http://musicpd.org
- 
+
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -82,6 +82,7 @@ static struct command {
 	{"volume",      0,   1,   0,    cmd_volume,      "[+-]<num>", "Sets volume to <num> or adjusts by [+-]<num>"},
 	{"repeat",      0,   1,   0,    cmd_repeat,      "<on|off>", "Toggle repeat mode, or specify state"},
 	{"random",      0,   1,   0,    cmd_random,      "<on|off>", "Toggle random mode, or specify state"},
+	{"single",      0,   1,   0,    cmd_single,      "<on|off>", "Toggle single mode, or specify state"},
 	{"search",      2,   -1,  0,    cmd_search,      "<type> <query>", "Search for a song"},
 	{"find",        2,   -1,  0,    cmd_find,        "<type> <query>", "Find a song (exact match)"},
 	{"list",        1,   -1,  0,    cmd_list,        "<type> [<type> <query>]", "Show all tags of <type>"},

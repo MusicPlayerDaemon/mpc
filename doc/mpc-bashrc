@@ -9,13 +9,13 @@
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	first=${COMP_WORDS[1]}
 	hold="";
-	
+
 	# add more escape stuff as it's needed
 	# because bash is a woman:
 	scrub="s/\([><()\";\`']\)/\\\1/g";
-	
+
 	case "$first" in
-		add) 
+		add)
 		hold=`mpc tab ${cur} | sed "$scrub"`;
 		COMPREPLY=($(compgen -W "${hold}"))
 		return 0
@@ -57,7 +57,7 @@
 		COMPREPLY=($(compgen -W "${hold}" | sed "$scrub"))
 		return 0
 		;;
-		repeat|random)
+		repeat|random|single)
 		COMPREPLY=($(compgen -W "0 1 true false yes no on off" "${cur}"))
 		return 0
 		;;
