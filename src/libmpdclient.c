@@ -311,13 +311,15 @@ static int mpd_recv(mpd_Connection *connection)
 	}
 
 	while (1) {
-		ret = mpd_wait(connection);
-		if (ret < 0) {
-			strcpy(connection->errorStr, "connection timeout");
-			connection->error = MPD_ERROR_TIMEOUT;
-			connection->doneProcessing = 1;
-			connection->doneListOk = 0;
-			return -1;
+		if (!connection->idle) {
+			ret = mpd_wait(connection);
+			if (ret < 0) {
+				strcpy(connection->errorStr, "connection timeout");
+				connection->error = MPD_ERROR_TIMEOUT;
+				connection->doneProcessing = 1;
+				connection->doneListOk = 0;
+				return -1;
+			}
 		}
 
 		nbytes = recv(connection->sock,
