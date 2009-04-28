@@ -670,6 +670,11 @@ void mpd_sendPlaylistMoveCommand(mpd_Connection *connection,
 void mpd_sendPlaylistDeleteCommand(mpd_Connection *connection,
                                    char *playlist, int pos);
 
+void mpd_send_idle(mpd_Connection *connection);
+
+const char *
+mpd_get_next_idle_change(mpd_Connection *connection);
+
 void mpd_startIdle(mpd_Connection *connection, mpd_NotificationCb notify_cb, void *userdata);
 
 void mpd_stopIdle(mpd_Connection *connection);

@@ -638,6 +638,8 @@ void mpd_finishCommand(mpd_Connection * connection) {
 		if(connection->doneListOk) connection->doneListOk = 0;
 		mpd_getNextReturnElement(connection);
 	}
+
+	connection->idle = 0;
 }
 
 static void mpd_finishListOkCommand(mpd_Connection * connection) {
@@ -1919,25 +1921,51 @@ void mpd_sendPlaylistDeleteCommand(mpd_Connection *connection,
 	free(string);
 }
 
-static void mpd_readChanges(mpd_Connection *connection)
+void mpd_send_idle(mpd_Connection *connection)
 {
-	unsigned i;
-	unsigned flags = 0;
+	mpd_executeCommand(connection, "idle\n");
+	if (connection->error == MPD_ERROR_SUCCESS)
+		connection->idle = 1;
+}
+
+const char *
+mpd_get_next_idle_change(mpd_Connection *connection)
+{
 	mpd_ReturnElement *re;
 
-	if (!connection->returnElement) mpd_getNextReturnElement(connection);
+	if (connection->returnElement == NULL)
+		mpd_getNextReturnElement(connection);
 
-	while (connection->returnElement) {
+	while (connection->returnElement != NULL) {
 		re = connection->returnElement;
-		if (re->name &&!strncmp (re->name, "changed", strlen ("changed"))) {
-			for (i = 0; idle_names[i]; ++i) {
-				if (!strcmp (re->value, idle_names[i])) {
-					flags |= (1 << i);
-				}
-			}
+		if (re->name != NULL && strcmp(re->name, "changed") == 0) {
+			connection->returnElement = NULL;
+			return re->value;
 		}
+
 		mpd_getNextReturnElement(connection);
 	}
+
+	return NULL;
+}
+
+static unsigned
+parse_idle_change(const char *change)
+{
+	for (unsigned i = 0; idle_names[i] != NULL; ++i)
+		if (strcmp(change, idle_names[i]) == 0)
+			return 1 << i;
+
+	return 0;
+}
+
+static void mpd_readChanges(mpd_Connection *connection)
+{
+	const char *change;
+	unsigned flags = 0;
+
+	while ((change = mpd_get_next_idle_change(connection)) != NULL)
+		flags |= parse_idle_change(change);
 
 	/* Notifiy application */
 	if (connection->notify_cb && flags)
@@ -1952,8 +1980,7 @@ void mpd_startIdle(mpd_Connection *connection, mpd_NotificationCb notify_cb, voi
 	if (connection->startIdle)
 		connection->startIdle(connection);
 
-	mpd_executeCommand(connection, "idle\n");
-	connection->idle = 1;
+	mpd_send_idle(connection);
 	connection->notify_cb = notify_cb;
 	connection->userdata = userdata;
 }
