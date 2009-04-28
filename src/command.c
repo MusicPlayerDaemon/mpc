@@ -1101,3 +1101,21 @@ cmd_status(mpd_unused  int argc, mpd_unused char **argv, mpd_Connection *conn)
 	print_status(conn);
 	return 0;
 }
+
+int cmd_idle(mpd_unused int argc, mpd_unused char **argv,
+	     mpd_Connection *connection)
+{
+	const char *change;
+
+	mpd_send_idle(connection);
+	printErrorAndExit(connection);
+
+	while ((change = mpd_get_next_idle_change(connection)) != NULL)
+		printf("%s\n", change);
+	printErrorAndExit(connection);
+
+	mpd_finishCommand(connection);
+	printErrorAndExit(connection);
+
+	return 0;
+}
