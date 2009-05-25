@@ -1,8 +1,7 @@
-0.16 - not yet released
+0.16 (2009/05/25)
 * added command "current"
 * support the new MPD modes "consume" and "single"
 * added command "idle"
-
 
 0.15 (2009/02/01)
 * optimized and simplified the "add" command, don't obtain and print
