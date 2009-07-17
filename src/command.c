@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/param.h>
+#include <sys/select.h>
 
 #define DIE(...) do { fprintf(stderr, __VA_ARGS__); return -1; } while(0)
 
@@ -1105,10 +1106,19 @@ cmd_status(mpd_unused  int argc, mpd_unused char **argv, mpd_Connection *conn)
 int cmd_idle(mpd_unused int argc, mpd_unused char **argv,
 	     mpd_Connection *connection)
 {
+	fd_set fds;
 	const char *change;
 
 	mpd_send_idle(connection);
 	printErrorAndExit(connection);
+
+	/* explicitly wait for a read event on the socket, because
+	   mpd_get_next_idle_change() is non-blocking */
+
+	FD_ZERO(&fds);
+	FD_SET((unsigned)connection->sock, &fds);
+
+	select(connection->sock + 1, &fds, NULL, NULL, NULL);
 
 	while ((change = mpd_get_next_idle_change(connection)) != NULL)
 		printf("%s\n", change);
