@@ -148,46 +148,14 @@ static int print_help(char * progname, char * command)
 
 static mpd_Connection * setup_connection (void)
 {
-	const char * host = DEFAULT_HOST;
-	const char * port = DEFAULT_PORT;
-	int iport;
-	char * test;
-	int port_env = 0;
-	int host_env = 0;
-	int password_len= 0;
-	int parsed_len = 0;
 	mpd_Connection * conn;
 
-	if((test = getenv("MPD_HOST"))) {
-		host =test;
-		host_env = 1;
-	}
-
-	if((test = getenv("MPD_PORT"))) {
-		port = test;
-		port_env = 1;
-	}
-
-	iport = strtol(port,&test,10);
-
-	if(iport<0 || *test!='\0') {
-		fprintf(stderr,"MPD_PORT \"%s\" is not a positive integer\n",
-				port);
-		exit(EXIT_FAILURE);
-	}
-
-	parse_password(host, &password_len, &parsed_len);
-
-	conn = mpd_newConnection(host+parsed_len,iport,10);
-
-	if(conn->error && (!port_env || !host_env))
-		fprintf(stderr,"MPD_HOST and/or MPD_PORT environment variables"
-			" are not set\n");
+	conn = mpd_newConnection(options.host,options.port,10);
 
 	printErrorAndExit(conn);
 
-	if(password_len)
-		send_password (host, password_len, conn);
+	if(options.password)
+		send_password (options.host, conn);
 
 	return conn;
 }
@@ -241,9 +209,7 @@ run(const struct command *command, int argc, char **array)
 
 	ret = command->handler(argc, array, conn);
 	if (ret != 0) {
-		struct mpc_option* nostatus = get_option("no-status");
-		if (!nostatus->set)
-			print_status(conn);
+		print_status(conn);
 	}
 
 	mpd_closeConnection(conn);
@@ -256,8 +222,8 @@ int main(int argc, char ** argv)
 	const char *command_name;
 	struct command *command;
 
-	if(parse_options(&argc, argv) < 0)
-		return print_help(argv[0],NULL);
+	options_init();
+	parse_options(&argc, argv);
 
 	/* parse command and arguments */
 

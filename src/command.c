@@ -24,6 +24,7 @@
 #include "list.h"
 #include "charset.h"
 #include "password.h"
+#include "options.h"
 #include "util.h"
 #include "status.h"
 #include "command.h"
@@ -93,7 +94,8 @@ int cmd_add (int argc, char ** argv, mpd_Connection * conn )
 	printErrorAndExit(conn);
 
 	for(i=0;i<argc;i++) {
-		printf("adding: %s\n", argv[i]);
+		if (options.verbosity >= V_VERBOSE)
+			printf("adding: %s\n", argv[i]);
 		mpd_sendAddCommand(conn, charset_to_utf8(argv[i]));
 		printErrorAndExit(conn);
 	}
@@ -1099,7 +1101,8 @@ cmd_stats(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 int
 cmd_status(mpd_unused  int argc, mpd_unused char **argv, mpd_Connection *conn)
 {
-	print_status(conn);
+	if (options.verbosity >= V_DEFAULT)
+		print_status(conn);
 	return 0;
 }
 

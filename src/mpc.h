@@ -38,6 +38,10 @@
 #  define DEFAULT_PORT "6600"
 #endif /* DEFAULT_PORT */
 
+#ifndef DEFAULT_FORMAT
+#  define DEFAULT_FORMAT "[%name%: &[%artist% - ]%title%]|%name%|[%artist% - ]%title%|%file%"
+#endif /* DEFAULT_FORMAT */
+
 #ifndef MIN_COLUMNS
 #  define MIN_COLUMNS	80
 #endif /* MIN_COLUMNS */

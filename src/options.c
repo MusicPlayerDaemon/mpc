@@ -1,133 +1,259 @@
-/* music player command (mpc)
- * Copyright (C) 2003-2008 Warren Dukes <warren.dukes@gmail.com>,
-				Eric Wong <normalperson@yhbt.net>,
-				Daniel Brown <danb@cs.utexas.edu>
- * Copyright (C) 2008-2009 Max Kellermann <max@duempel.org>
- * Project homepage: http://musicpd.org
- 
+/*
+ * Copyright (C) 2003-2009 The Music Player Daemon Project
+ * http://www.musicpd.org
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License along
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
+ */
 
 #include "options.h"
+#include "mpc.h"
 
-#include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
-/* i like this type/instance naming scheme better than _mpc_table/mpc_table
-    - danb */
-struct mpc_option mpc_options [] =
-{
-	{ "format", 1, 0, NULL },
-	{ "no-status", 0, 0, NULL },
+#define ERROR_UNKNOWN_OPTION    0x01
+#define ERROR_BAD_ARGUMENT      0x02
+#define ERROR_GOT_ARGUMENT      0x03
+#define ERROR_MISSING_ARGUMENT  0x04
 
-	/* other ideas for options...
-	{ "host", 1, 0, NULL },
-	{ "port", 1, 0, NULL },
-	{ "verbose", 0, 0, NULL },
-	*/
+typedef struct {
+	int shortopt;
+	const char *longopt;
+	const char *argument;
+	const char *descrition;
+} arg_opt_t;
 
-	{ .name = NULL }
+
+typedef void (*option_callback_fn_t)(int c, const char *arg);
+
+
+options_t options = {
+	.verbosity = V_DEFAULT,
+	.password = NULL,
 };
 
-/* why don't all languages have dictionary built-ins...? */
-struct mpc_option *get_option(const char *option)
-{
-	int i;
+static const arg_opt_t option_table[] = {
+		{ 'v', "verbose", NULL, "Verbose output" },
+		{ 'q', "quiet", NULL, "Don't print status" },
+		{ 'q', "no-status", NULL, "Don't print status" },
+		{ 'h', "host", "PORT", "Connect to server on host [" DEFAULT_HOST "]" },
+		{ 'P', "password", "PASSWORD", "Connect to server with password" },
+		{ 'p', "port", "HOST", "Connect to server on port [" DEFAULT_PORT "]" },
+		{ 'f', "format", "FORMAT", "Output status with format [" DEFAULT_FORMAT "]" }
+};
 
-	for (i = 0; mpc_options[i].name; ++i)
-		if (strcmp(option, mpc_options[i].name) == 0)
-			return &mpc_options[i];
+static const unsigned option_table_size = sizeof(option_table) / sizeof(option_table[0]);
+
+static void
+option_error(int error, const char *option, const char *arg)
+{
+	switch (error) {
+	case ERROR_UNKNOWN_OPTION:
+		fprintf(stderr, PACKAGE ": invalid option %s\n", option);
+		break;
+	case ERROR_BAD_ARGUMENT:
+		fprintf(stderr, PACKAGE ": bad argument: %s\n", option);
+		break;
+	case ERROR_GOT_ARGUMENT:
+		fprintf(stderr, PACKAGE ": invalid option %s=%s\n", option, arg);
+		break;
+	case ERROR_MISSING_ARGUMENT:
+		fprintf(stderr, PACKAGE ": missing value for %s option\n", option);
+		break;
+	default:
+		fprintf(stderr, PACKAGE ": internal error %d\n", error);
+		break;
+	}
+
+	exit(EXIT_FAILURE);
+}
+
+static const arg_opt_t *
+lookup_long_option(char *l)
+{
+	unsigned i;
+
+	for (i = 0; i < option_table_size; ++i) {
+		if (strcmp(l, option_table[i].longopt) == 0)
+			return &option_table[i];
+	}
 
 	return NULL;
 }
 
-/* removes the index-th element from arr (*size gets decremented) */
-static void remove_index (int idx, char ** arr, int * size)
+static const arg_opt_t *
+lookup_short_option(char s)
 {
-	int i;
+	unsigned i;
 
-	/* these would be dumb... */
-	assert(arr);
-	assert(size);
-	assert(idx >= 0);
-	assert(*size >= 0);
-	assert(idx < *size);
+	for (i = 0; i < option_table_size; ++i) {
+		if (s == option_table[i].shortopt)
+			return &option_table[i];
+	}
 
-	/* shift everything past index one to the left and decrement the size */
-	for (i = idx; i < *size - 1; ++i)
-		arr[i] = arr[i + 1];
-	--*size;
+	return NULL;
 }
 
-/* check and extract options from argv (between argv[0] and the first command
-   argument, since other locations could be ambiguous) */
-int parse_options (int * argc_p, char ** argv)
+static void
+handle_option(int c, const char *arg) {
+	switch (c) {
+		case 'v':
+			options.verbosity = 2;
+			fprintf(stderr,"verbose!\n");
+			break;
+		case 'q':
+			options.verbosity = 0;
+			fprintf(stderr,"quiet!\n");
+			break;
+		case 'h':
+			if (options.host)
+				free(options.host);
+			options.host = strdup(arg);
+			break;
+		case 'P':
+			if (options.password)
+				free(options.password);
+			options.password = strdup(arg);
+			break;
+		case 'p':
+			options.port = atoi(arg);
+			break;
+		case 'f':
+			if (options.format)
+				free(options.format);
+			options.format = strdup(arg);
+			break;
+		default: // Should never be reached, due to lookup_*_option functions
+			fprintf(stderr, "Unknown option %c = %s\n", c, arg);
+			exit(EXIT_FAILURE);
+			break;
+	}
+}
+
+void parse_options (int * argc_p, char ** argv)
 {
-	int i;
-	struct mpc_option * option;
+	int i, optind;
+	const arg_opt_t *opt = NULL;
+	option_callback_fn_t option_cb = handle_option;
+	char * tmp;
 
-	for (i = 1; i < *argc_p; )
-	{
-		/* args with a "--" prefix are options, until we find the "--" option */
-		if (strncmp(argv[i], "--", 2) == 0)
-		{
-			/* quit parsing on the first "--" */
-			if (strcmp(argv[i], "--") == 0)
-				return 0;
+	for (i = 1; i < *argc_p; i++) {
+		const char *arg = argv[i];
+		size_t len = strlen(arg);
 
-			/* strip the prefix from our option and try to look it up */
-			option = get_option(argv[i] + 2);
-			if (option)
-			{
-				option->set = 1;
+		/* check for a long option */
+		if (len >= 2 && arg[0] == '-' && arg[1] == '-') {
+			char *name, *value;
 
-				/* do we need to grab a parameter for this option? */
-				if (option->has_value)
-				{
-					/* are there any arguments left? */
-					if (i < *argc_p - 1)
-					{
-						/* grab and extract the value */
-						option->value = argv[i + 1];
-						remove_index(i + 1, argv, argc_p);
-					}
-					else
-					{
-						fprintf(stderr, "Option %s expects a value\n",
-								argv[i]);
-						return -1;
-					}
+			/* make sure we got an argument for the previous option */
+			if( opt && opt->argument )
+				option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
+
+			/* retrieve a option argument */
+			if ((value=rindex(arg+2, '='))) {
+				*value = '\0';
+				name = strdup(arg);
+				*value = '=';
+				value++;
+			} else
+				name = strdup(arg);
+
+			/* check if the option exists */
+			if( (opt=lookup_long_option(name+2)) == NULL )
+				option_error(ERROR_UNKNOWN_OPTION, name, NULL);
+			free(name);
+
+			/* abort if we got an argument to the option and don't want one */
+			if( value && opt->argument==NULL )
+				option_error(ERROR_GOT_ARGUMENT, arg, value);
+
+			/* execute option callback */
+			if (value || opt->argument==NULL) {
+				option_cb (opt->shortopt, value);
+				opt = NULL;
+			}
+		}
+		/* check for short options */
+		else if (len>=2 && arg[0] == '-') {
+			size_t j;
+
+			for(j=1; j<len; j++) {
+				/* make sure we got an argument for the previous option */
+				if (opt && opt->argument)
+					option_error(ERROR_MISSING_ARGUMENT,
+						     opt->longopt, opt->argument);
+
+				/* check if the option exists */
+				if ((opt=lookup_short_option(arg[j])) == NULL)
+					option_error(ERROR_UNKNOWN_OPTION, arg, NULL);
+
+				/* if no option argument is needed execute callback */
+				if (opt->argument == NULL) {
+					option_cb (opt->shortopt, NULL);
+					opt = NULL;
 				}
 			}
-			else
-			{
-				fprintf(stderr, "Invalid option: %s\n", argv[i]);
-				return -1;
+		} else {
+			/* is this a option argument? */
+			if (opt && opt->argument) {
+				option_cb (opt->shortopt, arg);
+				opt = NULL;
+			} else {
+				/* this is the command */
+				break;
 			}
-
-			/* remove the i-th element from argv */
-			remove_index(i, argv, argc_p);
-		}
-		else
-		{
-			/* increment iff we don't remove an element of argv */
-			++i;
 		}
 	}
 
-	return 0;
+	if (opt && opt->argument)
+		option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
+
+
+	// Parse the password from the host
+	if ( (tmp = index(options.host, '@')) ) {
+		options.password = tmp + 1;
+		*tmp = '\0';
+	}
+
+	/* Fix argv for command processing, which wants
+	   argv[1] to be the command, and so on. */
+	optind = i;
+	if ( optind > 1 )
+	{
+		for ( i = optind; i < *argc_p; i++)
+		{
+			argv[i-optind+1] = argv[i];
+		}
+		*argc_p -= optind - 1;
+	}
+}
+
+void options_init() {
+	char *tmp;
+
+	options.format = strdup(DEFAULT_FORMAT);
+	options.port = atoi(DEFAULT_PORT);
+
+	if ( (tmp = getenv("MPD_HOST")) )
+		options.host = strdup(tmp);
+	else
+		options.host = strdup(DEFAULT_HOST);
+
+	if ( (tmp = getenv("MPD_PORT")) ) {
+		options.port = atoi(tmp);
+	}
+
 }
