@@ -37,12 +37,10 @@ typedef struct {
 } arg_opt_t;
 
 
-typedef void (*option_callback_fn_t)(int c, const char *arg);
-
-
 options_t options = {
 	.verbosity = V_DEFAULT,
 	.password = NULL,
+	.port_str = NULL,
 };
 
 static const arg_opt_t option_table[] = {
@@ -61,33 +59,32 @@ static void
 option_error(int error, const char *option, const char *arg)
 {
 	switch (error) {
-	case ERROR_UNKNOWN_OPTION:
-		fprintf(stderr, PACKAGE ": invalid option %s\n", option);
-		break;
-	case ERROR_BAD_ARGUMENT:
-		fprintf(stderr, PACKAGE ": bad argument: %s\n", option);
-		break;
-	case ERROR_GOT_ARGUMENT:
-		fprintf(stderr, PACKAGE ": invalid option %s=%s\n", option, arg);
-		break;
-	case ERROR_MISSING_ARGUMENT:
-		fprintf(stderr, PACKAGE ": missing value for %s option\n", option);
-		break;
-	default:
-		fprintf(stderr, PACKAGE ": internal error %d\n", error);
-		break;
+		case ERROR_UNKNOWN_OPTION:
+			fprintf(stderr, PACKAGE ": invalid option %s\n", option);
+			break;
+		case ERROR_BAD_ARGUMENT:
+			fprintf(stderr, PACKAGE ": bad argument: %s\n", option);
+			break;
+		case ERROR_GOT_ARGUMENT:
+			fprintf(stderr, PACKAGE ": invalid option %s=%s\n", option, arg);
+			break;
+		case ERROR_MISSING_ARGUMENT:
+			fprintf(stderr, PACKAGE ": missing value for %s option\n", option);
+			break;
+		default:
+			fprintf(stderr, PACKAGE ": internal error %d\n", error);
+			break;
 	}
-
 	exit(EXIT_FAILURE);
 }
 
 static const arg_opt_t *
-lookup_long_option(char *l)
+lookup_long_option(char *l, size_t len)
 {
 	unsigned i;
 
 	for (i = 0; i < option_table_size; ++i) {
-		if (strcmp(l, option_table[i].longopt) == 0)
+		if (strncmp(l, option_table[i].longopt, len) == 0)
 			return &option_table[i];
 	}
 
@@ -95,7 +92,7 @@ lookup_long_option(char *l)
 }
 
 static const arg_opt_t *
-lookup_short_option(char s)
+lookup_short_option(int s)
 {
 	unsigned i;
 
@@ -108,33 +105,26 @@ lookup_short_option(char s)
 }
 
 static void
-handle_option(int c, const char *arg) {
+handle_option(int c, const char *arg)
+{
 	switch (c) {
 		case 'v':
 			options.verbosity = 2;
-			fprintf(stderr,"verbose!\n");
 			break;
 		case 'q':
 			options.verbosity = 0;
-			fprintf(stderr,"quiet!\n");
 			break;
 		case 'h':
-			if (options.host)
-				free(options.host);
-			options.host = strdup(arg);
+			options.host = arg;
 			break;
 		case 'P':
-			if (options.password)
-				free(options.password);
-			options.password = strdup(arg);
+			options.password = arg;
 			break;
 		case 'p':
-			options.port = atoi(arg);
+			options.port_str = arg;
 			break;
 		case 'f':
-			if (options.format)
-				free(options.format);
-			options.format = strdup(arg);
+			options.format = arg;
 			break;
 		default: // Should never be reached, due to lookup_*_option functions
 			fprintf(stderr, "Unknown option %c = %s\n", c, arg);
@@ -143,76 +133,74 @@ handle_option(int c, const char *arg) {
 	}
 }
 
-void parse_options (int * argc_p, char ** argv)
+void
+parse_options(int * argc_p, char ** argv)
 {
 	int i, optind;
 	const arg_opt_t *opt = NULL;
-	option_callback_fn_t option_cb = handle_option;
 	char * tmp;
 
 	for (i = 1; i < *argc_p; i++) {
 		const char *arg = argv[i];
 		size_t len = strlen(arg);
 
-		/* check for a long option */
-		if (len >= 2 && arg[0] == '-' && arg[1] == '-') {
-			char *name, *value;
+		if (len >= 2 && arg[0] == '-') {
+			if (arg[1] == '-') {
+				/* arg is a long option */
+				char *value;
+				size_t name_len = len - 2;
 
-			/* make sure we got an argument for the previous option */
-			if( opt && opt->argument )
-				option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
-
-			/* retrieve a option argument */
-			if ((value=rindex(arg+2, '='))) {
-				*value = '\0';
-				name = strdup(arg);
-				*value = '=';
-				value++;
-			} else
-				name = strdup(arg);
-
-			/* check if the option exists */
-			if( (opt=lookup_long_option(name+2)) == NULL )
-				option_error(ERROR_UNKNOWN_OPTION, name, NULL);
-			free(name);
-
-			/* abort if we got an argument to the option and don't want one */
-			if( value && opt->argument==NULL )
-				option_error(ERROR_GOT_ARGUMENT, arg, value);
-
-			/* execute option callback */
-			if (value || opt->argument==NULL) {
-				option_cb (opt->shortopt, value);
-				opt = NULL;
-			}
-		}
-		/* check for short options */
-		else if (len>=2 && arg[0] == '-') {
-			size_t j;
-
-			for(j=1; j<len; j++) {
 				/* make sure we got an argument for the previous option */
-				if (opt && opt->argument)
-					option_error(ERROR_MISSING_ARGUMENT,
-						     opt->longopt, opt->argument);
+				if( opt && opt->argument)
+					option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
+
+				/* retrieve a option argument */
+				if ((value=index(arg+2, '='))) {
+					name_len = value - arg - 2;
+					value++;
+				}
 
 				/* check if the option exists */
-				if ((opt=lookup_short_option(arg[j])) == NULL)
+				if ((opt=lookup_long_option(arg+2, name_len)) == NULL) {
 					option_error(ERROR_UNKNOWN_OPTION, arg, NULL);
+				}
 
-				/* if no option argument is needed execute callback */
-				if (opt->argument == NULL) {
-					option_cb (opt->shortopt, NULL);
+				/* abort if we got an argument to the option and don't want one */
+				if( value && opt->argument == NULL)
+					option_error(ERROR_GOT_ARGUMENT, arg, value);
+
+				/* execute option callback */
+				if (value || opt->argument == NULL) {
+					handle_option(opt->shortopt, value);
 					opt = NULL;
+				}
+			} else {
+				/* arg is a short option (or several) */
+				size_t j;
+
+				for (j=1; j<len; j++) {
+					/* make sure we got an argument for the previous option */
+					if (opt && opt->argument)
+						option_error(ERROR_MISSING_ARGUMENT,
+								opt->longopt, opt->argument);
+
+					/* check if the option exists */
+					if ((opt = lookup_short_option(arg[j])) == NULL)
+						option_error(ERROR_UNKNOWN_OPTION, arg, NULL);
+
+					/* if no option argument is needed execute callback */
+					if (opt->argument == NULL) {
+						handle_option(opt->shortopt, NULL);
+						opt = NULL;
+					}
 				}
 			}
 		} else {
-			/* is this a option argument? */
+			/* No '-'; arg is an option argument or command. */
 			if (opt && opt->argument) {
-				option_cb (opt->shortopt, arg);
+				handle_option(opt->shortopt, arg);
 				opt = NULL;
 			} else {
-				/* this is the command */
 				break;
 			}
 		}
@@ -221,39 +209,47 @@ void parse_options (int * argc_p, char ** argv)
 	if (opt && opt->argument)
 		option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
 
-
-	// Parse the password from the host
-	if ( (tmp = index(options.host, '@')) ) {
+	/* Parse the password from the host */
+	if ((tmp = index(options.host, '@'))) {
 		options.password = tmp + 1;
 		*tmp = '\0';
+	}
+
+	/* Convert port to an integer */
+	if (options.port_str) {
+		options.port = strtol(options.port_str, &tmp, 10);
+		if (options.port < 0 || *tmp != '\0') {
+			fprintf(stderr, "Port \"%s\" is not a positive integer\n", options.port_str);
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	/* Fix argv for command processing, which wants
 	   argv[1] to be the command, and so on. */
 	optind = i;
-	if ( optind > 1 )
-	{
-		for ( i = optind; i < *argc_p; i++)
-		{
+	if (optind > 1) {
+		for (i = optind; i < *argc_p; i++)
 			argv[i-optind+1] = argv[i];
-		}
+
 		*argc_p -= optind - 1;
 	}
 }
 
-void options_init() {
+void
+options_init()
+{
 	char *tmp;
 
-	options.format = strdup(DEFAULT_FORMAT);
+	options.format = DEFAULT_FORMAT;
 	options.port = atoi(DEFAULT_PORT);
 
-	if ( (tmp = getenv("MPD_HOST")) )
-		options.host = strdup(tmp);
+	if ((tmp = getenv("MPD_HOST")))
+		options.host = tmp;
 	else
-		options.host = strdup(DEFAULT_HOST);
+		options.host = DEFAULT_HOST;
 
-	if ( (tmp = getenv("MPD_PORT")) ) {
-		options.port = atoi(tmp);
+	if ((tmp = getenv("MPD_PORT"))) {
+		options.port_str = tmp;
 	}
 
 }

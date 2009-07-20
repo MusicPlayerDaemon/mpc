@@ -20,23 +20,22 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-#include <stdbool.h>
-
 #define V_QUIET 0
 #define V_DEFAULT 1
 #define V_VERBOSE 2
 
 typedef struct {
-	char *host;
+	const char *host;
+	const char *port_str;
 	int port;
-	char *password;
-	char *format;
+	const char *password;
+	const char *format;
 	int verbosity; // 0 for quiet, 1 for default, 2 for verbose
 } options_t;
 
+
 void parse_options(int * argc_p, char ** argv);
 void options_init(void);
-
 
 extern options_t options;
 

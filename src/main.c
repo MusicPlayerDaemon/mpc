@@ -208,7 +208,7 @@ run(const struct command *command, int argc, char **array)
 	conn = setup_connection();
 
 	ret = command->handler(argc, array, conn);
-	if (ret != 0) {
+	if (ret != 0 && options.verbosity > V_QUIET) {
 		print_status(conn);
 	}
 
