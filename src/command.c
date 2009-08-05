@@ -1132,3 +1132,15 @@ int cmd_idle(mpd_unused int argc, mpd_unused char **argv,
 
 	return 0;
 }
+
+int
+cmd_idleloop(int argc, char **argv, mpd_Connection *connection)
+{
+	int ret;
+
+	while (true) {
+		ret = cmd_idle(argc, argv, connection);
+		if (ret != 0)
+			return ret;
+	}
+}

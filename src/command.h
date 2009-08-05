@@ -66,4 +66,7 @@ int cmd_toggle ( int argc, char ** argv, mpd_Connection *conn );
 
 int cmd_idle(int argc, char **argv, mpd_Connection *connection);
 
+int
+cmd_idleloop(int argc, char **argv, mpd_Connection *connection);
+
 #endif /* COMMAND_H */
