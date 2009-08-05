@@ -79,7 +79,7 @@ option_error(int error, const char *option, const char *arg)
 }
 
 static const arg_opt_t *
-lookup_long_option(char *l, size_t len)
+lookup_long_option(const char *l, size_t len)
 {
 	unsigned i;
 
