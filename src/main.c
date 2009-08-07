@@ -158,7 +158,7 @@ static mpd_Connection * setup_connection (void)
 	printErrorAndExit(conn);
 
 	if(options.password)
-		send_password (options.host, conn);
+		send_password(options.password, conn);
 
 	return conn;
 }

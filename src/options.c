@@ -211,8 +211,14 @@ parse_options(int * argc_p, char ** argv)
 
 	/* Parse the password from the host */
 	if ((tmp = index(options.host, '@'))) {
-		options.password = tmp + 1;
-		*tmp = '\0';
+		size_t password_length = tmp - options.host;
+		char *password = malloc(password_length + 1);
+
+		memcpy(password, options.host, password_length);
+		password[password_length] = 0;
+
+		options.password = password;
+		options.host = tmp + 1;
 	}
 
 	/* Convert port to an integer */
