@@ -1,3 +1,6 @@
+0.18 - not yet released
+
+
 0.17 - (2009/08/13)
 * fixed busy loop while waiting for "idle" response
 * added command "idleloop"
