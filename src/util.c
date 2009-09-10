@@ -259,6 +259,54 @@ static const char * skipFormatting(const char * p) {
 	return p;
 }
 
+static const char *
+song_value(const struct mpd_song *song, const char *name)
+{
+	const char *value;
+
+	if (strcmp(name, "file") == 0)
+		value = song->file;
+	else if (strcmp(name, "artist") == 0)
+		value = song->artist;
+	else if (strcmp(name, "album") == 0)
+		value = song->album;
+	else if (strcmp(name, "track") == 0)
+		value = song->track;
+	else if (strcmp(name, "title") == 0)
+		value = song->title;
+	else if (strcmp(name, "name") == 0)
+		value = song->name;
+	else if (strcmp(name, "date") == 0)
+		value = song->date;
+	else if (strcmp(name, "genre") == 0)
+		value = song->genre;
+	else if (strcmp(name, "composer") == 0)
+		value = song->composer;
+	else if (strcmp(name, "performer") == 0)
+		value = song->performer;
+	else if (strcmp(name, "disc") == 0)
+		value = song->disc;
+	else if (strcmp(name, "comment") == 0)
+		value = song->comment;
+	else if (strcmp(name, "time") == 0) {
+		if (song->time != MPD_SONG_NO_TIME) {
+			static char buffer[10];
+			snprintf(buffer, sizeof(buffer), "%d:%02d",
+				 song->time / 60, song->time % 60);
+			value = buffer;
+		} else
+			value = NULL;
+	} else
+		return NULL;
+
+	if (value != NULL)
+		value = charset_from_utf8(value);
+	else
+		value = "";
+
+	return value;
+}
+
 /* this is a little ugly... */
 static char *
 songToFormatedString(struct mpd_song *song,
@@ -267,9 +315,9 @@ songToFormatedString(struct mpd_song *song,
 	char * ret = NULL;
 	const char *p, *end;
 	const char *temp;
+	char name[32];
 	int length;
 	int found = 0;
-	int labelFound = 0;
 
 	/* we won't mess up format, we promise... */
 	for (p = format; *p != '\0'; )
@@ -367,63 +415,28 @@ songToFormatedString(struct mpd_song *song,
 		}
 		length = end - p + 1;
 
-		labelFound = 0;
-
 		if (*end != '%') {
-			length--;
-		} else if (strncmp("%file%", p, length) == 0) {
-			temp = charset_from_utf8(song->file);
-		} else if (strncmp("%artist%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->artist ? charset_from_utf8(song->artist) : NULL;
-		} else if (strncmp("%album%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->album ? charset_from_utf8(song->album) : NULL;
-		} else if (strncmp("%track%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->track ? charset_from_utf8(song->track) : NULL;
-		} else if (strncmp("%title%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->title ? charset_from_utf8(song->title) : NULL;
-		} else if (strncmp("%name%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->name ? charset_from_utf8(song->name) : NULL;
-		} else if (strncmp("%date%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->date ? charset_from_utf8(song->date) : NULL;
-		} else if (strncmp("%genre%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->genre ? charset_from_utf8(song->genre) : NULL;
-		} else if (strncmp("%composer%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->composer ? charset_from_utf8(song->composer) : NULL;
-		} else if (strncmp("%performer%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->performer ? charset_from_utf8(song->performer) : NULL;
-		} else if (strncmp("%disc%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->disc ? charset_from_utf8(song->disc) : NULL;
-		} else if (strncmp("%comment%", p, length) == 0) {
-			labelFound = 1;
-			temp = song->comment ? charset_from_utf8(song->comment) : NULL;
-		} else if (strncmp("%time%", p, length) == 0) {
-			labelFound = 1;
-			if (song->time != MPD_SONG_NO_TIME) {
-				char s[10];
-				snprintf(s, 9, "%d:%02d", song->time / 60, 
-				                          song->time % 60);
-				/* nasty hack to use static buffer */
-				temp = charset_from_utf8(s);
-			}
+			ret = appendToString(ret, p, length - 1);
+			p += length - 1;
+			continue;
 		}
 
-		if( temp == NULL && !labelFound ) {
+		if (length > (int)sizeof(name)) {
 			ret = appendToString(ret, p, length);
+			p += length;
+			continue;
 		}
-		else if( temp != NULL ) {
-			found = 1;
+
+		memcpy(name, p + 1, length - 2);
+		name[length - 2] = 0;
+
+		temp = song_value(song, name);
+		if (temp != NULL) {
+			if (*temp != 0)
+				found = 1;
 			ret = appendToString(ret, temp, strlen(temp));
-		}
+		} else
+			ret = appendToString(ret, p, length);
 
 		/* advance past the specifier */
 		p += length;
