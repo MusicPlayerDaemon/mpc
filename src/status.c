@@ -30,6 +30,18 @@
 #include <stdio.h>
 #include <string.h>
 
+static unsigned
+elapsed_percent(const mpd_Status *status)
+{
+	if (status->totalTime <= 0)
+		return 0;
+
+	if (status->elapsedTime >= status->totalTime)
+		return 100;
+
+	return (status->elapsedTime * 100) / status->totalTime;
+}
+
 void print_status (mpd_Connection *conn)
 {
 	mpd_Status * status;
@@ -50,8 +62,6 @@ void print_status (mpd_Connection *conn)
 	if(status->state == MPD_STATUS_STATE_PLAY ||
 			status->state == MPD_STATUS_STATE_PAUSE)
 	{
-		float perc;
-
 		mpd_nextListOkCommand(conn);
 		printErrorAndExit(conn);
 
@@ -81,19 +91,14 @@ void print_status (mpd_Connection *conn)
 		}
 		else printf("[paused] ");
 
-		perc = status->elapsedTime<status->totalTime ?
-				100.0*status->elapsedTime/status->totalTime :
-				100.0;
-
-
-		printf(" #%i/%i %3i:%02i/%i:%02i (%.0f%c)\n",
+		printf(" #%i/%i %3i:%02i/%i:%02i (%u%%)\n",
 				status->song+1,
 				status->playlistLength,
 				status->elapsedTime/60,
 				status->elapsedTime%60,
 				status->totalTime/60,
 				status->totalTime%60,
-				perc,'%');
+		       elapsed_percent(status));
 	}
 
 	if(status->updatingDb) {
