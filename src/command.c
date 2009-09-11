@@ -690,8 +690,9 @@ int cmd_load ( int argc, char ** argv, mpd_Connection * conn )
 					strcpy(argv[i], charset_from_utf8(pl->path));
 			}
 			free(dp);
-			mpd_freeInfoEntity(entity);
 		}
+
+		mpd_freeInfoEntity(entity);
 	}
 	my_finishCommand(conn);
 
