@@ -668,33 +668,6 @@ int cmd_lsplaylists ( int argc, char ** argv, mpd_Connection * conn )
 int cmd_load ( int argc, char ** argv, mpd_Connection * conn )
 {
 	int i;
-	char * sp;
-	char * dp;
-	mpd_InfoEntity * entity;
-	mpd_PlaylistFile * pl;
-
-	for(i=0;i<argc;i++) {
-		sp = argv[i];
-		while((sp = strchr(sp,' '))) *sp = '_';
-	}
-
-	mpd_sendLsInfoCommand(conn,"");
-	printErrorAndExit(conn);
-	while((entity = mpd_getNextInfoEntity(conn))) {
-		if(entity->type==MPD_INFO_ENTITY_TYPE_PLAYLISTFILE) {
-			pl = entity->info.playlistFile;
-			dp = sp = strdup(charset_from_utf8(pl->path));
-			while((sp = strchr(sp,' '))) *sp = '_';
-			for(i=0;i<argc;i++) {
-				if(strcmp(dp,argv[i])==0)
-					strcpy(argv[i], charset_from_utf8(pl->path));
-			}
-			free(dp);
-		}
-
-		mpd_freeInfoEntity(entity);
-	}
-	my_finishCommand(conn);
 
 	mpd_sendCommandListBegin(conn);
 	printErrorAndExit(conn);
@@ -964,7 +937,6 @@ cmd_version(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 int cmd_loadtab ( int argc, char ** argv, mpd_Connection * conn )
 {
 	mpd_InfoEntity * entity;
-	char * sp;
 	mpd_PlaylistFile * pl;
 
 	mpd_sendLsInfoCommand(conn,"");
@@ -973,8 +945,6 @@ int cmd_loadtab ( int argc, char ** argv, mpd_Connection * conn )
 	while((entity = mpd_getNextInfoEntity(conn))) {
 		if(entity->type==MPD_INFO_ENTITY_TYPE_PLAYLISTFILE) {
 			pl = entity->info.playlistFile;
-			sp = pl->path;
-			while((sp = strchr(sp,' '))) *sp = '_';
 			if(argc==1) {
 				if(strncmp(pl->path,argv[0],
 							strlen(argv[0]))==0) {
