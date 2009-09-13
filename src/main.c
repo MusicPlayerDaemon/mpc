@@ -249,8 +249,7 @@ int main(int argc, char ** argv)
 
 	/* initialization */
 
-	charset_init(command->pipe >= 0 || isatty(STDIN_FILENO),
-		     isatty(STDOUT_FILENO));
+	charset_init(true, true);
 
 	/* run */
 

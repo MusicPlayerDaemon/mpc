@@ -1,5 +1,6 @@
 0.18 - not yet released
 * don't quote spaces in the "load" and "lstab"
+* revert "disable character set conversion to/from pipe"
 
 
 0.17 - (2009/08/13)
