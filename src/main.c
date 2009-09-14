@@ -105,21 +105,28 @@ static struct command {
 	{ .command = NULL }
 };
 
+static void
+print_usage(FILE * outfp, char * progname)
+{
+	fprintf(outfp,"Usage: %s [options] <command> [<arguments>]\n"
+		"mpc version: "VERSION"\n",progname);
+}
+
 static int print_help(char * progname, char * command)
 {
 	int i, max = 0;
-	int ret = EXIT_FAILURE;
-	FILE *outfp = stderr;
 
-	if (command) {
-		if (!strcmp(command,"help")) {
-			outfp = stdout;
-			ret = EXIT_SUCCESS;
-		} else
-			fprintf(outfp,"unknown command \"%s\"\n",command);
+	if (command && strcmp(command, "help")) {
+		fprintf(stderr,"unknown command \"%s\"\n",command);
+		print_usage(stderr, progname);
+		fprintf(stderr,"See man 1 mpc or use 'mpc help' for more help.\n");
+		return EXIT_FAILURE;
 	}
-	fprintf(outfp,"Usage: %s [options] <command> [<arguments>]\n"
-		"mpc version: "VERSION"\n",progname);
+
+	print_usage(stdout, progname);
+	printf("\n");
+
+	printf("Commands:\n");
 
 	for (i=0; mpc_table[i].command; ++i) {
 		if (mpc_table[i].help) {
@@ -129,7 +136,7 @@ static int print_help(char * progname, char * command)
 		}
 	}
 
-	fprintf(outfp,	"%s %*s  Displays status\n",progname,max," ");
+	printf("  %s %*s  Displays status\n",progname,max," ");
 
 	for (i=0; mpc_table[i].command; ++i) {
 		int spaces;
@@ -139,14 +146,14 @@ static int print_help(char * progname, char * command)
 		spaces = max-(strlen(mpc_table[i].command)+strlen(mpc_table[i].usage));
 		spaces += !spaces ? 0 : 1;
 
-		fprintf(outfp,"%s %s %s%*s%s\n",progname,
+		printf("  %s %s %s%*s%s\n",progname,
 			mpc_table[i].command,mpc_table[i].usage,
 			spaces," ",mpc_table[i].help);
 
 	}
-	fprintf(outfp,"For more information about these and other "
-			"options look at man 1 mpc\n");
-	return ret;
+	printf("For more information about these and other "
+		   "options look at man 1 mpc\n");
+	return EXIT_SUCCESS;
 }
 
 static mpd_Connection * setup_connection (void)
