@@ -136,19 +136,30 @@ handle_option(int c, const char *arg)
 void
 parse_options(int * argc_p, char ** argv)
 {
-	int i, optind;
+	int i;
 	const arg_opt_t *opt = NULL;
 	char * tmp;
+	int cmdind = 0;
+	int optind = 0;
 
 	for (i = 1; i < *argc_p; i++) {
 		const char *arg = argv[i];
 		size_t len = strlen(arg);
 
-		if (len >= 2 && arg[0] == '-') {
+		if (arg[0] == '-') {
 			if (arg[1] == '-') {
 				/* arg is a long option */
 				char *value;
 				size_t name_len = len - 2;
+
+				/* if arg is "--", there can be no more options */
+				if (len == 2) {
+					optind = i + 1;
+					if (cmdind == 0) {
+						cmdind = optind;
+					}
+					break;
+				}
 
 				/* make sure we got an argument for the previous option */
 				if( opt && opt->argument)
@@ -177,6 +188,8 @@ parse_options(int * argc_p, char ** argv)
 			} else {
 				/* arg is a short option (or several) */
 				size_t j;
+				if (len == 1)
+					option_error(ERROR_UNKNOWN_OPTION, arg, NULL);
 
 				for (j=1; j<len; j++) {
 					/* make sure we got an argument for the previous option */
@@ -196,15 +209,25 @@ parse_options(int * argc_p, char ** argv)
 				}
 			}
 		} else {
-			/* No '-'; arg is an option argument or command. */
+			/* No '-' */
 			if (opt && opt->argument) {
+				/* arg is an option argument */
 				handle_option(opt->shortopt, arg);
 				opt = NULL;
 			} else {
-				break;
+				/* arg may the command; note it and read for more options */
+				if (cmdind == 0)
+					cmdind = i;
+				/* otherwise, it is the first command argument and we are done */
+				else {
+					optind = i;
+					break;
+				}
 			}
 		}
 	}
+	if (optind == 0)
+		optind = i;
 
 	if (opt && opt->argument)
 		option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
@@ -232,12 +255,20 @@ parse_options(int * argc_p, char ** argv)
 
 	/* Fix argv for command processing, which wants
 	   argv[1] to be the command, and so on. */
-	optind = i;
+	if (cmdind != 0)
+		argv[1] = argv[cmdind];
 	if (optind > 1) {
-		for (i = optind; i < *argc_p; i++)
-			argv[i-optind+1] = argv[i];
+		if ( optind == cmdind || cmdind == 0 ) {
+			for (i = optind + 1; i < *argc_p; i++)
+				argv[i-optind+2] = argv[i];
 
-		*argc_p -= optind - 1;
+			*argc_p -= optind - 1;
+		} else {
+			for (i = optind; i < *argc_p; i++)
+				argv[i-optind+2] = argv[i];
+
+			*argc_p -= optind - 2;
+		}
 	}
 }
 
