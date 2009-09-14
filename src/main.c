@@ -75,11 +75,11 @@ static struct command {
 	{"playlist",    0,   0,   0,    cmd_playlist,    "", "Print the current playlist"},
 	{"listall",     0,   -1,  2,    cmd_listall,     "[<file>]", "List all songs in the music dir"},
 	{"ls",          0,   -1,  2,    cmd_ls,          "[<directory>]", "List the contents of <directory>"},
-	{"lsplaylists", 0,   -1,  2,    cmd_lsplaylists, "", "Lists currently available playlists"},
+	{"lsplaylists", 0,   -1,  2,    cmd_lsplaylists, "", "List currently available playlists"},
 	{"load",        0,   -1,  1,    cmd_load,        "<file>", "Load <file> as a playlist"},
-	{"save",        1,   1,   0,    cmd_save,        "<file>", "Saves a playlist as <file>"},
-	{"rm",          1,   1,   0,    cmd_rm,          "<file>", "Removes a playlist"},
-	{"volume",      0,   1,   0,    cmd_volume,      "[+-]<num>", "Sets volume to <num> or adjusts by [+-]<num>"},
+	{"save",        1,   1,   0,    cmd_save,        "<file>", "Save a playlist as <file>"},
+	{"rm",          1,   1,   0,    cmd_rm,          "<file>", "Remove a playlist"},
+	{"volume",      0,   1,   0,    cmd_volume,      "[+-]<num>", "Set volume to <num> or adjusts by [+-]<num>"},
 	{"repeat",      0,   1,   0,    cmd_repeat,      "<on|off>", "Toggle repeat mode, or specify state"},
 	{"random",      0,   1,   0,    cmd_random,      "<on|off>", "Toggle random mode, or specify state"},
 	{"single",      0,   1,   0,    cmd_single,      "<on|off>", "Toggle single mode, or specify state"},
@@ -88,9 +88,9 @@ static struct command {
 	{"find",        2,   -1,  0,    cmd_find,        "<type> <query>", "Find a song (exact match)"},
 	{"list",        1,   -1,  0,    cmd_list,        "<type> [<type> <query>]", "Show all tags of <type>"},
 	{"crossfade",   0,   1,   0,    cmd_crossfade,   "[<seconds>]", "Set and display crossfade settings"},
-	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scans music directory for updates"},
-	{"stats",       0,   -1,  0,    cmd_stats,       "", "Displays statistics about MPD"},
-	{"version",     0,   0,   0,    cmd_version,     "", "Reports version of MPD"},
+	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scan music directory for updates"},
+	{"stats",       0,   -1,  0,    cmd_stats,       "", "Display statistics about MPD"},
+	{"version",     0,   0,   0,    cmd_version,     "", "Report version of MPD"},
 	/* loadtab, lstab, and tab used for completion-scripting only */
 	{"loadtab",     0,   1,   0,    cmd_loadtab,     "<directory>", NULL},
 	{"lstab",       0,   1,   0,    cmd_lstab,       "<directory>", NULL},
@@ -140,7 +140,7 @@ static int print_help(char * progname, char * command)
 		}
 	}
 
-	printf("  %s %*s  Displays status\n",progname,max," ");
+	printf("  %s %*s  Display status\n",progname,max," ");
 
 	for (i=0; mpc_table[i].command; ++i) {
 		int spaces;
