@@ -126,6 +126,10 @@ static int print_help(char * progname, char * command)
 	print_usage(stdout, progname);
 	printf("\n");
 
+	printf("Options:\n");
+	print_option_help();
+	printf("\n");
+
 	printf("Commands:\n");
 
 	for (i=0; mpc_table[i].command; ++i) {
@@ -151,8 +155,7 @@ static int print_help(char * progname, char * command)
 			spaces," ",mpc_table[i].help);
 
 	}
-	printf("For more information about these and other "
-		   "options look at man 1 mpc\n");
+	printf("\nSee man 1 mpc for more information about mpc commands and options\n");
 	return EXIT_SUCCESS;
 }
 

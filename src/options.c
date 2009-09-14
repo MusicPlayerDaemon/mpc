@@ -24,6 +24,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#define MAX_LONGOPT_LENGTH 32
+
 #define ERROR_UNKNOWN_OPTION    0x01
 #define ERROR_BAD_ARGUMENT      0x02
 #define ERROR_GOT_ARGUMENT      0x03
@@ -33,7 +35,7 @@ typedef struct {
 	int shortopt;
 	const char *longopt;
 	const char *argument;
-	const char *descrition;
+	const char *description;
 } arg_opt_t;
 
 
@@ -44,13 +46,13 @@ options_t options = {
 };
 
 static const arg_opt_t option_table[] = {
-		{ 'v', "verbose", NULL, "Verbose output" },
-		{ 'q', "quiet", NULL, "Don't print status" },
-		{ 'q', "no-status", NULL, "Don't print status" },
-		{ 'h', "host", "PORT", "Connect to server on host [" DEFAULT_HOST "]" },
-		{ 'P', "password", "PASSWORD", "Connect to server with password" },
-		{ 'p', "port", "HOST", "Connect to server on port [" DEFAULT_PORT "]" },
-		{ 'f', "format", "FORMAT", "Output status with format [" DEFAULT_FORMAT "]" }
+		{ 'v', "verbose", NULL, "Give verbose output" },
+		{ 'q', "quiet", NULL, "Suppress status message" },
+		{ 'q', "no-status", NULL, "synonym for --quiet" },
+		{ 'h', "host", "<host>", "Connect to server on <host>" },
+		{ 'P', "password", "<password>", "Connect to server using password <password>" },
+		{ 'p', "port", "<port>", "Connect to server port <port>" },
+		{ 'f', "format", "<format>", "Print status with format <format>" },
 };
 
 static const unsigned option_table_size = sizeof(option_table) / sizeof(option_table[0]);
@@ -130,6 +132,24 @@ handle_option(int c, const char *arg)
 			fprintf(stderr, "Unknown option %c = %s\n", c, arg);
 			exit(EXIT_FAILURE);
 			break;
+	}
+}
+
+void
+print_option_help(void)
+{
+	unsigned i;
+
+	for (i = 0; i < option_table_size; i++) {
+		printf("  -%c, ", option_table[i].shortopt);
+		if (option_table[i].argument)
+			printf("--%s=%-*s",
+				   option_table[i].longopt,
+				   20 - strlen(option_table[i].longopt),
+				   option_table[i].argument);
+		else
+			printf("--%-20s ", option_table[i].longopt);
+		printf("%s\n", option_table[i].description);
 	}
 }
 
