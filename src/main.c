@@ -118,7 +118,7 @@ static int print_help(char * progname, char * command)
 		} else
 			fprintf(outfp,"unknown command \"%s\"\n",command);
 	}
-	fprintf(outfp,"Usage: %s <command> [command args]...\n"
+	fprintf(outfp,"Usage: %s [options] <command> [<arguments>]\n"
 		"mpc version: "VERSION"\n",progname);
 
 	for (i=0; mpc_table[i].command; ++i) {

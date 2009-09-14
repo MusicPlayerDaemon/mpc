@@ -2,11 +2,14 @@
 .SH "NAME"
 mpc \- Program for controlling Music Player Daemon (MPD)
 .SH "SYNOPSIS"
-mpc [<command> <arguments>]
+.B mpc
+.RI [ options ]
+.I <command>
+.RI [ <arguments> ]
 .SH "DESCRIPTION"
 mpc is a client for MPD, the Music Player Daemon.  mpc connects to a MPD and
-controls it according to commands and arguments passed to it.  If no arguments
-are passed, current status is given.
+controls it according to commands and arguments passed to it.  If no command
+is given, the current status is printed (same as 'mpc status').
 .SH "OPTIONS"
 .TP
 .BI -f,--format
