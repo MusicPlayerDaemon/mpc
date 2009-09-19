@@ -778,13 +778,12 @@ int cmd_list ( int argc, char ** argv, mpd_Connection * conn )
 int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 {
         struct int_value_change ch;
+	mpd_Status *status;
 
 	if(argc==1) {
                 if(!parse_int_value_change(argv[0], &ch))
 			DIE("\"%s\" is not an integer\n", argv[0]);
 	} else {
-		mpd_Status *status;
-
 		status = getStatus(conn);
 
 		printf("volume:%3i%c   \n",status->volume,'%');
@@ -794,11 +793,24 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 		return 0;
 	}
 
-	if (ch.is_relative)
-		mpd_sendVolumeCommand(conn,ch.value);
-	else
-		mpd_sendSetvolCommand(conn,ch.value);
+	if (ch.is_relative) {
+		int old_volume;
 
+		status = getStatus(conn);
+		old_volume = status->volume;
+		mpd_freeStatus(status);
+
+		ch.value += old_volume;
+		if (ch.value < 0)
+			ch.value = 0;
+		else if (ch.value > 100)
+			ch.value = 100;
+
+		if (ch.value == old_volume)
+			return 0;
+	}
+
+	mpd_sendSetvolCommand(conn, ch.value);
 	my_finishCommand(conn);
 	return 1;
 }
