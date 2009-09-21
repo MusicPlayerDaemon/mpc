@@ -186,7 +186,7 @@ parse_options(int * argc_p, char ** argv)
 					option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
 
 				/* retrieve a option argument */
-				if ((value=index(arg+2, '='))) {
+				if ((value = strchr(arg + 2, '=')) != NULL) {
 					name_len = value - arg - 2;
 					value++;
 				}
@@ -253,7 +253,7 @@ parse_options(int * argc_p, char ** argv)
 		option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
 
 	/* Parse the password from the host */
-	if ((tmp = index(options.host, '@'))) {
+	if ((tmp = strchr(options.host, '@')) != NULL) {
 		size_t password_length = tmp - options.host;
 		char *password = malloc(password_length + 1);
 
