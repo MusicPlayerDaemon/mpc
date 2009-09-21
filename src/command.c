@@ -37,7 +37,13 @@
 #include <stdlib.h>
 #include <time.h>
 #include <sys/param.h>
+
+#ifdef WIN32
+#include <ws2tcpip.h>
+#include <winsock.h>
+#else
 #include <sys/select.h>
+#endif
 
 #define DIE(...) do { fprintf(stderr, __VA_ARGS__); return -1; } while(0)
 
