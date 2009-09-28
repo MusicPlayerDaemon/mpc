@@ -21,116 +21,113 @@
 */
 
 #include "status.h"
-#include "libmpdclient.h"
 #include "charset.h"
 #include "util.h"
 #include "mpc.h"
+
+#include <mpd/client.h>
 
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
 static unsigned
-elapsed_percent(const mpd_Status *status)
+elapsed_percent(const struct mpd_status *status)
 {
-	if (status->totalTime <= 0)
+	unsigned elapsed = mpd_status_get_elapsed_time(status);
+	unsigned total = mpd_status_get_total_time(status);
+
+	if (total <= 0)
 		return 0;
 
-	if (status->elapsedTime >= status->totalTime)
+	if (elapsed >= total)
 		return 100;
 
-	return (status->elapsedTime * 100) / status->totalTime;
+	return (elapsed * 100) / total;
 }
 
-void print_status (mpd_Connection *conn)
+void
+print_status(struct mpd_connection *conn)
 {
-	mpd_Status * status;
-	mpd_InfoEntity * entity;
+	struct mpd_status *status;
 
-	mpd_sendCommandListOkBegin(conn);
-	printErrorAndExit(conn);
-	mpd_sendStatusCommand(conn);
-	printErrorAndExit(conn);
-	mpd_sendCurrentSongCommand(conn);
-	printErrorAndExit(conn);
-	mpd_sendCommandListEnd(conn);
-	printErrorAndExit(conn);
-
-	status = mpd_getStatus(conn);
-	printErrorAndExit(conn);
-
-	if(status->state == MPD_STATUS_STATE_PLAY ||
-			status->state == MPD_STATUS_STATE_PAUSE)
-	{
-		mpd_nextListOkCommand(conn);
+	if (!mpd_command_list_begin(conn, true) ||
+	    !mpd_send_status(conn) ||
+	    !mpd_send_current_song(conn) ||
+	    !mpd_command_list_end(conn))
 		printErrorAndExit(conn);
 
-		while((entity = mpd_getNextInfoEntity(conn))) {
-			struct mpd_song *song = entity->info.song;
+	status = mpd_recv_status(conn);
+	if (status == NULL)
+		printErrorAndExit(conn);
 
-			if(entity->type!=MPD_INFO_ENTITY_TYPE_SONG) {
-				mpd_freeInfoEntity(entity);
-				continue;
-			}
+	if (mpd_status_get_state(status) == MPD_STATE_PLAY ||
+	    mpd_status_get_state(status) == MPD_STATE_PAUSE) {
+		struct mpd_song *song;
 
+		if (!mpd_response_next(conn))
+			printErrorAndExit(conn);
+
+		song = mpd_recv_song(conn);
+		if (song != NULL) {
 			pretty_print_song(song);
 			printf("\n");
 
-			mpd_freeInfoEntity(entity);
-
-			break;
+			mpd_song_free(song);
 		}
 
-		printErrorAndExit(conn);
-
-		mpd_finishCommand(conn);
-		printErrorAndExit(conn);
-
-		if(status->state==MPD_STATUS_STATE_PLAY) {
+		if (mpd_status_get_state(status) == MPD_STATE_PLAY)
 			printf("[playing]");
-		}
-		else printf("[paused] ");
+		else
+			printf("[paused] ");
 
-		printf(" #%i/%i %3i:%02i/%i:%02i (%u%%)\n",
-				status->song+1,
-				status->playlistLength,
-				status->elapsedTime/60,
-				status->elapsedTime%60,
-				status->totalTime/60,
-				status->totalTime%60,
+		printf(" #%i/%u %3i:%02i/%i:%02i (%u%%)\n",
+		       mpd_status_get_song_pos(status) + 1,
+		       mpd_status_get_queue_length(status),
+		       mpd_status_get_elapsed_time(status) / 60,
+		       mpd_status_get_elapsed_time(status) % 60,
+		       mpd_status_get_total_time(status) / 60,
+		       mpd_status_get_total_time(status) % 60,
 		       elapsed_percent(status));
 	}
 
-	if(status->updatingDb) {
-		printf("Updating DB (#%i) ...\n",status->updatingDb);
-	}
+	if (mpd_status_get_update_id(status) > 0)
+		printf("Updating DB (#%u) ...\n",
+		       mpd_status_get_update_id(status));
 
-	if(status->volume!=MPD_STATUS_NO_VOLUME) {
-		printf("volume:%3i%c   ",status->volume,'%');
-	}
+	if (mpd_status_get_volume(status) != MPD_STATUS_NO_VOLUME)
+		printf("volume:%3i%c   ", mpd_status_get_volume(status), '%');
 	else {
 		printf("volume: n/a   ");
 	}
 
 	printf("repeat: ");
-	if(status->repeat) printf("on    ");
+	if (mpd_status_get_repeat(status))
+		printf("on    ");
 	else printf("off   ");
 
 	printf("random: ");
-	if(status->random) printf("on    ");
+	if (mpd_status_get_random(status))
+		printf("on    ");
 	else printf("off   ");
 
 	printf("single: ");
-	if(status->single) printf("on    ");
+	if (mpd_status_get_single(status))
+		printf("on    ");
 	else printf("off   ");
 
 	printf("consume: ");
-	if(status->consume) printf("on \n");
+	if (mpd_status_get_consume(status))
+		printf("on \n");
 	else printf("off\n");
 
-	if (status->error != NULL)
-		printf("ERROR: %s\n", charset_from_utf8(status->error));
+	if (mpd_status_get_error(status) != NULL)
+		printf("ERROR: %s\n",
+		       charset_from_utf8(mpd_status_get_error(status)));
 
-	mpd_freeStatus(status);
+	mpd_status_free(status);
+
+	if (!mpd_response_finish(conn))
+		printErrorAndExit(conn);
 }
 

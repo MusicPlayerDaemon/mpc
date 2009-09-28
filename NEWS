@@ -3,6 +3,7 @@
 * revert "disable character set conversion to/from pipe"
 * don't use the deprecated "volume" command
 * allow options before and after the command
+* using libmpdclient 2.0 instead of built-in libmpdclient
 
 0.17 - (2009/08/13)
 * fixed busy loop while waiting for "idle" response

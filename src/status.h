@@ -23,8 +23,9 @@
 #ifndef STATUS_H
 #define STATUS_H
 
-#include "libmpdclient.h"
+struct mpd_connection;
 
-void print_status (mpd_Connection *conn);
+void
+print_status(struct mpd_connection *conn);
 
 #endif /* STATUS_H */

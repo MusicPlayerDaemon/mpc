@@ -20,7 +20,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "libmpdclient.h"
 #include "list.h"
 #include "charset.h"
 #include "password.h"
@@ -29,6 +28,8 @@
 #include "command.h"
 #include "mpc.h"
 #include "options.h"
+
+#include <mpd/client.h>
 
 #include <assert.h>
 #include <stdio.h>
@@ -159,13 +160,19 @@ static int print_help(char * progname, char * command)
 	return EXIT_SUCCESS;
 }
 
-static mpd_Connection * setup_connection (void)
+static struct mpd_connection *
+setup_connection(void)
 {
-	mpd_Connection * conn;
+	struct mpd_connection *conn;
 
-	conn = mpd_newConnection(options.host,options.port,10);
+	conn = mpd_connection_new(options.host, options.port, 0);
+	if (conn == NULL) {
+		fputs("Out of memory\n", stderr);
+		exit(EXIT_FAILURE);
+	}
 
-	printErrorAndExit(conn);
+	if (mpd_connection_get_error(conn) != MPD_ERROR_SUCCESS)
+		printErrorAndExit(conn);
 
 	if(options.password)
 		send_password(options.password, conn);
@@ -216,7 +223,7 @@ static int
 run(const struct command *command, int argc, char **array)
 {
 	int ret;
-	mpd_Connection *conn;
+	struct mpd_connection *conn;
 
 	conn = setup_connection();
 
@@ -225,7 +232,7 @@ run(const struct command *command, int argc, char **array)
 		print_status(conn);
 	}
 
-	mpd_closeConnection(conn);
+	mpd_connection_free(conn);
 	return (ret >= 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 

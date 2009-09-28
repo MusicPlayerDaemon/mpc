@@ -23,7 +23,7 @@
 #ifndef MPC_UTIL_H
 #define MPC_UTIL_H
 
-#include "libmpdclient.h"
+#include <mpd/client.h>
 
 #define VALUE_CHANGE(type) \
 struct type##_value_change { \
@@ -38,16 +38,23 @@ typedef struct _Constraint {
 	char *query;
 } Constraint;
 
-void printErrorAndExit(mpd_Connection * conn);
+void
+printErrorAndExit(struct mpd_connection *conn);
+
 void free_pipe_array (int max, char ** array);
 int stdinToArgArray(char *** array);
 int get_boolean (const char * arg);
-int get_search_type(const char * arg);
+
+enum mpd_tag_type
+get_search_type(const char *name);
+
 int get_constraints(int argc, char **argv, Constraint **constraints);
 int parse_int(const char *, int *);
 int parse_songnum(const char *, int *);
 int parse_int_value_change(const char *, struct int_value_change *);
 void pretty_print_song(struct mpd_song *song);
-void print_filenames(mpd_Connection *conn);
+
+void
+print_filenames(struct mpd_connection *conn);
 
 #endif /* MPC_UTIL_H */	

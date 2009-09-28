@@ -22,6 +22,10 @@
 
 #ifndef PASSWORD_H
 #define PASSWORD_H
-#include "libmpdclient.h"
-void send_password (const char * host, mpd_Connection * conn);
+
+struct mpd_connection;
+
+void
+send_password(const char *password, struct mpd_connection *conn);
+
 #endif /* PASSWORD_H */

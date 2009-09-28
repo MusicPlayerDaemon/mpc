@@ -9,8 +9,7 @@ EXTRA_DIST = $(man_MANS) $(doc_DATA)
 
 bin_PROGRAMS = src/mpc
 
-src_mpc_headers = src/libmpdclient.h src/str_pool.h \
-	src/song.h src/resolver.h \
+src_mpc_headers = \
 	src/list.h \
 	src/password.h \
 	src/charset.h \
@@ -21,8 +20,7 @@ src_mpc_headers = src/libmpdclient.h src/str_pool.h \
 	src/options.h \
 	src/gcc.h
 
-src_mpc_SOURCES = src/libmpdclient.c src/str_pool.c \
-	src/song.c src/resolver.c \
+src_mpc_SOURCES = \
 	src/main.c \
 	src/list.c \
 	src/password.c \
@@ -36,8 +34,8 @@ if HAVE_ICONV
 src_mpc_SOURCES += src/charset.c
 endif
 
-src_mpc_CPPFLAGS = $(AM_CPPFLAGS) $(ICONV_CFLAGS)
-src_mpc_LDADD = $(MPC_LIBS) $(ICONV_LIBS)
+src_mpc_CPPFLAGS = $(AM_CPPFLAGS) $(ICONV_CFLAGS) $(LIBMPDCLIENT_CFLAGS)
+src_mpc_LDADD = $(MPC_LIBS) $(ICONV_LIBS) $(LIBMPDCLIENT_LIBS)
 
 # sparse is a semantic parser
 # URL: git://www.kernel.org/pub/scm/devel/sparse/sparse.git

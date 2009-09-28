@@ -86,6 +86,9 @@ dnl
 AC_CHECK_LIB(socket, socket, MPC_LIBS="$MPC_LIBS -lsocket",)
 AC_CHECK_LIB(nsl, gethostbyname, MPC_LIBS="$MPC_LIBS -lnsl",)
 
+PKG_CHECK_MODULES([LIBMPDCLIENT], [libmpdclient >= 2.0],,
+	[AC_MSG_ERROR([libmpdclient2 is required])])
+
 
 dnl
 dnl i18n / l10n (iconv)
@@ -130,26 +133,6 @@ AC_SUBST(ICONV_CPPFLAGS)
 AC_SUBST(ICONV_LIBS)
 
 AM_CONDITIONAL(HAVE_ICONV, test x$enable_iconv = xyes)
-
-
-dnl
-dnl MPD protocol features
-dnl
-
-AC_ARG_WITH(default-host,
-	AS_HELP_STRING([--with-default-host=HOST],
-		[Use as host when MPD_HOST environment variable is not set]),
-	[DEFAULT_HOST="$withval"],
-	[DEFAULT_HOST="localhost"])
-
-AC_ARG_WITH(default-port,
-	AS_HELP_STRING([--with-default-port=PORT],
-		[Use as port when MPD_PORT environment variable is not set]),
-	[DEFAULT_PORT="$withval"],
-	[DEFAULT_PORT="6600"])
-
-AC_DEFINE_UNQUOTED(DEFAULT_HOST,"$DEFAULT_HOST",[Define default host])
-AC_DEFINE_UNQUOTED(DEFAULT_PORT,"$DEFAULT_PORT",[Define default port])
 
 
 dnl

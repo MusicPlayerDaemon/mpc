@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#include "libmpdclient.h"
 #define STRING_LENGTH	(8192)
 
 #define STDIN_SYMBOL	"-"
@@ -46,6 +45,8 @@
 #  define MIN_COLUMNS	80
 #endif /* MIN_COLUMNS */
 
-typedef int (* cmdhandler)(int argc, char ** argv, mpd_Connection * conn);
+struct mpd_connection;
+
+typedef int (*cmdhandler)(int argc, char **argv, struct mpd_connection *conn);
 
 #endif /* MPC_H */

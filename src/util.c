@@ -21,11 +21,12 @@
 */
 
 #include "util.h"
-#include "libmpdclient.h"
 #include "charset.h"
 #include "list.h"
 #include "mpc.h"
 #include "options.h"
+
+#include <mpd/client.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -34,13 +35,22 @@
 #include <assert.h>
 #include <sys/param.h>
 
-void printErrorAndExit(mpd_Connection * conn)
+void
+printErrorAndExit(struct mpd_connection *conn)
 {
-	if(conn->error) {
-		fprintf(stderr,"error: %s\n",charset_from_utf8(conn->errorStr));
-		mpd_closeConnection(conn);
-		exit(EXIT_FAILURE);
-	}
+	const char *message;
+
+	assert(mpd_connection_get_error(conn) != MPD_ERROR_SUCCESS);
+
+	message = mpd_connection_get_error_message(conn);
+	if (mpd_connection_get_error(conn) == MPD_ERROR_SERVER)
+		/* messages received from the server are UTF-8; the
+		   rest is either US-ASCII or locale */
+		message = charset_from_utf8(message);
+
+	fprintf(stderr, "error: %s\n", message);
+	mpd_connection_free(conn);
+	exit(EXIT_FAILURE);
 }
 
 int stdinToArgArray(char *** array)
@@ -109,24 +119,34 @@ int get_boolean (const char * arg)
 	return -1;
 }
 
-int get_search_type(const char * arg)
+enum mpd_tag_type
+get_search_type(const char *name)
 {
-	int i;
+	enum mpd_tag_type type;
+	bool first = true;
 
-	for (i = 0; i < MPD_TAG_NUM_OF_ITEM_TYPES; i++) {
-		if (strcasecmp(mpdTagItemKeys[i], arg) == 0)
-			return i;
+	type = mpd_tag_name_iparse(name);
+	if (type != MPD_TAG_UNKNOWN)
+		return type;
+
+	fprintf(stderr, "\"%s\" is not a valid search type: <", name);
+
+	for (unsigned i = 0; i < MPD_TAG_COUNT; i++) {
+		name = mpd_tag_name(i);
+		if (name == NULL)
+			continue;
+
+		if (first)
+			first = false;
+		else
+			fputc('|', stderr);
+
+		fputs(name, stderr);
 	}
 
-	fprintf(stderr, "\"%s\" is not a valid search type: <", arg);
+	fputs(">\n", stderr);
 
-	for (i = 0; i < MPD_TAG_NUM_OF_ITEM_TYPES; i++) {
-		fprintf(stderr, "%c%s%s", tolower(mpdTagItemKeys[i][0]),
-		                          mpdTagItemKeys[i]+1,
-		                          (mpdTagItemKeys[i+1] ? "|" : ">\n"));
-	}
-
-	return -1;
+	return MPD_TAG_UNKNOWN;
 }
 
 int get_constraints(int argc, char **argv, Constraint **constraints)
@@ -265,39 +285,24 @@ song_value(const struct mpd_song *song, const char *name)
 	const char *value;
 
 	if (strcmp(name, "file") == 0)
-		value = song->file;
-	else if (strcmp(name, "artist") == 0)
-		value = song->artist;
-	else if (strcmp(name, "album") == 0)
-		value = song->album;
-	else if (strcmp(name, "track") == 0)
-		value = song->track;
-	else if (strcmp(name, "title") == 0)
-		value = song->title;
-	else if (strcmp(name, "name") == 0)
-		value = song->name;
-	else if (strcmp(name, "date") == 0)
-		value = song->date;
-	else if (strcmp(name, "genre") == 0)
-		value = song->genre;
-	else if (strcmp(name, "composer") == 0)
-		value = song->composer;
-	else if (strcmp(name, "performer") == 0)
-		value = song->performer;
-	else if (strcmp(name, "disc") == 0)
-		value = song->disc;
-	else if (strcmp(name, "comment") == 0)
-		value = song->comment;
+		value = mpd_song_get_uri(song);
 	else if (strcmp(name, "time") == 0) {
-		if (song->time != MPD_SONG_NO_TIME) {
+		unsigned duration = mpd_song_get_duration(song);
+
+		if (duration > 0) {
 			static char buffer[10];
 			snprintf(buffer, sizeof(buffer), "%d:%02d",
-				 song->time / 60, song->time % 60);
+				 duration / 60, duration % 60);
 			value = buffer;
 		} else
 			value = NULL;
-	} else
-		return NULL;
+	} else {
+		enum mpd_tag_type tag_type = mpd_tag_name_iparse(name);
+		if (tag_type == MPD_TAG_UNKNOWN)
+			return NULL;
+
+		value = mpd_song_get_tag(song, tag_type, 0);
+	}
 
 	if (value != NULL)
 		value = charset_from_utf8(value);
@@ -463,14 +468,16 @@ void pretty_print_song(struct mpd_song *song)
 	print_formatted_song(song, options.format);
 }
 
-void print_filenames(mpd_Connection *conn)
+void
+print_filenames(struct mpd_connection *conn)
 {
-	mpd_InfoEntity *entity;
+	struct mpd_song *song;
 
-	while ((entity = mpd_getNextInfoEntity(conn))) {
-		printErrorAndExit(conn);
-		if (entity->type == MPD_INFO_ENTITY_TYPE_SONG)
-			printf("%s\n", charset_from_utf8(entity->info.song->file));
-		mpd_freeInfoEntity(entity);
+	while ((song = mpd_recv_song(conn)) != NULL) {
+		printf("%s\n", charset_from_utf8(mpd_song_get_uri(song)));
+		mpd_song_free(song);
 	}
+
+	if (mpd_connection_get_error(conn) != MPD_ERROR_SUCCESS)
+		printErrorAndExit(conn);
 }

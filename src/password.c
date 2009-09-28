@@ -21,19 +21,18 @@
 */
 
 #include "password.h"
-#include "libmpdclient.h"
 #include "util.h"
 #include "mpc.h"
+
+#include <mpd/client.h>
 
 #include <string.h>
 #include <stdlib.h>
 
-void send_password ( const char * password,
-		mpd_Connection * conn)
+void
+send_password(const char *password, struct mpd_connection *conn)
 {
-	mpd_sendPasswordCommand(conn,password);
-	printErrorAndExit(conn);
-	mpd_finishCommand(conn);
-	printErrorAndExit(conn);
+	if (!mpd_run_password(conn, password))
+		printErrorAndExit(conn);
 }
 

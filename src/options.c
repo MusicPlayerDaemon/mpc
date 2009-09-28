@@ -253,7 +253,8 @@ parse_options(int * argc_p, char ** argv)
 		option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
 
 	/* Parse the password from the host */
-	if ((tmp = strchr(options.host, '@')) != NULL) {
+	if (options.host != NULL &&
+	    (tmp = strchr(options.host, '@')) != NULL) {
 		size_t password_length = tmp - options.host;
 		char *password = malloc(password_length + 1);
 
@@ -295,18 +296,5 @@ parse_options(int * argc_p, char ** argv)
 void
 options_init()
 {
-	char *tmp;
-
 	options.format = DEFAULT_FORMAT;
-	options.port = atoi(DEFAULT_PORT);
-
-	if ((tmp = getenv("MPD_HOST")))
-		options.host = tmp;
-	else
-		options.host = DEFAULT_HOST;
-
-	if ((tmp = getenv("MPD_PORT"))) {
-		options.port_str = tmp;
-	}
-
 }

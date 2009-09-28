@@ -20,7 +20,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "libmpdclient.h"
 #include "list.h"
 #include "charset.h"
 #include "password.h"
@@ -31,6 +30,8 @@
 #include "mpc.h"
 #include "gcc.h"
 
+#include <mpd/client.h>
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -38,168 +39,142 @@
 #include <time.h>
 #include <sys/param.h>
 
-#ifdef WIN32
-#include <ws2tcpip.h>
-#include <winsock.h>
-#else
-#include <sys/select.h>
-#endif
-
 #define DIE(...) do { fprintf(stderr, __VA_ARGS__); return -1; } while(0)
 
 #define SIMPLE_CMD(funcname, libmpdclient_funcname, ret) \
 int funcname(mpd_unused int argc, mpd_unused char **argv, \
-	     mpd_Connection *conn) { \
+	     struct mpd_connection *conn) { \
         libmpdclient_funcname(conn); \
         my_finishCommand(conn); \
         return ret; \
 }
 
 #define SIMPLE_ONEARG_CMD(funcname, libmpdclient_funcname, ret) \
-int funcname (mpd_unused int argc, char **argv, mpd_Connection *conn) { \
-        libmpdclient_funcname(conn, charset_to_utf8(argv[0])); \
-        my_finishCommand(conn); \
+int funcname (mpd_unused int argc, char **argv, struct mpd_connection *conn) { \
+	if (!libmpdclient_funcname(conn, charset_to_utf8(argv[0]))) \
+		printErrorAndExit(conn); \
         return ret; \
 }
 
-static void my_finishCommand(mpd_Connection * conn) {
-	printErrorAndExit(conn);
-	mpd_finishCommand(conn);
-	printErrorAndExit(conn);
+static void my_finishCommand(struct mpd_connection *conn) {
+	if (!mpd_response_finish(conn))
+		printErrorAndExit(conn);
 }
 
-SIMPLE_CMD(cmd_next, mpd_sendNextCommand, 1)
-SIMPLE_CMD(cmd_prev, mpd_sendPrevCommand, 1)
-SIMPLE_CMD(cmd_stop, mpd_sendStopCommand, 1)
-SIMPLE_CMD(cmd_clear, mpd_sendClearCommand, 1)
-SIMPLE_CMD(cmd_shuffle, mpd_sendShuffleCommand, 1)
+SIMPLE_CMD(cmd_next, mpd_run_next, 1)
+SIMPLE_CMD(cmd_prev, mpd_run_previous, 1)
+SIMPLE_CMD(cmd_stop, mpd_run_stop, 1)
+SIMPLE_CMD(cmd_clear, mpd_run_clear, 1)
+SIMPLE_CMD(cmd_shuffle, mpd_run_shuffle, 1)
 
-SIMPLE_ONEARG_CMD(cmd_save, mpd_sendSaveCommand, 0)
-SIMPLE_ONEARG_CMD(cmd_rm, mpd_sendRmCommand, 0)
+SIMPLE_ONEARG_CMD(cmd_save, mpd_run_save, 0)
+SIMPLE_ONEARG_CMD(cmd_rm, mpd_run_rm, 0)
 
-static mpd_Status * getStatus(mpd_Connection * conn) {
-	mpd_Status * ret;
-
-	mpd_sendStatusCommand(conn);
-	printErrorAndExit(conn);
-
-	ret = mpd_getStatus(conn);
-	printErrorAndExit(conn);
-
-	mpd_finishCommand(conn);
-	printErrorAndExit(conn);
+static struct mpd_status *
+getStatus(struct mpd_connection *conn) {
+	struct mpd_status *ret = mpd_run_status(conn);
+	if (ret == NULL)
+		printErrorAndExit(conn);
 
 	return ret;
 }
 
-int cmd_add (int argc, char ** argv, mpd_Connection * conn )
+int cmd_add (int argc, char ** argv, struct mpd_connection *conn )
 {
 	int i;
 
-	mpd_sendCommandListBegin(conn);
-	printErrorAndExit(conn);
+	if (!mpd_command_list_begin(conn, false))
+		printErrorAndExit(conn);
 
 	for(i=0;i<argc;i++) {
 		if (options.verbosity >= V_VERBOSE)
 			printf("adding: %s\n", argv[i]);
-		mpd_sendAddCommand(conn, charset_to_utf8(argv[i]));
-		printErrorAndExit(conn);
+		mpd_send_add(conn, charset_to_utf8(argv[i]));
 	}
 
-	mpd_sendCommandListEnd(conn);
-	my_finishCommand(conn);
+	if (!mpd_command_list_end(conn) || !mpd_response_finish(conn))
+		printErrorAndExit(conn);
 
 	return 0;
 }
 
 int
-cmd_crop(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
+cmd_crop(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	mpd_Status *status = getStatus( conn );
-	int length = ( status->playlistLength - 1 );
+	struct mpd_status *status = getStatus( conn );
+	int length = mpd_status_get_queue_length(status) - 1;
 
-	if( status->playlistLength == 0 ) {
+	if (length < 0) {
 
-		mpd_freeStatus(status);
+		mpd_status_free(status);
 		DIE( "You have to have a playlist longer than 1 song in length to crop" );
 
-	} else if( status->state == 3 || status->state == 2 ) { /* If playing or paused */
-
-		mpd_sendCommandListBegin( conn );
-		printErrorAndExit( conn );
+	} else if (mpd_status_get_state(status) == MPD_STATE_PLAY ||
+		   mpd_status_get_state(status) == MPD_STATE_PAUSE) {
+		if (!mpd_command_list_begin(conn, false))
+			printErrorAndExit(conn);
 
 		while( length >= 0 )
 		{
-			if( length != status->song )
-			{
-				mpd_sendDeleteCommand( conn, length );
-				printErrorAndExit( conn );
+			if (length != mpd_status_get_song_pos(status)) {
+				mpd_send_delete(conn, length);
 			}
 			length--;
 		}
 
-		mpd_sendCommandListEnd( conn );
-		my_finishCommand( conn );
-		mpd_freeStatus( status );
+		mpd_status_free(status);
+
+		if (!mpd_command_list_end(conn) || !mpd_response_finish(conn))
+			printErrorAndExit(conn);
+
 		return ( 0 );
 
 	} else {
 
-		mpd_freeStatus(status);
+		mpd_status_free(status);
 		DIE( "You need to be playing to crop the playlist\n" );
 
 	}
 }
 
-int cmd_current(mpd_unused int argc, mpd_unused char ** argv, mpd_Connection *conn)
+int cmd_current(mpd_unused int argc, mpd_unused char ** argv, struct mpd_connection *conn)
 {
-	mpd_Status * status;
-	mpd_InfoEntity * entity;
+	struct mpd_status *status;
 
-	mpd_sendCommandListOkBegin(conn);
-	printErrorAndExit(conn);
-	mpd_sendStatusCommand(conn);
-	printErrorAndExit(conn);
-	mpd_sendCurrentSongCommand(conn);
-	printErrorAndExit(conn);
-	mpd_sendCommandListEnd(conn);
-	printErrorAndExit(conn);
-
-	status = mpd_getStatus(conn);
-	printErrorAndExit(conn);
-
-	if (status->state == MPD_STATUS_STATE_PLAY ||
-	    status->state == MPD_STATUS_STATE_PAUSE) {
-		mpd_nextListOkCommand(conn);
+	if (!mpd_command_list_begin(conn, true) ||
+	    !mpd_send_status(conn) ||
+	    !mpd_send_current_song(conn) ||
+	    !mpd_command_list_end(conn))
 		printErrorAndExit(conn);
 
-		while((entity = mpd_getNextInfoEntity(conn))) {
-			struct mpd_song *song = entity->info.song;
+	status = mpd_recv_status(conn);
+	if (status == NULL)
+		printErrorAndExit(conn);
 
-			if(entity->type!=MPD_INFO_ENTITY_TYPE_SONG) {
-				mpd_freeInfoEntity(entity);
-				continue;
-			}
+	if (mpd_status_get_state(status) == MPD_STATE_PLAY ||
+	    mpd_status_get_state(status) == MPD_STATE_PAUSE) {
+		struct mpd_song *song;
 
+		if (!mpd_response_next(conn))
+			printErrorAndExit(conn);
+
+		song = mpd_recv_song(conn);
+		if (song != NULL) {
 			pretty_print_song(song);
 			printf("\n");
 
-			mpd_freeInfoEntity(entity);
-
-			break;
+			mpd_song_free(song);
 		}
 
-		printErrorAndExit(conn);
-
-		mpd_finishCommand(conn);
-		printErrorAndExit(conn);
+		if (!mpd_response_finish(conn))
+			printErrorAndExit(conn);
 	}
-	mpd_freeStatus(status);
+	mpd_status_free(status);
 
 	return 0;
 }
 
-int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_del ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	int i,j;
 	char * s;
@@ -209,11 +184,11 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 	int songsDeleted = 0;
 	int plLength = 0;
 	char * songsToDel;
-	mpd_Status * status;
+	struct mpd_status *status;
 
 	status = getStatus(conn);
 
-	plLength = status->playlistLength;
+	plLength = mpd_status_get_queue_length(status);
 
 	songsToDel = malloc(plLength);
 	memset(songsToDel,0,plLength);
@@ -226,9 +201,9 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 
 		/* If argument is 0 current song and we're not stopped */
 		if(range[0] == 0 && strlen(s) == 1 && \
-			(status->state == MPD_STATUS_STATE_PLAY ||
-			status->state == MPD_STATUS_STATE_PAUSE))
-			range[0] = status->song+1;
+			(mpd_status_get_state(status) == MPD_STATE_PLAY ||
+			 mpd_status_get_state(status) == MPD_STATE_PAUSE))
+			range[0] = mpd_status_get_song_pos(status) + 1;
 
 		if(s==t)
 			DIE("error parsing song numbers from: %s\n",argv[i]);
@@ -257,30 +232,32 @@ int cmd_del ( int argc, char ** argv, mpd_Connection * conn )
 		for(j=range[0];j<=range[1];j++) songsToDel[j-1] = 1;
 	}
 
-	mpd_sendCommandListBegin(conn);
-	printErrorAndExit(conn);
+	if (!mpd_command_list_begin(conn, false))
+		printErrorAndExit(conn);
+
 	for(i=0;i<plLength;i++) {
 		if(songsToDel[i]) {
-			mpd_sendDeleteCommand(conn,i-songsDeleted);
-			printErrorAndExit(conn);
+			mpd_send_delete(conn, i - songsDeleted);
 			songsDeleted++;
 		}
 	}
-	mpd_sendCommandListEnd(conn);
-	my_finishCommand(conn);
 
-	mpd_freeStatus(status);
+	mpd_status_free(status);
 	free(songsToDel);
+
+	if (!mpd_command_list_end(conn) || !mpd_response_finish(conn))
+		printErrorAndExit(conn);
+
 	return 0;
 }
 
 int
-cmd_toggle(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
+cmd_toggle(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	mpd_Status * status;
+	struct mpd_status *status;
 	status = getStatus(conn);
 
-	if(status->state==MPD_STATUS_STATE_PLAY) {
+	if (mpd_status_get_state(status) == MPD_STATE_PLAY) {
 		cmd_pause(0, NULL, conn);
 	} else {
 		cmd_play(0, NULL, conn);
@@ -289,72 +266,63 @@ cmd_toggle(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 }
 
 int
-cmd_outputs(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
+cmd_outputs(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	mpd_OutputEntity * output;
+	struct mpd_output *output;
 
-	mpd_sendOutputsCommand( conn );
-	while(( output = mpd_getNextOutput( conn ))) {
+	mpd_send_outputs(conn);
+
+	while ((output = mpd_recv_output(conn)) != NULL) {
 		/* We increment by 1 to make it natural to the user  */
-		output->id++;
+		int id = mpd_output_get_id(output) + 1;
+		const char *name = mpd_output_get_name(output);
 
-		/* If it's a negative number a password is needed  */
-		if( output->id > 0 )
-		{
-			if( output->enabled ) {
-				printf( "Output %i (%s) is enabled\n", output->id, output->name );
-			} else {
-				printf( "Output %i (%s) is disabled\n", output->id, output->name );
-			}
+		if (mpd_output_get_enabled(output)) {
+			printf("Output %i (%s) is enabled\n", id, name);
+		} else {
+			printf("Output %i (%s) is disabled\n", id, name);
 		}
-		else
-		{
-			DIE( "cannot receive the current outputs\n" );
-		}
-		mpd_freeOutputElement( output );
+
+		mpd_output_free(output);
 	}
-	mpd_finishCommand( conn );
+	mpd_response_finish(conn);
 	return( 0 );
 }
 
 int
-cmd_enable(mpd_unused int argc, char **argv, mpd_Connection *conn)
+cmd_enable(mpd_unused int argc, char **argv, struct mpd_connection *conn)
 {
 	int arg;
 
         if( ! parse_int( argv[0], &arg ) || arg <= 0 ) {
 		DIE( "Not a positive integer\n" );
-	} else {
-		mpd_sendEnableOutputCommand( conn, (arg - 1) );
 	}
 
-	mpd_finishCommand( conn );
+	mpd_run_enable_output(conn, arg - 1);
 	return cmd_outputs(0, NULL, conn);
 }
 
 int
-cmd_disable(mpd_unused int argc, char **argv, mpd_Connection *conn)
+cmd_disable(mpd_unused int argc, char **argv, struct mpd_connection *conn)
 {
 	int arg;
 
         if( ! parse_int( argv[0], &arg ) || arg <= 0 ) {
 		DIE( "Not a positive integer\n" );
-	} else {
-		mpd_sendDisableOutputCommand( conn, ( arg - 1 ) );
 	}
 
-	mpd_finishCommand( conn );
+	mpd_run_disable_output(conn, arg - 1);
 	return cmd_outputs(0, NULL, conn);
 }
 
-int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_play ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	int song;
 	int i;
 
-	if(0==argc) song = MPD_PLAY_AT_BEGINNING;
+	if(0==argc) song = -1;
 	else {
-		mpd_Status *status;
+		struct mpd_status *status;
 
 		for(i=0;i<argc-1;i++)
 			printf("skipping: %s\n",argv[i]);
@@ -366,22 +334,24 @@ int cmd_play ( int argc, char ** argv, mpd_Connection * conn )
 
 		/* This is necessary, otherwise mpc will output the wrong playlist number */
 		status = getStatus(conn);
-		i = status->playlistLength;
-		mpd_freeStatus(status);
+		i = mpd_status_get_queue_length(status);
+		mpd_status_free(status);
 		if(song >= i)
 			DIE("song number greater than playlist length.\n");
 	}
 
-	mpd_sendPlayCommand(conn,song);
-	my_finishCommand(conn);
+	if (song >= 0)
+		mpd_run_play_pos(conn, song);
+	else
+		mpd_run_play(conn);
 
 	return 1;
 }
 
 int
-cmd_seek(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
+cmd_seek(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	mpd_Status * status;
+	struct mpd_status *status;
 	char * arg = argv[0];
 	char * test;
 
@@ -392,7 +362,7 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 
 	status = getStatus(conn);
 
-	if(status->state==MPD_STATUS_STATE_STOP)
+	if (mpd_status_get_state(status) == MPD_STATE_STOP)
 		DIE("not currently playing\n");
 
 	/* Detect +/- if exists point to the next char */
@@ -415,7 +385,7 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 		if(( *test!='\0' ) || (!rel && (perc<0 || perc>100)) || (rel && perc>abs(100)))
 			DIE("\"%s\" is not an number between 0 and 100\n",arg);
 
-		seekchange = perc*status->totalTime/100+0.5;
+		seekchange = perc * mpd_status_get_total_time(status) / 100 + 0.5;
 
 	} else { /* If seeking by absolute seek time */
 
@@ -492,27 +462,26 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
 
 	/* This detects +/- and is necessary due to the parsing of HH:MM:SS numbers*/
 	if(rel == 1) {
-		seekto = status->elapsedTime + seekchange;
+		seekto = mpd_status_get_elapsed_time(status) + seekchange;
 	} else if (rel == -1) {
-		seekto = status->elapsedTime - seekchange;
+		seekto = mpd_status_get_elapsed_time(status) - seekchange;
 	} else {
 		seekto = seekchange;
 	}
 
-	if(seekto > status->totalTime)
+	if (seekto > (int)mpd_status_get_total_time(status))
 		DIE("Seek amount would seek past the end of the song\n");
 
-	mpd_sendSeekIdCommand(conn,status->songid,seekto);
-	printErrorAndExit(conn);
-	my_finishCommand(conn);
-	printErrorAndExit(conn);
-	mpd_freeStatus(status);
-	printErrorAndExit(conn);
+	mpd_status_free(status);
+
+	if (!mpd_run_seek_id(conn, mpd_status_get_song_id(status), seekto))
+		printErrorAndExit(conn);
+
 	return 1;
 }
 
 int
-cmd_move(mpd_unused int argc, char **argv, mpd_Connection *conn)
+cmd_move(mpd_unused int argc, char **argv, struct mpd_connection *conn)
 {
 	int from;
 	int to;
@@ -527,47 +496,45 @@ cmd_move(mpd_unused int argc, char **argv, mpd_Connection *conn)
 	from--;
 	to--;
 
-	mpd_sendMoveCommand(conn,from,to);
-	my_finishCommand(conn);
+	mpd_run_move(conn, from, to);
 
 	return 0;
 }
 
 int
-cmd_playlist(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
+cmd_playlist(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	mpd_InfoEntity * entity;
-	mpd_Status * status;
-	int count = 0;
+	struct mpd_status *status;
+	struct mpd_song *song;
+	int current, count = 0;
 
-	mpd_sendStatusCommand(conn);
-	printErrorAndExit(conn);
-	status = mpd_getStatus(conn);
-	printErrorAndExit(conn);
-	mpd_finishCommand(conn);
-	mpd_sendPlaylistInfoCommand(conn,-1);
-	printErrorAndExit(conn);
+	status = mpd_run_status(conn);
+	if (status == NULL)
+		printErrorAndExit(conn);
 
-	while((entity = mpd_getNextInfoEntity(conn))) {
-		if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
-			struct mpd_song *song = entity->info.song;
+	current = mpd_status_get_song_pos(status);
+	mpd_status_free(status);
 
-			printf("%s%i) ", (status->song == count)?">":" ", 1+count);
-			pretty_print_song(song);
-			printf("\n");
+	if (!mpd_send_list_queue_meta(conn))
+		printErrorAndExit(conn);
 
-			count++;
-		}
-		mpd_freeInfoEntity(entity);
+	while ((song = mpd_recv_song(conn)) != NULL) {
+		printf("%s%i) ",
+		       current == count ? ">" : " ",
+		       1 + count);
+		pretty_print_song(song);
+		mpd_song_free(song);
+		printf("\n");
+
+		count++;
 	}
 
 	my_finishCommand(conn);
-	mpd_freeStatus(status);
 
 	return 0;
 }
 
-int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_listall ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	const char * listall = "";
 	int i=0;
@@ -576,8 +543,8 @@ int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
 		listall = charset_to_utf8(argv[i]);
 
 	do {
-		mpd_sendListallCommand(conn,listall);
-		printErrorAndExit(conn);
+		if (!mpd_send_list_all(conn, listall))
+			printErrorAndExit(conn);
 
 		print_filenames(conn);
 
@@ -588,31 +555,29 @@ int cmd_listall ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_update ( int argc, char ** argv, mpd_Connection * conn)
+int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 {
 	const char * update = "";
 	int i = 0;
 
-	mpd_sendCommandListBegin(conn);
-	printErrorAndExit(conn);
+	if (!mpd_command_list_begin(conn, false))
+		printErrorAndExit(conn);
 
 	if(argc > 0) update = charset_to_utf8(argv[i]);
 
 	do {
-		mpd_sendUpdateCommand(conn, update);
+		mpd_send_update(conn, update);
 	} while (++i < argc && (update = charset_to_utf8(argv[i])) != NULL);
 
-	mpd_sendCommandListEnd(conn);
-	printErrorAndExit(conn);
-	mpd_finishCommand(conn);
-	printErrorAndExit(conn);
+	if (!mpd_command_list_end(conn) || !mpd_response_finish(conn))
+		printErrorAndExit(conn);
 
 	return 1;
 }
 
-int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	mpd_InfoEntity * entity;
+	struct mpd_entity *entity;
 	const char *ls;
 	int i = 0;
 
@@ -622,19 +587,32 @@ int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
 		ls = strdup("");
 
 	do {
-		mpd_sendLsInfoCommand(conn,ls);
-		printErrorAndExit(conn);
+		if (!mpd_send_list_meta(conn, ls))
+			printErrorAndExit(conn);
 
-		while((entity = mpd_getNextInfoEntity(conn))) {
-			if(entity->type==MPD_INFO_ENTITY_TYPE_DIRECTORY) {
-				mpd_Directory * dir = entity->info.directory;
-				printf("%s\n", charset_from_utf8(dir->path));
+		while ((entity = mpd_recv_entity(conn)) != NULL) {
+			const struct mpd_directory *dir;
+			const struct mpd_song *song;
+
+			switch (mpd_entity_get_type(entity)) {
+			case MPD_ENTITY_TYPE_UNKNOWN:
+				break;
+
+			case MPD_ENTITY_TYPE_DIRECTORY:
+				dir = mpd_entity_get_directory(entity);
+				printf("%s\n", charset_from_utf8(mpd_directory_get_path(dir)));
+				break;
+
+			case MPD_ENTITY_TYPE_SONG:
+				song = mpd_entity_get_song(entity);
+				printf("%s\n", charset_from_utf8(mpd_song_get_uri(song)));
+				break;
+
+			case MPD_ENTITY_TYPE_PLAYLIST:
+				break;
 			}
-			else if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
-				struct mpd_song *song = entity->info.song;
-				printf("%s\n", charset_from_utf8(song->file));
-			}
-			mpd_freeInfoEntity(entity);
+
+			mpd_entity_free(entity);
 		}
 
 		my_finishCommand(conn);
@@ -644,25 +622,26 @@ int cmd_ls ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_lsplaylists ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_lsplaylists ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	mpd_InfoEntity * entity;
+	struct mpd_entity *entity;
 	const char * ls = "";
 	int i = 0;
 
 	if(argc>0) ls = charset_to_utf8(argv[i]);
 
 	do {
-		mpd_sendLsInfoCommand(conn,ls);
-		printErrorAndExit(conn);
+		if (!mpd_send_list_meta(conn, ls))
+			printErrorAndExit(conn);
 
-		while((entity = mpd_getNextInfoEntity(conn))) {
-			if(entity->type==
-					MPD_INFO_ENTITY_TYPE_PLAYLISTFILE) {
-				mpd_PlaylistFile * pl = entity->info.playlistFile;
-				printf("%s\n", charset_from_utf8(pl->path));
+		while ((entity = mpd_recv_entity(conn)) != NULL) {
+			if (mpd_entity_get_type(entity) == MPD_ENTITY_TYPE_PLAYLIST) {
+				const struct mpd_playlist *playlist =
+					mpd_entity_get_playlist(entity);
+
+				printf("%s\n", charset_from_utf8(mpd_playlist_get_path(playlist)));
 			}
-			mpd_freeInfoEntity(entity);
+			mpd_entity_free(entity);
 		}
 
 		my_finishCommand(conn);
@@ -671,24 +650,24 @@ int cmd_lsplaylists ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_load ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	int i;
 
-	mpd_sendCommandListBegin(conn);
-	printErrorAndExit(conn);
+	if (!mpd_command_list_begin(conn, false))
+		printErrorAndExit(conn);
+
 	for(i=0;i<argc;i++) {
 		printf("loading: %s\n",argv[i]);
-		mpd_sendLoadCommand(conn,charset_to_utf8(argv[i]));
-		printErrorAndExit(conn);
+		mpd_send_load(conn, charset_to_utf8(argv[i]));
 	}
-	mpd_sendCommandListEnd(conn);
+	mpd_command_list_end(conn);
 	my_finishCommand(conn);
 
 	return 0;
 }
 
-static int do_search ( int argc, char ** argv, mpd_Connection * conn, int exact )
+static int do_search ( int argc, char ** argv, struct mpd_connection *conn, int exact )
 {
 	Constraint *constraints;
 	int numconstraints;
@@ -701,17 +680,18 @@ static int do_search ( int argc, char ** argv, mpd_Connection * conn, int exact 
 	if (numconstraints < 0)
 		return -1;
 
-	mpd_startSearch(conn, exact);
+	mpd_search_db_songs(conn, exact);
 
 	for (i = 0; i < numconstraints; i++) {
-		mpd_addConstraintSearch(conn, constraints[i].type,
-		                        charset_to_utf8(constraints[i].query));
+		mpd_search_add_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
+					      constraints[i].type,
+					      charset_to_utf8(constraints[i].query));
 	}
 
 	free(constraints);
 
-	mpd_commitSearch(conn);
-	printErrorAndExit(conn);
+	if (!mpd_search_commit(conn))
+		printErrorAndExit(conn);
 
 	print_filenames(conn);
 
@@ -720,23 +700,23 @@ static int do_search ( int argc, char ** argv, mpd_Connection * conn, int exact 
 	return 0;
 }
 
-int cmd_search ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_search ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	return do_search(argc, argv, conn, 0);
 }
 
-int cmd_find ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_find ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	return do_search(argc, argv, conn, 1);
 }
 
-int cmd_list ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_list ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	Constraint *constraints;
 	int numconstraints = 0;
 	int type;
 	int i;
-	char *tag;
+	struct mpd_pair *pair;
 
 	type = get_search_type(argv[0]);
 	if (type < 0)
@@ -756,24 +736,25 @@ int cmd_list ( int argc, char ** argv, mpd_Connection * conn )
 			return -1;
 	}
 
-	mpd_startFieldSearch(conn, type);
+	mpd_search_db_tags(conn, type);
 
 	if (argc > 0) {
 		for (i = 0; i < numconstraints; i++) {
-			mpd_addConstraintSearch(conn, constraints[i].type,
-						charset_to_utf8(constraints[i].query));
+			mpd_search_add_tag_constraint(conn,
+						      MPD_OPERATOR_DEFAULT,
+						      constraints[i].type,
+						  charset_to_utf8(constraints[i].query));
 		}
 
 		free(constraints);
 	}
 
-	mpd_commitSearch(conn);
-	printErrorAndExit(conn);
-
-	while ((tag = mpd_getNextTag(conn, type))) {
+	if (!mpd_search_commit(conn))
 		printErrorAndExit(conn);
-		printf("%s\n", charset_from_utf8(tag));
-		free(tag);
+
+	while ((pair = mpd_recv_pair_tag(conn, type)) != NULL) {
+		printf("%s\n", charset_from_utf8(pair->value));
+		mpd_return_pair(conn, pair);
 	}
 
 	my_finishCommand(conn);
@@ -781,10 +762,10 @@ int cmd_list ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_volume ( int argc, char ** argv, struct mpd_connection *conn )
 {
         struct int_value_change ch;
-	mpd_Status *status;
+	struct mpd_status *status;
 
 	if(argc==1) {
                 if(!parse_int_value_change(argv[0], &ch))
@@ -792,9 +773,10 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 	} else {
 		status = getStatus(conn);
 
-		printf("volume:%3i%c   \n",status->volume,'%');
+		printf("volume:%3u%c   \n",
+		       mpd_status_get_volume(status), '%');
 
-		mpd_freeStatus(status);
+		mpd_status_free(status);
 
 		return 0;
 	}
@@ -803,8 +785,8 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 		int old_volume;
 
 		status = getStatus(conn);
-		old_volume = status->volume;
-		mpd_freeStatus(status);
+		old_volume = mpd_status_get_volume(status);
+		mpd_status_free(status);
 
 		ch.value += old_volume;
 		if (ch.value < 0)
@@ -816,21 +798,87 @@ int cmd_volume ( int argc, char ** argv, mpd_Connection * conn )
 			return 0;
 	}
 
-	mpd_sendSetvolCommand(conn, ch.value);
-	my_finishCommand(conn);
+	if (!mpd_run_set_volume(conn, ch.value))
+		printErrorAndExit(conn);
 	return 1;
 }
 
 int
-cmd_pause(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
+cmd_pause(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	mpd_sendPauseCommand(conn,1);
+	mpd_send_pause(conn, true);
 	my_finishCommand(conn);
 
 	return 1;
 }
 
-int cmd_repeat ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_repeat ( int argc, char ** argv, struct mpd_connection *conn )
+{
+	bool mode;
+
+	if(argc==1) {
+		mode = get_boolean(argv[0]);
+		if (mode < 0)
+			return -1;
+	}
+	else {
+		struct mpd_status *status;
+		status = getStatus(conn);
+		mode = !mpd_status_get_repeat(status);
+		mpd_status_free(status);
+	}
+
+	if (!mpd_run_repeat(conn, mode))
+		printErrorAndExit(conn);
+
+	return 1;
+}
+
+int cmd_random ( int argc, char ** argv, struct mpd_connection *conn )
+{
+	bool mode;
+
+	if(argc==1) {
+		mode = get_boolean(argv[0]);
+		if (mode < 0)
+			return -1;
+	}
+	else {
+		struct mpd_status *status;
+		status = getStatus(conn);
+		mode = !mpd_status_get_random(status);
+		mpd_status_free(status);
+	}
+
+	if (!mpd_run_random(conn, mode))
+		printErrorAndExit(conn);
+
+	return 1;
+}
+
+int cmd_single ( int argc, char ** argv, struct mpd_connection *conn )
+{
+	bool mode;
+
+	if(argc==1) {
+		mode = get_boolean(argv[0]);
+		if (mode < 0)
+			return -1;
+	}
+	else {
+		struct mpd_status *status;
+		status = getStatus(conn);
+		mode = !mpd_status_get_single(status);
+		mpd_status_free(status);
+	}
+
+	if (!mpd_run_single(conn, mode))
+		printErrorAndExit(conn);
+
+	return 1;
+}
+
+int cmd_consume ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	int mode;
 
@@ -840,88 +888,19 @@ int cmd_repeat ( int argc, char ** argv, mpd_Connection * conn )
 			return -1;
 	}
 	else {
-		mpd_Status * status;
+		struct mpd_status *status;
 		status = getStatus(conn);
-		mode = !status->repeat;
-		mpd_freeStatus(status);
+		mode = !mpd_status_get_consume(status);
+		mpd_status_free(status);
 	}
 
-
-	mpd_sendRepeatCommand(conn,mode);
-	printErrorAndExit(conn);
-	my_finishCommand(conn);
-	printErrorAndExit(conn);
+	if (!mpd_run_consume(conn, mode))
+		printErrorAndExit(conn);
 
 	return 1;
 }
 
-int cmd_random ( int argc, char ** argv, mpd_Connection * conn )
-{
-	int mode;
-
-	if(argc==1) {
-		mode = get_boolean(argv[0]);
-		if (mode < 0)
-			return -1;
-	}
-	else {
-		mpd_Status * status;
-		status = getStatus(conn);
-		mode = !status->random;
-		mpd_freeStatus(status);
-	}
-
-	mpd_sendRandomCommand(conn,mode);
-	my_finishCommand(conn);
-
-	return 1;
-}
-
-int cmd_single ( int argc, char ** argv, mpd_Connection * conn )
-{
-	int mode;
-
-	if(argc==1) {
-		mode = get_boolean(argv[0]);
-		if (mode < 0)
-			return -1;
-	}
-	else {
-		mpd_Status * status;
-		status = getStatus(conn);
-		mode = !status->single;
-		mpd_freeStatus(status);
-	}
-
-	mpd_sendSingleCommand(conn,mode);
-	my_finishCommand(conn);
-
-	return 1;
-}
-
-int cmd_consume ( int argc, char ** argv, mpd_Connection * conn )
-{
-	int mode;
-
-	if(argc==1) {
-		mode = get_boolean(argv[0]);
-		if (mode < 0)
-			return -1;
-	}
-	else {
-		mpd_Status * status;
-		status = getStatus(conn);
-		mode = !status->consume;
-		mpd_freeStatus(status);
-	}
-
-	mpd_sendConsumeCommand(conn,mode);
-	my_finishCommand(conn);
-
-	return 1;
-}
-
-int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_crossfade ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	int seconds;
 
@@ -929,71 +908,74 @@ int cmd_crossfade ( int argc, char ** argv, mpd_Connection * conn )
                 if(!parse_int(argv[0], &seconds) || seconds<0)
 			DIE("\"%s\" is not 0 or positive integer\n",argv[0]);
 
-		mpd_sendCrossfadeCommand(conn,seconds);
-		my_finishCommand(conn);
+		if (!mpd_run_crossfade(conn, seconds))
+			printErrorAndExit(conn);
 	}
 	else {
-		mpd_Status * status;
+		struct mpd_status *status;
 		status = getStatus(conn);
 
-		printf("crossfade: %i\n",status->crossfade);
+		printf("crossfade: %i\n", mpd_status_get_crossfade(status));
 
-		mpd_freeStatus(status);
-		printErrorAndExit(conn);
+		mpd_status_free(status);
 	}
 	return 0;
 }
 
 int
-cmd_version(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
+cmd_version(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	printf("mpd version: %i.%i.%i\n",conn->version[0],
-			conn->version[1],conn->version[2]);
+	const unsigned *version = mpd_connection_get_server_version(conn);
+
+	if (version != NULL)
+		printf("mpd version: %i.%i.%i\n", version[0],
+		       version[1], version[2]);
+	else
+		printf("mpd version: unknown\n");
+
 	return 0;
 }
 
-int cmd_loadtab ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_loadtab ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	mpd_InfoEntity * entity;
-	mpd_PlaylistFile * pl;
+	struct mpd_playlist *pl;
 
 	if (argc != 1)
 		return 0;
 
-	mpd_sendLsInfoCommand(conn,"");
-	printErrorAndExit(conn);
+	if (!mpd_send_list_meta(conn, NULL))
+		printErrorAndExit(conn);
 
-	while((entity = mpd_getNextInfoEntity(conn))) {
-		if(entity->type==MPD_INFO_ENTITY_TYPE_PLAYLISTFILE) {
-			pl = entity->info.playlistFile;
-			if (strncmp(pl->path, argv[0], strlen(argv[0])) == 0)
-				printf("%s\n", charset_from_utf8(pl->path));
-		}
-		mpd_freeInfoEntity(entity);
+	while ((pl = mpd_recv_playlist(conn)) != NULL) {
+		if (strncmp(mpd_playlist_get_path(pl), argv[0],
+			    strlen(argv[0])) == 0)
+			printf("%s\n",
+			       charset_from_utf8(mpd_playlist_get_path(pl)));
+
+		mpd_playlist_free(pl);
 	}
 
 	my_finishCommand(conn);
 	return 0;
 }
 
-int cmd_lstab ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_lstab ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	mpd_InfoEntity * entity;
-	mpd_Directory * dir;
+	struct mpd_directory *dir;
 
 	if (argc != 1)
 		return 0;
 
-	mpd_sendListallCommand(conn,"");
-	printErrorAndExit(conn);
+	if (!mpd_send_list_all(conn, NULL))
+		printErrorAndExit(conn);
 
-	while((entity = mpd_getNextInfoEntity(conn))) {
-		if(entity->type==MPD_INFO_ENTITY_TYPE_DIRECTORY) {
-			dir = entity->info.directory;
-			if (strncmp(dir->path, argv[0], strlen(argv[0])) == 0)
-				printf("%s\n", charset_from_utf8(dir->path));
-		}
-		mpd_freeInfoEntity(entity);
+	while ((dir = mpd_recv_directory(conn)) != NULL) {
+		if (strncmp(mpd_directory_get_path(dir), argv[0],
+			    strlen(argv[0])) == 0)
+			printf("%s\n",
+			       charset_from_utf8(mpd_directory_get_path(dir)));
+
+		mpd_directory_free(dir);
 	}
 
 	my_finishCommand(conn);
@@ -1001,22 +983,21 @@ int cmd_lstab ( int argc, char ** argv, mpd_Connection * conn )
 	return 0;
 }
 
-int cmd_tab ( int argc, char ** argv, mpd_Connection * conn )
+int cmd_tab ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	mpd_InfoEntity * entity;
 	struct mpd_song *song;
 
-	mpd_sendListallCommand(conn,"");
-	printErrorAndExit(conn);
+	if (!mpd_send_list_all(conn, ""))
+		printErrorAndExit(conn);
 
-	while((entity = mpd_getNextInfoEntity(conn))) {
-		if(entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
-			song = entity->info.song;
-			if (argc != 1 ||
-			    strncmp(song->file, argv[0], strlen(argv[0]))==0)
-				printf("%s\n", charset_from_utf8(song->file));
-		}
-		mpd_freeInfoEntity(entity);
+	while ((song = mpd_recv_song(conn)) != NULL) {
+		if (argc != 1 ||
+		    strncmp(mpd_song_get_uri(song), argv[0],
+			    strlen(argv[0])) == 0)
+			printf("%s\n",
+			       charset_from_utf8(mpd_song_get_uri(song)));
+
+		mpd_song_free(song);
 	}
 
 	my_finishCommand(conn);
@@ -1052,34 +1033,31 @@ static char * DHMS(unsigned long t)
 }
 
 int
-cmd_stats(mpd_unused int argc, mpd_unused char **argv, mpd_Connection *conn)
+cmd_stats(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	mpd_Stats *stats;
+	struct mpd_stats *stats;
 	time_t t;
 
-	mpd_sendStatsCommand(conn);
-	stats = mpd_getStats(conn);
-	printErrorAndExit(conn);
+	stats = mpd_run_stats(conn);
+	if (stats == NULL)
+		printErrorAndExit(conn);
 
-	if (stats != NULL) {
-		t = stats->dbUpdateTime;
-		printf("Artists: %6d\n", stats->numberOfArtists);
-		printf("Albums:  %6d\n", stats->numberOfAlbums);
-		printf("Songs:   %6d\n", stats->numberOfSongs);
-		printf("\n");
-		printf("Play Time:    %s\n", DHMS(stats->playTime));
-		printf("Uptime:       %s\n", DHMS(stats->uptime));
-		printf("DB Updated:   %s", ctime(&t));	/* no \n needed */
-		printf("DB Play Time: %s\n", DHMS(stats->dbPlayTime));
-		mpd_freeStats(stats);
-	} else {
-		printf("Error getting mpd stats\n");
-	}
+	t = mpd_stats_get_db_update_time(stats);
+	printf("Artists: %6d\n", mpd_stats_get_number_of_artists(stats));
+	printf("Albums:  %6d\n", mpd_stats_get_number_of_albums(stats));
+	printf("Songs:   %6d\n", mpd_stats_get_number_of_songs(stats));
+	printf("\n");
+	printf("Play Time:    %s\n", DHMS(mpd_stats_get_play_time(stats)));
+	printf("Uptime:       %s\n", DHMS(mpd_stats_get_uptime(stats)));
+	printf("DB Updated:   %s", ctime(&t));	/* no \n needed */
+	printf("DB Play Time: %s\n", DHMS(mpd_stats_get_db_play_time(stats)));
+
+	mpd_stats_free(stats);
 	return 0;
 }
 
 int
-cmd_status(mpd_unused  int argc, mpd_unused char **argv, mpd_Connection *conn)
+cmd_status(mpd_unused  int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
 	if (options.verbosity >= V_DEFAULT)
 		print_status(conn);
@@ -1087,34 +1065,30 @@ cmd_status(mpd_unused  int argc, mpd_unused char **argv, mpd_Connection *conn)
 }
 
 int cmd_idle(mpd_unused int argc, mpd_unused char **argv,
-	     mpd_Connection *connection)
+	     struct mpd_connection *connection)
 {
-	fd_set fds;
-	const char *change;
+	enum mpd_idle idle;
 
-	mpd_send_idle(connection);
-	printErrorAndExit(connection);
+	idle = mpd_run_idle(connection);
+	if (idle == 0)
+		printErrorAndExit(connection);
 
-	/* explicitly wait for a read event on the socket, because
-	   mpd_get_next_idle_change() is non-blocking */
+	for (unsigned j = 0;; ++j) {
+		enum mpd_idle i = 1 << j;
+		const char *name = mpd_idle_name(i);
 
-	FD_ZERO(&fds);
-	FD_SET((unsigned)connection->sock, &fds);
+		if (name == NULL)
+			break;
 
-	select(connection->sock + 1, &fds, NULL, NULL, NULL);
-
-	while ((change = mpd_get_next_idle_change(connection)) != NULL)
-		printf("%s\n", change);
-	printErrorAndExit(connection);
-
-	mpd_finishCommand(connection);
-	printErrorAndExit(connection);
+		if (idle & i)
+			printf("%s\n", name);
+	}
 
 	return 0;
 }
 
 int
-cmd_idleloop(int argc, char **argv, mpd_Connection *connection)
+cmd_idleloop(int argc, char **argv, struct mpd_connection *connection)
 {
 	int ret;
 
