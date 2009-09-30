@@ -95,7 +95,7 @@ print_status(struct mpd_connection *conn)
 		printf("Updating DB (#%u) ...\n",
 		       mpd_status_get_update_id(status));
 
-	if (mpd_status_get_volume(status) != MPD_STATUS_NO_VOLUME)
+	if (mpd_status_get_volume(status) >= 0)
 		printf("volume:%3i%c   ", mpd_status_get_volume(status), '%');
 	else {
 		printf("volume: n/a   ");
