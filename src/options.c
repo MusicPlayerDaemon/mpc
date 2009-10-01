@@ -173,7 +173,7 @@ parse_options(int * argc_p, char ** argv)
 		const char *arg = argv[i];
 		size_t len = strlen(arg);
 
-		if (arg[0] == '-') {
+		if (arg[0] == '-' && (arg[1] < '0' || arg[1] > '9')) {
 			if (arg[1] == '-') {
 				/* arg is a long option */
 				char *value;
