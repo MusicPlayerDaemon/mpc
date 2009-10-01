@@ -559,6 +559,7 @@ int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 {
 	const char * update = "";
 	int i = 0;
+	unsigned id = 0;
 
 	if (!mpd_command_list_begin(conn, false))
 		printErrorAndExit(conn);
@@ -569,8 +570,45 @@ int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 		mpd_send_update(conn, update);
 	} while (++i < argc && (update = charset_to_utf8(argv[i])) != NULL);
 
-	if (!mpd_command_list_end(conn) || !mpd_response_finish(conn))
+	if (!mpd_command_list_end(conn))
 		printErrorAndExit(conn);
+
+	/* obtain the last "update id" response */
+
+	while (true) {
+		unsigned next_id = mpd_recv_update_id(conn);
+		if (next_id == 0)
+			break;
+		id = next_id;
+	}
+
+	if (!mpd_response_finish(conn))
+		printErrorAndExit(conn);
+
+	while (options.wait) {
+		/* idle until an update finishes */
+		enum mpd_idle idle = mpd_run_idle_mask(conn, MPD_IDLE_UPDATE);
+		struct mpd_status *status;
+		unsigned current_id;
+
+		if (idle == 0)
+			printErrorAndExit(conn);
+
+		/* determine the current "update id" */
+
+		status = mpd_run_status(conn);
+		if (status == NULL)
+			printErrorAndExit(conn);
+
+		current_id = mpd_status_get_update_id(status);
+		mpd_status_free(status);
+
+		/* is our last queued update finished now? */
+
+		if (current_id == 0 || current_id > id ||
+		    (id > 1 << 30 && id < 1000)) /* wraparound */
+			break;
+	}
 
 	return 1;
 }

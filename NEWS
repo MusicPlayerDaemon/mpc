@@ -2,6 +2,7 @@
 * don't quote spaces in the "load" and "lstab"
 * revert "disable character set conversion to/from pipe"
 * don't use the deprecated "volume" command
+* added option "update --wait"
 * allow options before and after the command
 * using libmpdclient 2.0 instead of built-in libmpdclient
 

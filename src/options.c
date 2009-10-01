@@ -53,6 +53,7 @@ static const arg_opt_t option_table[] = {
 	{ 'P', "password", "<password>", "Connect to server using password <password>" },
 	{ 'p', "port", "<port>", "Connect to server port <port>" },
 	{ 'f', "format", "<format>", "Print status with format <format>" },
+	{ 'w', "wait", NULL, "Wait for operation to finish (e.g. database update)" },
 };
 
 static const unsigned option_table_size = sizeof(option_table) / sizeof(option_table[0]);
@@ -129,6 +130,11 @@ handle_option(int c, const char *arg)
 	case 'f':
 		options.format = arg;
 		break;
+
+	case 'w':
+		options.wait = true;
+		break;
+
 	default: // Should never be reached, due to lookup_*_option functions
 		fprintf(stderr, "Unknown option %c = %s\n", c, arg);
 		exit(EXIT_FAILURE);

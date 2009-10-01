@@ -20,6 +20,8 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
+#include "stdbool.h"
+
 #define V_QUIET 0
 #define V_DEFAULT 1
 #define V_VERBOSE 2
@@ -31,6 +33,7 @@ typedef struct {
 	const char *password;
 	const char *format;
 	int verbosity; // 0 for quiet, 1 for default, 2 for verbose
+	bool wait;
 } options_t;
 
 
