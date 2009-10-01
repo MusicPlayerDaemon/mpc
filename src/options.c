@@ -46,13 +46,13 @@ options_t options = {
 };
 
 static const arg_opt_t option_table[] = {
-		{ 'v', "verbose", NULL, "Give verbose output" },
-		{ 'q', "quiet", NULL, "Suppress status message" },
-		{ 'q', "no-status", NULL, "synonym for --quiet" },
-		{ 'h', "host", "<host>", "Connect to server on <host>" },
-		{ 'P', "password", "<password>", "Connect to server using password <password>" },
-		{ 'p', "port", "<port>", "Connect to server port <port>" },
-		{ 'f', "format", "<format>", "Print status with format <format>" },
+	{ 'v', "verbose", NULL, "Give verbose output" },
+	{ 'q', "quiet", NULL, "Suppress status message" },
+	{ 'q', "no-status", NULL, "synonym for --quiet" },
+	{ 'h', "host", "<host>", "Connect to server on <host>" },
+	{ 'P', "password", "<password>", "Connect to server using password <password>" },
+	{ 'p', "port", "<port>", "Connect to server port <port>" },
+	{ 'f', "format", "<format>", "Print status with format <format>" },
 };
 
 static const unsigned option_table_size = sizeof(option_table) / sizeof(option_table[0]);
@@ -61,22 +61,23 @@ static void
 option_error(int error, const char *option, const char *arg)
 {
 	switch (error) {
-		case ERROR_UNKNOWN_OPTION:
-			fprintf(stderr, PACKAGE ": invalid option %s\n", option);
-			break;
-		case ERROR_BAD_ARGUMENT:
-			fprintf(stderr, PACKAGE ": bad argument: %s\n", option);
-			break;
-		case ERROR_GOT_ARGUMENT:
-			fprintf(stderr, PACKAGE ": invalid option %s=%s\n", option, arg);
-			break;
-		case ERROR_MISSING_ARGUMENT:
-			fprintf(stderr, PACKAGE ": missing value for %s option\n", option);
-			break;
-		default:
-			fprintf(stderr, PACKAGE ": internal error %d\n", error);
-			break;
+	case ERROR_UNKNOWN_OPTION:
+		fprintf(stderr, PACKAGE ": invalid option %s\n", option);
+		break;
+	case ERROR_BAD_ARGUMENT:
+		fprintf(stderr, PACKAGE ": bad argument: %s\n", option);
+		break;
+	case ERROR_GOT_ARGUMENT:
+		fprintf(stderr, PACKAGE ": invalid option %s=%s\n", option, arg);
+		break;
+	case ERROR_MISSING_ARGUMENT:
+		fprintf(stderr, PACKAGE ": missing value for %s option\n", option);
+		break;
+	default:
+		fprintf(stderr, PACKAGE ": internal error %d\n", error);
+		break;
 	}
+
 	exit(EXIT_FAILURE);
 }
 
@@ -110,28 +111,28 @@ static void
 handle_option(int c, const char *arg)
 {
 	switch (c) {
-		case 'v':
-			options.verbosity = 2;
-			break;
-		case 'q':
-			options.verbosity = 0;
-			break;
-		case 'h':
-			options.host = arg;
-			break;
-		case 'P':
-			options.password = arg;
-			break;
-		case 'p':
-			options.port_str = arg;
-			break;
-		case 'f':
-			options.format = arg;
-			break;
-		default: // Should never be reached, due to lookup_*_option functions
-			fprintf(stderr, "Unknown option %c = %s\n", c, arg);
-			exit(EXIT_FAILURE);
-			break;
+	case 'v':
+		options.verbosity = 2;
+		break;
+	case 'q':
+		options.verbosity = 0;
+		break;
+	case 'h':
+		options.host = arg;
+		break;
+	case 'P':
+		options.password = arg;
+		break;
+	case 'p':
+		options.port_str = arg;
+		break;
+	case 'f':
+		options.format = arg;
+		break;
+	default: // Should never be reached, due to lookup_*_option functions
+		fprintf(stderr, "Unknown option %c = %s\n", c, arg);
+		exit(EXIT_FAILURE);
+		break;
 	}
 }
 
