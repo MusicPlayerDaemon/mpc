@@ -33,7 +33,8 @@ static void my_finishCommand(struct mpd_connection *conn) {
 		printErrorAndExit(conn);
 }
 
-static int do_search ( int argc, char ** argv, struct mpd_connection *conn, int exact )
+static int
+add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 {
 	Constraint *constraints;
 	int numconstraints;
@@ -46,8 +47,6 @@ static int do_search ( int argc, char ** argv, struct mpd_connection *conn, int 
 	if (numconstraints < 0)
 		return -1;
 
-	mpd_search_db_songs(conn, exact);
-
 	for (i = 0; i < numconstraints; i++) {
 		mpd_search_add_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
 					      constraints[i].type,
@@ -55,6 +54,17 @@ static int do_search ( int argc, char ** argv, struct mpd_connection *conn, int 
 	}
 
 	free(constraints);
+	return 0;
+}
+
+static int do_search ( int argc, char ** argv, struct mpd_connection *conn, int exact )
+{
+	int ret;
+
+	mpd_search_db_songs(conn, exact);
+	ret = add_constraints(argc, argv, conn);
+	if (ret != 0)
+		return ret;
 
 	if (!mpd_search_commit(conn))
 		printErrorAndExit(conn);
