@@ -504,29 +504,15 @@ cmd_move(mpd_unused int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_playlist(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	struct mpd_status *status;
 	struct mpd_song *song;
-	int current, count = 0;
-
-	status = mpd_run_status(conn);
-	if (status == NULL)
-		printErrorAndExit(conn);
-
-	current = mpd_status_get_song_pos(status);
-	mpd_status_free(status);
 
 	if (!mpd_send_list_queue_meta(conn))
 		printErrorAndExit(conn);
 
 	while ((song = mpd_recv_song(conn)) != NULL) {
-		printf("%s%i) ",
-		       current == count ? ">" : " ",
-		       1 + count);
 		pretty_print_song(song);
 		mpd_song_free(song);
 		printf("\n");
-
-		count++;
 	}
 
 	my_finishCommand(conn);
