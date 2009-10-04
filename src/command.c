@@ -1087,38 +1087,3 @@ cmd_status(mpd_unused  int argc, mpd_unused char **argv, struct mpd_connection *
 		print_status(conn);
 	return 0;
 }
-
-int cmd_idle(mpd_unused int argc, mpd_unused char **argv,
-	     struct mpd_connection *connection)
-{
-	enum mpd_idle idle;
-
-	idle = mpd_run_idle(connection);
-	if (idle == 0)
-		printErrorAndExit(connection);
-
-	for (unsigned j = 0;; ++j) {
-		enum mpd_idle i = 1 << j;
-		const char *name = mpd_idle_name(i);
-
-		if (name == NULL)
-			break;
-
-		if (idle & i)
-			printf("%s\n", name);
-	}
-
-	return 0;
-}
-
-int
-cmd_idleloop(int argc, char **argv, struct mpd_connection *connection)
-{
-	int ret;
-
-	while (true) {
-		ret = cmd_idle(argc, argv, connection);
-		if (ret != 0)
-			return ret;
-	}
-}

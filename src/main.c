@@ -26,6 +26,7 @@
 #include "util.h"
 #include "status.h"
 #include "command.h"
+#include "idle.h"
 #include "mpc.h"
 #include "options.h"
 

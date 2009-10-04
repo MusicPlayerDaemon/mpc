@@ -66,9 +66,4 @@ int cmd_tab(int argc, char **argv, struct mpd_connection *conn);
 int cmd_stats(int argc, char **argv, struct mpd_connection *conn);
 int cmd_toggle(int argc, char **argv, struct mpd_connection *conn);
 
-int cmd_idle(int argc, char **argv, struct mpd_connection *connection);
-
-int
-cmd_idleloop(int argc, char **argv, struct mpd_connection *connection);
-
 #endif /* COMMAND_H */
