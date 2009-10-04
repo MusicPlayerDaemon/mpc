@@ -22,9 +22,6 @@
 
 #include "charset.h"
 
-#include "mpc.h"
-#include "gcc.h"
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -135,7 +132,7 @@ static inline size_t deconst_iconv(iconv_t cd,
 }
 
 static char *
-charset_conv_strdup(mpd_unused const char *string)
+charset_conv_strdup(const char *string)
 {
 	char buffer[BUFFER_SIZE];
 	size_t inleft = strlen(string);
