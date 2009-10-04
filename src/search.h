@@ -28,4 +28,7 @@ cmd_search(int argc, char **argv, struct mpd_connection *conn);
 int
 cmd_find(int argc, char **argv, struct mpd_connection *conn);
 
+int
+cmd_findadd(int argc, char **argv, struct mpd_connection *conn);
+
 #endif

@@ -154,6 +154,10 @@ comment, disc, filename, or any (to match any tag).
 .B find <type> <query> [<type> <query>]...
 Same as search, but match <query>s exactly.
 .TP
+.B findadd <type> <query> [<type> <query>]...
+Same as find, but add the result to the current playlist instead of
+printing them.
+.TP
 .B list <type> [<type> <query>]...
 Return a list of all tags of given tag <type>.  Optional search
 <type>s/<query>s limit results in a way similar to search.

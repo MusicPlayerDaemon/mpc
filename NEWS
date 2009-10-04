@@ -8,6 +8,7 @@
 * using libmpdclient 2.0 instead of built-in libmpdclient
 * don't print song numbers in the "playlist" command
 * idle: added "mask" parameter
+* added the "findadd" command
 
 0.17 - (2009/08/13)
 * fixed busy loop while waiting for "idle" response

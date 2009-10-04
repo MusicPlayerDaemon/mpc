@@ -89,6 +89,8 @@ static struct command {
 	{"consume",     0,   1,   0,    cmd_consume,     "<on|off>", "Toggle consume mode, or specify state"},
 	{"search",      2,   -1,  0,    cmd_search,      "<type> <query>", "Search for a song"},
 	{"find",        2,   -1,  0,    cmd_find,        "<type> <query>", "Find a song (exact match)"},
+	{"findadd", 2, -1, 0, cmd_findadd, "<type> <query>",
+	 "Find songs and add them to the current playlist"},
 	{"list",        1,   -1,  0,    cmd_list,        "<type> [<type> <query>]", "Show all tags of <type>"},
 	{"crossfade",   0,   1,   0,    cmd_crossfade,   "[<seconds>]", "Set and display crossfade settings"},
 	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scan music directory for updates"},
