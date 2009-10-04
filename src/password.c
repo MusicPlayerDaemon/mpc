@@ -22,12 +22,8 @@
 
 #include "password.h"
 #include "util.h"
-#include "mpc.h"
 
 #include <mpd/client.h>
-
-#include <string.h>
-#include <stdlib.h>
 
 void
 send_password(const char *password, struct mpd_connection *conn)
