@@ -25,8 +25,6 @@
 
 #include "config.h"
 
-#define STRING_LENGTH	(8192)
-
 #define STDIN_SYMBOL	"-"
 
 #ifndef MIN_COLUMNS

@@ -23,7 +23,6 @@
 #include "util.h"
 #include "charset.h"
 #include "list.h"
-#include "mpc.h"
 #include "options.h"
 
 #include <mpd/client.h>
@@ -57,12 +56,12 @@ int stdinToArgArray(char *** array)
 {
 	List * list = makeList(NULL);
 	ListNode * node;
-	char buffer[STRING_LENGTH+1];
+	char buffer[4096];
 	int size;
 	int i;
 	char * sp;
 
-	while(fgets(buffer,STRING_LENGTH,stdin)) {
+	while(fgets(buffer, sizeof(buffer), stdin)) {
 		if((sp = strchr(buffer,'\n'))) *sp = '\0';
 		insertInListWithoutKey(list,strdup(buffer));
 	}
