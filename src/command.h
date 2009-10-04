@@ -44,8 +44,6 @@ int cmd_listall(int argc, char **argv, struct mpd_connection *conn);
 int cmd_ls(int argc, char **argv, struct mpd_connection *conn);
 int cmd_lsplaylists(int argc, char **argv, struct mpd_connection *conn);
 int cmd_load(int argc, char **argv, struct mpd_connection *conn);
-int cmd_search(int argc, char **argv, struct mpd_connection *conn);
-int cmd_find(int argc, char **argv, struct mpd_connection *conn);
 int cmd_list(int argc, char **argv, struct mpd_connection *conn);
 int cmd_save(int argc, char **argv, struct mpd_connection *conn);
 int cmd_rm(int argc, char **argv, struct mpd_connection *conn);

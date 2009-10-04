@@ -17,6 +17,7 @@ src_mpc_headers = \
 	src/util.h \
 	src/command.h \
 	src/idle.h \
+	src/search.h \
 	src/mpc.h \
 	src/options.h \
 	src/gcc.h
@@ -29,6 +30,7 @@ src_mpc_SOURCES = \
 	src/util.c \
 	src/command.c \
 	src/idle.c \
+	src/search.c \
 	src/options.c \
 	$(src_mpc_headers)
 

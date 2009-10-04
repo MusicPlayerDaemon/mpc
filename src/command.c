@@ -685,49 +685,6 @@ int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
 	return 0;
 }
 
-static int do_search ( int argc, char ** argv, struct mpd_connection *conn, int exact )
-{
-	Constraint *constraints;
-	int numconstraints;
-	int i;
-
-	if (argc % 2 != 0)
-		DIE("arguments must be pairs of search types and queries\n");
-
-	numconstraints = get_constraints(argc, argv, &constraints);
-	if (numconstraints < 0)
-		return -1;
-
-	mpd_search_db_songs(conn, exact);
-
-	for (i = 0; i < numconstraints; i++) {
-		mpd_search_add_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
-					      constraints[i].type,
-					      charset_to_utf8(constraints[i].query));
-	}
-
-	free(constraints);
-
-	if (!mpd_search_commit(conn))
-		printErrorAndExit(conn);
-
-	print_filenames(conn);
-
-	my_finishCommand(conn);
-
-	return 0;
-}
-
-int cmd_search ( int argc, char ** argv, struct mpd_connection *conn )
-{
-	return do_search(argc, argv, conn, 0);
-}
-
-int cmd_find ( int argc, char ** argv, struct mpd_connection *conn )
-{
-	return do_search(argc, argv, conn, 1);
-}
-
 int cmd_list ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	Constraint *constraints;

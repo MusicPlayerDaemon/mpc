@@ -27,6 +27,7 @@
 #include "status.h"
 #include "command.h"
 #include "idle.h"
+#include "search.h"
 #include "mpc.h"
 #include "options.h"
 
