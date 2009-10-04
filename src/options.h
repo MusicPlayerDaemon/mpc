@@ -39,7 +39,6 @@ typedef struct {
 
 void print_option_help(void);
 void parse_options(int * argc_p, char ** argv);
-void options_init(void);
 
 extern options_t options;
 

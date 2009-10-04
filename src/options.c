@@ -18,7 +18,7 @@
  */
 
 #include "options.h"
-#include "mpc.h"
+#include "config.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -43,6 +43,7 @@ options_t options = {
 	.verbosity = V_DEFAULT,
 	.password = NULL,
 	.port_str = NULL,
+	.format = "[%name%: &[%artist% - ]%title%]|%name%|[%artist% - ]%title%|%file%",
 };
 
 static const arg_opt_t option_table[] = {
@@ -298,10 +299,4 @@ parse_options(int * argc_p, char ** argv)
 			*argc_p -= optind - 2;
 		}
 	}
-}
-
-void
-options_init()
-{
-	options.format = DEFAULT_FORMAT;
 }

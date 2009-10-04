@@ -244,7 +244,6 @@ int main(int argc, char ** argv)
 	const char *command_name;
 	struct command *command;
 
-	options_init();
 	parse_options(&argc, argv);
 
 	/* parse command and arguments */

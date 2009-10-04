@@ -461,8 +461,6 @@ static void print_formatted_song(struct mpd_song *song, const char * format)
 	}
 }
 
-#define DEFAULT_FORMAT "[%name%: &[%artist% - ]%title%]|%name%|[%artist% - ]%title%|%file%"
-
 void pretty_print_song(struct mpd_song *song)
 {
 	print_formatted_song(song, options.format);
