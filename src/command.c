@@ -25,6 +25,7 @@
 #include "options.h"
 #include "util.h"
 #include "status.h"
+#include "gcc.h"
 
 #include <mpd/client.h>
 
