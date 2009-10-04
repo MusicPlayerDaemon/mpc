@@ -33,6 +33,10 @@ This command also takes the following defined escape sequences:
 .br
 \\r - carriage return
 .TP
+.BI --wait
+.br
+Wait for operation to finish (e.g. database update).
+.TP
 .BI -q,--quiet,--no-status
 .br
 Prevents the current song status from being printed on completion of some of
@@ -166,8 +170,10 @@ Stops playing.
 .B toggle
 Toggles between play and pause. If stopped starts playing. Does not support start playing at song number (use play).
 .TP
-.B update [<path>]
+.B update [--wait] [<path>]
 Scans music directory for updates if no <path> is specified.  If one or more <path>'s are specified, scans only those path's for updates.  Can take input from a pipe.
+
+With --wait, mpc waits until MPD has finished the update.
 .TP
 .B version
 Reports the version of MPD.
