@@ -20,24 +20,17 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-#include "list.h"
+#include "command.h"
 #include "charset.h"
-#include "password.h"
 #include "options.h"
 #include "util.h"
 #include "status.h"
-#include "command.h"
-#include "mpc.h"
-#include "gcc.h"
 
 #include <mpd/client.h>
 
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <stdlib.h>
-#include <time.h>
-#include <sys/param.h>
 
 #define DIE(...) do { fprintf(stderr, __VA_ARGS__); return -1; } while(0)
 
