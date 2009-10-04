@@ -29,14 +29,6 @@
 
 #define STDIN_SYMBOL	"-"
 
-#ifndef DEFAULT_HOST
-#  define DEFAULT_HOST "localhost"
-#endif /* DEFAULT_HOST */
-
-#ifndef DEFAULT_PORT
-#  define DEFAULT_PORT "6600"
-#endif /* DEFAULT_PORT */
-
 #ifndef DEFAULT_FORMAT
 #  define DEFAULT_FORMAT "[%name%: &[%artist% - ]%title%]|%name%|[%artist% - ]%title%|%file%"
 #endif /* DEFAULT_FORMAT */
