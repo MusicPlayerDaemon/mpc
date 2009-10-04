@@ -99,8 +99,9 @@ static struct command {
 	{"tab",         0,   1,   0,    cmd_tab,         "<path>", NULL},
 	/* status was added for pedantic reasons */
 	{"status",      0,   -1,  0,    cmd_status,      "", NULL},
-	{ "idle", 0, 0, 0, cmd_idle, "", "Idle until an event occurs" },
-	{ "idleloop", 0, 0, 0, cmd_idleloop, "",
+	{ "idle", 0, -1, 0, cmd_idle, "[events]",
+	  "Idle until an event occurs" },
+	{ "idleloop", 0, -1, 0, cmd_idleloop, "[events]",
 	  "Continuously idle until an event occurs" },
 
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */

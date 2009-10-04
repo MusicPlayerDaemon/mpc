@@ -25,12 +25,24 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-int cmd_idle(mpd_unused int argc, mpd_unused char **argv,
+int cmd_idle(int argc, char **argv,
 	     struct mpd_connection *connection)
 {
-	enum mpd_idle idle;
+	enum mpd_idle idle = 0;
 
-	idle = mpd_run_idle(connection);
+	for (int i = 0; i < argc; ++i) {
+		enum mpd_idle parsed = mpd_idle_name_parse(argv[i]);
+		if (parsed == 0) {
+			fprintf(stderr, "Unrecognized idle event: %s\n",
+				argv[i]);
+			return 1;
+		}
+
+		idle |= parsed;
+	}
+
+	idle = idle == 0 ? mpd_run_idle(connection)
+		: mpd_run_idle_mask(connection, idle);
 	if (idle == 0)
 		printErrorAndExit(connection);
 
