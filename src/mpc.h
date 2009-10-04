@@ -27,10 +27,6 @@
 
 #define STDIN_SYMBOL	"-"
 
-#ifndef MIN_COLUMNS
-#  define MIN_COLUMNS	80
-#endif /* MIN_COLUMNS */
-
 struct mpd_connection;
 
 typedef int (*cmdhandler)(int argc, char **argv, struct mpd_connection *conn);
