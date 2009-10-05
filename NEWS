@@ -1,4 +1,4 @@
-0.18 - not yet released
+0.18 (2009/10/05)
 * don't quote spaces in the "load" and "lstab"
 * revert "disable character set conversion to/from pipe"
 * don't use the deprecated "volume" command
@@ -10,7 +10,7 @@
 * idle: added "mask" parameter
 * added the "findadd" command
 
-0.17 - (2009/08/13)
+0.17 (2009/08/13)
 * fixed busy loop while waiting for "idle" response
 * added command "idleloop"
 
