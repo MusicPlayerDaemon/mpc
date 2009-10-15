@@ -689,12 +689,12 @@ int cmd_list ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	Constraint *constraints;
 	int numconstraints = 0;
-	int type;
+	enum mpd_tag_type type;
 	int i;
 	struct mpd_pair *pair;
 
 	type = get_search_type(argv[0]);
-	if (type < 0)
+	if (type == MPD_TAG_UNKNOWN)
 		return -1;
 
 	argc -= 1;
