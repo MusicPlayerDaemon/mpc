@@ -687,7 +687,7 @@ int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_list ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	Constraint *constraints;
+	struct constraint *constraints;
 	int numconstraints = 0;
 	enum mpd_tag_type type;
 	int i;

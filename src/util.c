@@ -148,7 +148,7 @@ get_search_type(const char *name)
 	return MPD_TAG_UNKNOWN;
 }
 
-int get_constraints(int argc, char **argv, Constraint **constraints)
+int get_constraints(int argc, char **argv, struct constraint **constraints)
 {
 	int numconstraints = 0;
 	int type;
@@ -156,7 +156,7 @@ int get_constraints(int argc, char **argv, Constraint **constraints)
 
 	assert(argc > 0 && argc % 2 == 0);
 
-	*constraints = malloc(sizeof(Constraint)*argc/2);
+	*constraints = malloc(sizeof(**constraints) * argc / 2);
 
 	for (i = 0; i < argc; i += 2) {
 		type = get_search_type(argv[i]);

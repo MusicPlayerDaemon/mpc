@@ -33,10 +33,10 @@ struct type##_value_change { \
 
 VALUE_CHANGE(int) /* struct int_value_change */
 
-typedef struct _Constraint {
+struct constraint {
 	int type;
 	char *query;
-} Constraint;
+};
 
 void
 printErrorAndExit(struct mpd_connection *conn);
@@ -48,7 +48,7 @@ int get_boolean (const char * arg);
 enum mpd_tag_type
 get_search_type(const char *name);
 
-int get_constraints(int argc, char **argv, Constraint **constraints);
+int get_constraints(int argc, char **argv, struct constraint **constraints);
 int parse_int(const char *, int *);
 int parse_songnum(const char *, int *);
 int parse_int_value_change(const char *, struct int_value_change *);

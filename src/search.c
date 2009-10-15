@@ -36,7 +36,7 @@ static void my_finishCommand(struct mpd_connection *conn) {
 static int
 add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 {
-	Constraint *constraints;
+	struct constraint *constraints;
 	int numconstraints;
 	int i;
 
