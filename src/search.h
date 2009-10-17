@@ -20,7 +20,20 @@
 #ifndef MPC_SEARCH_H
 #define MPC_SEARCH_H
 
+#include <mpd/client.h>
+
 struct mpd_connection;
+
+struct constraint {
+	int type;
+	char *query;
+};
+
+enum mpd_tag_type
+get_search_type(const char *name);
+
+int
+get_constraints(int argc, char **argv, struct constraint **constraints);
 
 int
 cmd_search(int argc, char **argv, struct mpd_connection *conn);

@@ -118,61 +118,6 @@ int get_boolean (const char * arg)
 	return -1;
 }
 
-enum mpd_tag_type
-get_search_type(const char *name)
-{
-	enum mpd_tag_type type;
-	bool first = true;
-
-	type = mpd_tag_name_iparse(name);
-	if (type != MPD_TAG_UNKNOWN)
-		return type;
-
-	fprintf(stderr, "\"%s\" is not a valid search type: <", name);
-
-	for (unsigned i = 0; i < MPD_TAG_COUNT; i++) {
-		name = mpd_tag_name(i);
-		if (name == NULL)
-			continue;
-
-		if (first)
-			first = false;
-		else
-			fputc('|', stderr);
-
-		fputs(name, stderr);
-	}
-
-	fputs(">\n", stderr);
-
-	return MPD_TAG_UNKNOWN;
-}
-
-int get_constraints(int argc, char **argv, struct constraint **constraints)
-{
-	int numconstraints = 0;
-	int type;
-	int i;
-
-	assert(argc > 0 && argc % 2 == 0);
-
-	*constraints = malloc(sizeof(**constraints) * argc / 2);
-
-	for (i = 0; i < argc; i += 2) {
-		type = get_search_type(argv[i]);
-		if (type < 0) {
-			free(*constraints);
-			return -1;
-		}
-
-		(*constraints)[numconstraints].type = type;
-		(*constraints)[numconstraints].query = argv[i+1];
-		numconstraints++;
-	}
-
-	return numconstraints;
-}
-
 /* note - return value is success; the parsed int itself is in ret */
 
 int parse_int(const char * str, int * ret)

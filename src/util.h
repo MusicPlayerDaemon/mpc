@@ -23,7 +23,8 @@
 #ifndef MPC_UTIL_H
 #define MPC_UTIL_H
 
-#include <mpd/client.h>
+struct mpd_connection;
+struct mpd_song;
 
 #define VALUE_CHANGE(type) \
 struct type##_value_change { \
@@ -33,11 +34,6 @@ struct type##_value_change { \
 
 VALUE_CHANGE(int) /* struct int_value_change */
 
-struct constraint {
-	int type;
-	char *query;
-};
-
 void
 printErrorAndExit(struct mpd_connection *conn);
 
@@ -45,10 +41,6 @@ void free_pipe_array (int max, char ** array);
 int stdinToArgArray(char *** array);
 int get_boolean (const char * arg);
 
-enum mpd_tag_type
-get_search_type(const char *name);
-
-int get_constraints(int argc, char **argv, struct constraint **constraints);
 int parse_int(const char *, int *);
 int parse_songnum(const char *, int *);
 int parse_int_value_change(const char *, struct int_value_change *);

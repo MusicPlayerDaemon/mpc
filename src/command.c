@@ -24,6 +24,7 @@
 #include "charset.h"
 #include "options.h"
 #include "util.h"
+#include "search.h"
 #include "status.h"
 #include "gcc.h"
 
