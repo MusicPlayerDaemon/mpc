@@ -88,6 +88,15 @@ static void my_finishCommand(struct mpd_connection *conn) {
 		printErrorAndExit(conn);
 }
 
+static void
+add_constraint(struct mpd_connection *conn,
+	       const struct constraint *constraint)
+{
+	mpd_search_add_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
+				      constraint->type,
+				      charset_to_utf8(constraint->query));
+}
+
 bool
 add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 {
@@ -103,9 +112,7 @@ add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 		return false;
 
 	for (i = 0; i < numconstraints; i++) {
-		mpd_search_add_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
-					      constraints[i].type,
-					      charset_to_utf8(constraints[i].query));
+		add_constraint(conn, &constraints[i]);
 	}
 
 	free(constraints);
