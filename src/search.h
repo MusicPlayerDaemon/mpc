@@ -24,6 +24,10 @@
 
 struct mpd_connection;
 
+enum {
+	SEARCH_TAG_ANY = MPD_TAG_COUNT + 1,
+};
+
 struct constraint {
 	enum mpd_tag_type type;
 	char *query;

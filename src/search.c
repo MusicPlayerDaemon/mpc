@@ -24,6 +24,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define DIE(...) do { fprintf(stderr, __VA_ARGS__); return false; } while(0)
 
@@ -31,24 +32,22 @@ enum mpd_tag_type
 get_search_type(const char *name)
 {
 	enum mpd_tag_type type;
-	bool first = true;
+
+	if (strcasecmp(name, "any") == 0)
+		return SEARCH_TAG_ANY;
 
 	type = mpd_tag_name_iparse(name);
 	if (type != MPD_TAG_UNKNOWN)
 		return type;
 
-	fprintf(stderr, "\"%s\" is not a valid search type: <", name);
+	fprintf(stderr, "\"%s\" is not a valid search type: <any", name);
 
 	for (unsigned i = 0; i < MPD_TAG_COUNT; i++) {
 		name = mpd_tag_name(i);
 		if (name == NULL)
 			continue;
 
-		if (first)
-			first = false;
-		else
-			fputc('|', stderr);
-
+		fputc('|', stderr);
 		fputs(name, stderr);
 	}
 
@@ -92,9 +91,13 @@ static void
 add_constraint(struct mpd_connection *conn,
 	       const struct constraint *constraint)
 {
-	mpd_search_add_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
-				      constraint->type,
-				      charset_to_utf8(constraint->query));
+	if (constraint->type == SEARCH_TAG_ANY)
+		mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
+						  charset_to_utf8(constraint->query));
+	else
+		mpd_search_add_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
+					      constraint->type,
+					      charset_to_utf8(constraint->query));
 }
 
 bool
