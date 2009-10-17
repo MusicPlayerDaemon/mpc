@@ -25,7 +25,7 @@
 struct mpd_connection;
 
 struct constraint {
-	int type;
+	enum mpd_tag_type type;
 	char *query;
 };
 
