@@ -88,7 +88,7 @@ static void my_finishCommand(struct mpd_connection *conn) {
 		printErrorAndExit(conn);
 }
 
-static bool
+bool
 add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 {
 	struct constraint *constraints;

@@ -35,6 +35,9 @@ get_search_type(const char *name);
 int
 get_constraints(int argc, char **argv, struct constraint **constraints);
 
+bool
+add_constraints(int argc, char ** argv, struct mpd_connection *conn);
+
 int
 cmd_search(int argc, char **argv, struct mpd_connection *conn);
 
