@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DIE(...) do { fprintf(stderr, __VA_ARGS__); return -1; } while(0)
+#define DIE(...) do { fprintf(stderr, __VA_ARGS__); return false; } while(0)
 
 enum mpd_tag_type
 get_search_type(const char *name)
@@ -88,7 +88,7 @@ static void my_finishCommand(struct mpd_connection *conn) {
 		printErrorAndExit(conn);
 }
 
-static int
+static bool
 add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 {
 	struct constraint *constraints;
@@ -100,7 +100,7 @@ add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 
 	numconstraints = get_constraints(argc, argv, &constraints);
 	if (numconstraints < 0)
-		return -1;
+		return false;
 
 	for (i = 0; i < numconstraints; i++) {
 		mpd_search_add_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
@@ -109,17 +109,14 @@ add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 	}
 
 	free(constraints);
-	return 0;
+	return true;
 }
 
 static int do_search ( int argc, char ** argv, struct mpd_connection *conn, int exact )
 {
-	int ret;
-
 	mpd_search_db_songs(conn, exact);
-	ret = add_constraints(argc, argv, conn);
-	if (ret != 0)
-		return ret;
+	if (!add_constraints(argc, argv, conn))
+		return -1;
 
 	if (!mpd_search_commit(conn))
 		printErrorAndExit(conn);
@@ -146,15 +143,12 @@ cmd_find(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_findadd(int argc, char **argv, struct mpd_connection *conn)
 {
-	int ret;
-
 	if (mpd_connection_cmp_server_version(conn, 0, 16, 0) < 0)
 		fprintf(stderr, "warning: MPD 0.16 required for this command\n");
 
 	mpd_search_add_db_songs(conn, true);
-	ret = add_constraints(argc, argv, conn);
-	if (ret != 0)
-		return ret;
+	if (!add_constraints(argc, argv, conn))
+		return -1;
 
 	if (!mpd_search_commit(conn))
 		printErrorAndExit(conn);
