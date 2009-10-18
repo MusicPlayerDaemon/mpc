@@ -1,5 +1,6 @@
 0.19 (not yet released)
 * search: fix "mpc search any"
+* added command "replaygain" (MPD 0.16)
 
 
 0.18 (2009/10/05)

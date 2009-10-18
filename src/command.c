@@ -1017,3 +1017,31 @@ cmd_status(mpd_unused  int argc, mpd_unused char **argv, struct mpd_connection *
 		print_status(conn);
 	return 0;
 }
+
+int
+cmd_replaygain(int argc, char **argv, struct mpd_connection *connection)
+{
+	/* libmpdclient 2.0 doesn't support these commands yet, we
+	   have to roll our own with mpd_send_command() */
+
+	if (mpd_connection_cmp_server_version(connection, 0, 16, 0) < 0)
+		fprintf(stderr, "warning: MPD 0.16 required for this command\n");
+
+	if (argc == 0) {
+		struct mpd_pair *pair;
+
+		mpd_send_command(connection, "replay_gain_status", NULL);
+		while ((pair = mpd_recv_pair(connection)) != NULL) {
+			printf("%s: %s\n", pair->name, pair->value);
+			mpd_return_pair(connection, pair);
+		}
+
+		my_finishCommand(connection);
+	} else {
+		mpd_send_command(connection, "replay_gain_mode",
+				 argv[0], NULL);
+		my_finishCommand(connection);
+	}
+
+	return 0;
+}

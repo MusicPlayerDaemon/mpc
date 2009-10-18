@@ -106,6 +106,8 @@ static struct command {
 	  "Idle until an event occurs" },
 	{ "idleloop", 0, -1, 0, cmd_idleloop, "[events]",
 	  "Continuously idle until an event occurs" },
+	{ "replaygain", 0, -1, 0, cmd_replaygain, "[off|track|ablum]",
+	  "Set or display the replay gain mode" },
 
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */
 	{ .command = NULL }
