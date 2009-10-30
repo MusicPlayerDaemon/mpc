@@ -1,5 +1,6 @@
 0.19 (not yet released)
 * search: fix "mpc search any"
+* idle: flush output after each idleloop iteration
 * added command "replaygain" (MPD 0.16)
 
 

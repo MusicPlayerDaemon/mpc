@@ -70,6 +70,7 @@ cmd_idleloop(int argc, char **argv, struct mpd_connection *connection)
 
 	while (true) {
 		ret = cmd_idle(argc, argv, connection);
+		fflush(stdout);
 		if (ret != 0)
 			return ret;
 	}
