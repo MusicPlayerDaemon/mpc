@@ -94,6 +94,7 @@ static struct command {
 	{"list",        1,   -1,  0,    cmd_list,        "<type> [<type> <query>]", "Show all tags of <type>"},
 	{"crossfade",   0,   1,   0,    cmd_crossfade,   "[<seconds>]", "Set and display crossfade settings"},
 	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scan music directory for updates"},
+	{"sticker",     1,   -1,  0,    cmd_sticker,     "<uri> <get|set|list|del> <args..>", "Sticker management"},
 	{"stats",       0,   -1,  0,    cmd_stats,       "", "Display statistics about MPD"},
 	{"version",     0,   0,   0,    cmd_version,     "", "Report version of MPD"},
 	/* loadtab, lstab, and tab used for completion-scripting only */

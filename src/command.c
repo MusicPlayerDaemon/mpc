@@ -1045,3 +1045,89 @@ cmd_replaygain(int argc, char **argv, struct mpd_connection *connection)
 
 	return 0;
 }
+
+int
+cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
+{
+	if(!strcmp(argv[1], "set"))
+	{
+		if(argc < 4)
+		{
+			fputs("syntax: sticker <uri> set <key> <value>\n", stderr);
+			return 0;
+		}
+
+		mpd_sticker_song_set(conn, argv[0], argv[2], argv[3]);
+		my_finishCommand(conn);
+		return 0;
+	}
+	else if(!strcmp(argv[1], "get"))
+	{
+		struct mpd_sticker* value;
+
+		if(argc < 3)
+		{
+			fputs("syntax: sticker <uri> get <key>\n", stderr);
+			return 0;
+		}
+
+		value = mpd_sticker_song_get(conn, argv[0], argv[2]);
+		if(value)
+		{
+			printf("%s: %s\n", value->name, value->value);
+			mpd_sticker_free(value);
+		}
+		my_finishCommand(conn);
+	}
+	else if(!strcmp(argv[1], "find"))
+	{
+		struct mpd_sticker* sticker;
+
+		if(argc < 3)
+		{
+			fputs("syntax: sticker <dir> find <key>\n", stderr);
+			return 0;
+		}
+
+		sticker = mpd_sticker_song_find(conn, argv[0], argv[2]);
+		while(sticker)
+		{
+			printf("%s: %s=%s\n", sticker->uri, sticker->name, sticker->value);
+			sticker = mpd_sticker_free(sticker);
+		}
+		my_finishCommand(conn);
+	}
+	else if(!strncmp(argv[1], "del", 3))
+	{
+		if(argc < 2)
+		{
+			fputs("syntax: sticker <uri> delete [key]\n", stderr);
+			return 0;
+		}
+
+		mpd_sticker_song_delete(conn, argv[0], argc > 2 ? argv[2] : NULL);
+		my_finishCommand(conn);
+	}
+	else if(!strcmp(argv[1], "list"))
+	{
+		struct mpd_sticker* sticker;
+
+		if(argc < 2)
+		{
+			fputs("syntax: sticker <uri> list\n", stderr);
+			return 0;
+		}
+
+		sticker = mpd_sticker_song_list(conn, argv[0]);
+		while(sticker)
+		{
+			printf("%s: %s\n", sticker->name, sticker->value);
+			sticker = mpd_sticker_free(sticker);
+		}
+		my_finishCommand(conn);
+	}
+	else
+		fputs("error: unknown command.\n", stderr);
+
+	return 0;
+}
