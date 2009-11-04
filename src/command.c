@@ -1074,7 +1074,7 @@ cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 		value = mpd_sticker_song_get(conn, argv[0], argv[2]);
 		if(value)
 		{
-			printf("%s: %s\n", value->name, value->value);
+			printf("%s: %s\n", mpd_sticker_get_name(value), mpd_sticker_get_value(value));
 			mpd_sticker_free(value);
 		}
 		my_finishCommand(conn);
@@ -1092,7 +1092,8 @@ cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 		sticker = mpd_sticker_song_find(conn, argv[0], argv[2]);
 		while(sticker)
 		{
-			printf("%s: %s=%s\n", sticker->uri, sticker->name, sticker->value);
+			printf("%s: %s=%s\n", mpd_sticker_get_uri(sticker), mpd_sticker_get_name(sticker),
+			                      mpd_sticker_get_value(sticker));
 			sticker = mpd_sticker_free(sticker);
 		}
 		my_finishCommand(conn);
@@ -1121,7 +1122,7 @@ cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 		sticker = mpd_sticker_song_list(conn, argv[0]);
 		while(sticker)
 		{
-			printf("%s: %s\n", sticker->name, sticker->value);
+			printf("%s: %s\n", mpd_sticker_get_name(sticker), mpd_sticker_get_value(sticker));
 			sticker = mpd_sticker_free(sticker);
 		}
 		my_finishCommand(conn);
