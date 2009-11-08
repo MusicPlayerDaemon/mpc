@@ -1046,6 +1046,8 @@ cmd_replaygain(int argc, char **argv, struct mpd_connection *connection)
 	return 0;
 }
 
+#if defined(LIBMPDCLIENT_CHECK_VERSION) && LIBMPDCLIENT_CHECK_VERSION(2,1,0)
+
 int
 cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 {
@@ -1132,3 +1134,5 @@ cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 
 	return 0;
 }
+
+#endif /* libmpdclient 2.1 */
