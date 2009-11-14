@@ -26,6 +26,7 @@
 #include "util.h"
 #include "status.h"
 #include "command.h"
+#include "sticker.h"
 #include "idle.h"
 #include "search.h"
 #include "mpc.h"

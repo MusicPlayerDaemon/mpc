@@ -29,6 +29,7 @@ src_mpc_SOURCES = \
 	src/status.c \
 	src/util.c \
 	src/command.c \
+	src/sticker.c \
 	src/idle.c \
 	src/search.c \
 	src/options.c \
