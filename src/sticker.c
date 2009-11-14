@@ -32,6 +32,35 @@ static void my_finishCommand(struct mpd_connection *conn) {
 		printErrorAndExit(conn);
 }
 
+static void
+recv_print_stickers(struct mpd_connection *connection)
+{
+	struct mpd_pair *pair;
+
+	while ((pair = mpd_recv_sticker(connection)) != NULL) {
+		printf("%s=%s\n", pair->name, pair->value);
+		mpd_return_pair(connection, pair);
+	}
+}
+
+static void
+recv_print_stickers2(struct mpd_connection *connection)
+{
+	struct mpd_pair *pair;
+
+	while ((pair = mpd_recv_pair_named(connection, "file")) != NULL) {
+		printf("%s: ", pair->value);
+		mpd_return_pair(connection, pair);
+
+		pair = mpd_recv_sticker(connection);
+		if (pair != NULL) {
+			printf("%s=%s\n", pair->name, pair->value);
+			mpd_return_pair(connection, pair);
+		} else
+			printf("\n");
+	}
+}
+
 int
 cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 {
@@ -43,45 +72,32 @@ cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 			return 0;
 		}
 
-		mpd_sticker_song_set(conn, argv[0], argv[2], argv[3]);
+		mpd_send_sticker_set(conn, "song", argv[0], argv[2], argv[3]);
 		my_finishCommand(conn);
 		return 0;
 	}
 	else if(!strcmp(argv[1], "get"))
 	{
-		struct mpd_sticker* value;
-
 		if(argc < 3)
 		{
 			fputs("syntax: sticker <uri> get <key>\n", stderr);
 			return 0;
 		}
 
-		value = mpd_sticker_song_get(conn, argv[0], argv[2]);
-		if(value)
-		{
-			printf("%s: %s\n", mpd_sticker_get_name(value), mpd_sticker_get_value(value));
-			mpd_sticker_free(value);
-		}
+		mpd_send_sticker_get(conn, "song", argv[0], argv[2]);
+		recv_print_stickers(conn);
 		my_finishCommand(conn);
 	}
 	else if(!strcmp(argv[1], "find"))
 	{
-		struct mpd_sticker* sticker;
-
 		if(argc < 3)
 		{
 			fputs("syntax: sticker <dir> find <key>\n", stderr);
 			return 0;
 		}
 
-		sticker = mpd_sticker_song_find(conn, argv[0], argv[2]);
-		while(sticker)
-		{
-			printf("%s: %s=%s\n", mpd_sticker_get_uri(sticker), mpd_sticker_get_name(sticker),
-			                      mpd_sticker_get_value(sticker));
-			sticker = mpd_sticker_free(sticker);
-		}
+		mpd_send_sticker_find(conn, "song", argv[0], argv[2]);
+		recv_print_stickers2(conn);
 		my_finishCommand(conn);
 	}
 	else if(!strncmp(argv[1], "del", 3))
@@ -92,25 +108,19 @@ cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 			return 0;
 		}
 
-		mpd_sticker_song_delete(conn, argv[0], argc > 2 ? argv[2] : NULL);
+		mpd_send_sticker_delete(conn, "song", argv[0], argc > 2 ? argv[2] : NULL);
 		my_finishCommand(conn);
 	}
 	else if(!strcmp(argv[1], "list"))
 	{
-		struct mpd_sticker* sticker;
-
 		if(argc < 2)
 		{
 			fputs("syntax: sticker <uri> list\n", stderr);
 			return 0;
 		}
 
-		sticker = mpd_sticker_song_list(conn, argv[0]);
-		while(sticker)
-		{
-			printf("%s: %s\n", mpd_sticker_get_name(sticker), mpd_sticker_get_value(sticker));
-			sticker = mpd_sticker_free(sticker);
-		}
+		mpd_send_sticker_list(conn, "song", argv[0]);
+		recv_print_stickers(conn);
 		my_finishCommand(conn);
 	}
 	else
