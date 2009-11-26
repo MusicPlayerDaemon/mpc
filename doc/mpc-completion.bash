@@ -60,9 +60,9 @@ _mpc_ls () {
 	if [ -z "$cur" ]; then
 		COMPREPLY=($(mpc ls | sed 's@$@/@' | __escape_strings_stdin))
 	else
-		COMPREPLY=($(mpc ls $(eval echo "$cur") 2> /dev/null | sed 's@$@/@' | __escape_strings_stdin))
+		COMPREPLY=($(mpc ls $(eval echo "$cur") 2> /dev/null | __escape_strings_stdin))
 		if [ ${#COMPREPLY[*]} -eq 0 ]; then
-			COMPREPLY=($(mpc lstab $(eval echo "$cur") | sed 's@$@/@' | __escape_strings_stdin))
+			COMPREPLY=($(mpc lstab $(eval echo "$cur") | __escape_strings_stdin))
 		fi
 	fi
 }
