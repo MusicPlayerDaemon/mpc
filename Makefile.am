@@ -4,7 +4,7 @@ AUTOMAKE_OPTIONS = foreign 1.10 dist-bzip2
 man_MANS = doc/mpc.1
 doc_DATA = AUTHORS COPYING NEWS README \
 	doc/mpd-m3u-handler.sh doc/mpd-pls-handler.sh doc/mppledit \
-	doc/mpc-bashrc
+	doc/mpc-completion.bash
 EXTRA_DIST = $(man_MANS) $(doc_DATA)
 
 bin_PROGRAMS = src/mpc
