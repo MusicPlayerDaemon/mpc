@@ -240,6 +240,11 @@ song_value(const struct mpd_song *song, const char *name)
 			value = buffer;
 		} else
 			value = NULL;
+	} else if (strcmp(name, "position") == 0) {
+	        unsigned pos = mpd_song_get_pos(song);
+		static char buffer[10];
+		snprintf(buffer, sizeof(buffer), "%d", pos+1);
+		value = buffer;
 	} else {
 		enum mpd_tag_type tag_type = mpd_tag_name_iparse(name);
 		if (tag_type == MPD_TAG_UNKNOWN)
