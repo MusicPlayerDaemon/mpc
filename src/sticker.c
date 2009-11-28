@@ -25,7 +25,8 @@
 #include <string.h>
 #include <stdio.h>
 
-#if defined(LIBMPDCLIENT_CHECK_VERSION) && LIBMPDCLIENT_CHECK_VERSION(2,1,0)
+#if defined(LIBMPDCLIENT_CHECK_VERSION)
+#if LIBMPDCLIENT_CHECK_VERSION(2,1,0)
 
 static void my_finishCommand(struct mpd_connection *conn) {
 	if (!mpd_response_finish(conn))
@@ -130,3 +131,4 @@ cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 }
 
 #endif /* libmpdclient 2.1 */
+#endif /* libmpdclient > 2.0 */
