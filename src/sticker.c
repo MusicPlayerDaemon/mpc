@@ -48,18 +48,23 @@ static void
 recv_print_stickers2(struct mpd_connection *connection)
 {
 	struct mpd_pair *pair;
+	bool first = true;
 
-	while ((pair = mpd_recv_pair_named(connection, "file")) != NULL) {
-		printf("%s: ", pair->value);
+	while ((pair = mpd_recv_pair(connection)) != NULL) {
+		if (strcmp(pair->name, "file") == 0) {
+			if (first)
+				first = false;
+			else
+				putchar('\n');
+			printf("%s:", pair->value);
+		} else if (!first && strcmp(pair->name, "sticker") == 0)
+			printf(" %s", pair->value);
+
 		mpd_return_pair(connection, pair);
-
-		pair = mpd_recv_sticker(connection);
-		if (pair != NULL) {
-			printf("%s=%s\n", pair->name, pair->value);
-			mpd_return_pair(connection, pair);
-		} else
-			printf("\n");
 	}
+
+	if (!first)
+		putchar('\n');
 }
 
 int
