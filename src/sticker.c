@@ -105,9 +105,7 @@ cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 		mpd_send_sticker_find(conn, "song", argv[0], argv[2]);
 		recv_print_stickers2(conn);
 		my_finishCommand(conn);
-	}
-	else if(!strncmp(argv[1], "del", 3))
-	{
+	} else if (strcmp(argv[1], "delete") == 0) {
 		if(argc < 2)
 		{
 			fputs("syntax: sticker <uri> delete [key]\n", stderr);
