@@ -226,6 +226,7 @@ static const char * skipFormatting(const char * p) {
 static const char *
 song_value(const struct mpd_song *song, const char *name)
 {
+	static char buffer[10];
 	const char *value;
 
 	if (strcmp(name, "file") == 0)
@@ -234,7 +235,6 @@ song_value(const struct mpd_song *song, const char *name)
 		unsigned duration = mpd_song_get_duration(song);
 
 		if (duration > 0) {
-			static char buffer[10];
 			snprintf(buffer, sizeof(buffer), "%d:%02d",
 				 duration / 60, duration % 60);
 			value = buffer;
@@ -242,8 +242,10 @@ song_value(const struct mpd_song *song, const char *name)
 			value = NULL;
 	} else if (strcmp(name, "position") == 0) {
 	        unsigned pos = mpd_song_get_pos(song);
-		static char buffer[10];
 		snprintf(buffer, sizeof(buffer), "%d", pos+1);
+		value = buffer;
+	} else if (strcmp(name, "id") == 0) {
+		snprintf(buffer, sizeof(buffer), "%u", mpd_song_get_id(song));
 		value = buffer;
 	} else {
 		enum mpd_tag_type tag_type = mpd_tag_name_iparse(name);
