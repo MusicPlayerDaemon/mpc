@@ -18,6 +18,7 @@ src_mpc_headers = \
 	src/command.h \
 	src/idle.h \
 	src/search.h \
+	src/sticker.h \
 	src/mpc.h \
 	src/options.h \
 	src/gcc.h
