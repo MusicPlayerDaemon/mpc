@@ -1,7 +1,10 @@
 0.19 (not yet released)
 * search: fix "mpc search any"
 * idle: flush output after each idleloop iteration
+* added command "sticker" (MPD 0.15)
 * added command "replaygain" (MPD 0.16)
+* implemented %position% for --format
+* fixed bash completion
 
 
 0.18 (2009/10/05)
