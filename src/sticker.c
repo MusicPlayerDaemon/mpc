@@ -40,7 +40,7 @@ recv_print_stickers(struct mpd_connection *connection)
 
 	while ((pair = mpd_recv_sticker(connection)) != NULL) {
 		printf("%s=%s\n", pair->name, pair->value);
-		mpd_return_pair(connection, pair);
+		mpd_return_sticker(connection, pair);
 	}
 }
 
