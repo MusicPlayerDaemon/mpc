@@ -193,6 +193,14 @@ Reports the version of MPD.
 .B volume [+-]<num>
 Sets the volume to <num> (0-100).  If "+" or "-" is used, then it adjusts
 the volume relative to the current volume.
+.SH "ENVIRONMENT VARIABLES"
+All environment variables are overriden by any values specified via command line switches.
+.IP MPD_HOST
+Specifies the hostname of the mpd server.  This can be a hostname, IP address or an absolute path.  If it is an absolute path, mpc will use Unix Domain Sockets instead of TCP/IP.
+
+If the server requires a password, it can be specified using password@host in the MPD_HOST variable.
+.IP MPD_PORT
+Specifies the port the mpd server is listening on.
 .SH "EXAMPLES"
 .TP
 .br
