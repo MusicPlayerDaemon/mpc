@@ -940,7 +940,8 @@ int cmd_lstab ( int argc, char ** argv, struct mpd_connection *conn )
 int cmd_tab ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	struct mpd_song *song;
-	char *dir = "";
+	char empty[] = "";
+	char *dir = empty;
 	char *tmp = NULL;
 
 	if (argc == 1) {
