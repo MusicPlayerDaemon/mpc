@@ -50,7 +50,7 @@ _mpc_commands () {
 _mpc_add () {
 	local IFS=$'\n'
 	__get_long_cur
-	COMPREPLY=($(mpc tab $(eval echo "$cur") | __escape_strings_stdin))
+	COMPREPLY=($(mpc tab $(eval echo "$cur") | sed -re "s%^(${cur}[^/]*/?).*%\\1%" | sort -u | __escape_strings_stdin))
 }
 
 # Complete the ls command (directories)

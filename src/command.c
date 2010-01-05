@@ -940,9 +940,22 @@ int cmd_lstab ( int argc, char ** argv, struct mpd_connection *conn )
 int cmd_tab ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	struct mpd_song *song;
+	char *dir = "";
+	char *tmp = NULL;
 
-	if (!mpd_send_list_all(conn, ""))
+	if (argc == 1) {
+		if (strrchr(argv[0], '/')) {
+			dir = strdup(argv[0]);
+			if (!dir) return 0;
+			tmp = strrchr(dir, '/');
+			if (tmp) *tmp = '\0'; // XXX: It's unpossible for tmp to be NULL.
+		}
+	}
+
+	if (!mpd_send_list_all(conn, dir))
 		printErrorAndExit(conn);
+
+	if (*dir) free(dir);
 
 	while ((song = mpd_recv_song(conn)) != NULL) {
 		if (argc != 1 ||
