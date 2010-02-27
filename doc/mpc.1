@@ -183,7 +183,9 @@ Stops playing.
 Toggles between play and pause. If stopped starts playing. Does not support start playing at song number (use play).
 .TP
 .B update [--wait] [<path>]
-Scans music directory for updates if no <path> is specified.  If one or more <path>'s are specified, scans only those path's for updates.  Can take input from a pipe.
+Scans for updated files in the music directory.  The optional
+parameter <path> (relative to the music directory) may limit the scope
+of the update.
 
 With --wait, mpc waits until MPD has finished the update.
 .TP
