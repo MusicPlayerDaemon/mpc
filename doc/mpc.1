@@ -14,8 +14,33 @@ is given, the current status is printed (same as 'mpc status').
 .TP
 .BI -f,--format
 .br
-Configure the format of song display for status and the playlist.  The metadata delimiters are "%name%", "%artist%", "%album%", "%title%", "%track%", "%time%", and "%file%".  The [] operator is used to group output such that if no metadata delimiters are found or matched between '[' and ']', then none of the characters between '[' and ']' are output.  '&' and '|' are logical operators for and and or.  '#' is used to escape characters.  Some useful examples for format are: "%file%" and "[[%artist% - ]%title%]|[%file%]".
+Configure the format of song display for status and the playlist.  The metadata delimiters are:
+
+.br
+%name%         Unknown (doesn't produce output)
+.br
+%artist%       Artist file tag
+.br
+%album%        Album file tag
+.br
+%albumartist%  Album Artist file tag
+.br
+%composer%     Composer file tag
+.br
+%title%        Title file tag
+.br
+%track%        Track file tag
+.br
+%time%         Duration of file
+.br
+%file%         Path of file, relative to mpd's `music_directory` variable
+.br
+%position%     Playlist track number
+.br
+
+The [] operator is used to group output such that if no metadata delimiters are found or matched between '[' and ']', then none of the characters between '[' and ']' are output.  '&' and '|' are logical operators for and and or.  '#' is used to escape characters.  Some useful examples for format are: "%file%" and "[[%artist% - ]%title%]|[%file%]".
 This command also takes the following defined escape sequences:
+
 .br
 \\\\ - backslash
 .br
