@@ -26,6 +26,7 @@ struct mpd_connection;
 
 enum {
 	SEARCH_TAG_ANY = MPD_TAG_COUNT + 1,
+	SEARCH_TAG_URI = MPD_TAG_COUNT + 2,
 };
 
 struct constraint {

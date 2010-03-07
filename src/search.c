@@ -36,6 +36,9 @@ get_search_type(const char *name)
 	if (strcasecmp(name, "any") == 0)
 		return SEARCH_TAG_ANY;
 
+	if (strcasecmp(name, "filename") == 0)
+		return SEARCH_TAG_URI;
+
 	type = mpd_tag_name_iparse(name);
 	if (type != MPD_TAG_UNKNOWN)
 		return type;
@@ -92,6 +95,9 @@ add_constraint(struct mpd_connection *conn,
 	       const struct constraint *constraint)
 {
 	if (constraint->type == SEARCH_TAG_ANY)
+		mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
+						  charset_to_utf8(constraint->query));
+	else if (constraint->type == SEARCH_TAG_URI)
 		mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
 						  charset_to_utf8(constraint->query));
 	else
