@@ -42,6 +42,7 @@ int stdinToArgArray(char *** array);
 int get_boolean (const char * arg);
 
 int parse_int(const char *, int *);
+int parse_float(const char *, float *);
 int parse_songnum(const char *, int *);
 int parse_int_value_change(const char *, struct int_value_change *);
 void pretty_print_song(struct mpd_song *song);

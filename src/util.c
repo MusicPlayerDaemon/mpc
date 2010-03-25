@@ -134,6 +134,22 @@ int parse_int(const char * str, int * ret)
         return 1; /* success */
 }
 
+/* note - return value is success; the parsed float itself is in ret */
+
+int parse_float(const char * str, float * ret)
+{
+	char * test;
+	double temp;
+
+	temp = strtod(str, &test);
+
+	if(*test != '\0')
+		return 0; /* failure */
+
+	*ret = (float)temp;
+	return 1; /* success */
+}
+
 /* note - simply strips number out of formatting; does not -1 or +1 or change
  * the number in any other way for that matter */
 int parse_songnum(const char * str, int * ret)

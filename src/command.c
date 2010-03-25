@@ -876,6 +876,55 @@ int cmd_crossfade ( int argc, char ** argv, struct mpd_connection *conn )
 	return 0;
 }
 
+#if defined(LIBMPDCLIENT_CHECK_VERSION)
+#if LIBMPDCLIENT_CHECK_VERSION(2,2,0)
+int cmd_mixrampdb ( int argc, char ** argv, struct mpd_connection *conn )
+{
+	float db;
+
+	if(argc==1) {
+		if(!parse_float(argv[0], &db))
+			DIE("\"%s\" is not a floating point number\n",argv[0]);
+
+		mpd_run_mixrampdb(conn, db);
+                my_finishCommand(conn);
+	}
+	else {
+		struct mpd_status *status;
+		status = getStatus(conn);
+
+		printf("mixrampdb: %f\n", mpd_status_get_mixrampdb(status));
+
+		mpd_status_free(status);
+	}
+	return 0;
+}
+
+int cmd_mixrampdelay ( int argc, char ** argv, struct mpd_connection *conn )
+{
+	float seconds;
+
+	if(argc==1) {
+		if(!parse_float(argv[0], &seconds))
+			DIE("\"%s\" is not a floating point number\n",argv[0]);
+
+		mpd_run_mixrampdelay(conn, seconds);
+		my_finishCommand(conn);
+	}
+	else {
+		struct mpd_status *status;
+		status = getStatus(conn);
+
+		printf("mixrampdelay: %f\n",
+		       mpd_status_get_mixrampdelay(status));
+
+		mpd_status_free(status);
+	}
+	return 0;
+}
+#endif
+#endif
+
 int
 cmd_version(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {

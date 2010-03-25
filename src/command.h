@@ -53,6 +53,8 @@ int cmd_random(int argc, char **argv, struct mpd_connection *conn);
 int cmd_single(int argc, char **argv, struct mpd_connection *conn);
 int cmd_consume(int argc, char **argv, struct mpd_connection *conn);
 int cmd_crossfade(int argc, char **argv, struct mpd_connection *conn);
+int cmd_mixrampdb(int argc, char **argv, struct mpd_connection *conn);
+int cmd_mixrampdelay(int argc, char **argv, struct mpd_connection *conn);
 int cmd_enable( int argc, char **argv, struct mpd_connection *conn);
 int cmd_disable( int argc, char **argv, struct mpd_connection *conn);
 int cmd_outputs(int argc, char **argv, struct mpd_connection *conn);
