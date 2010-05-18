@@ -102,7 +102,7 @@ cmd_crop(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *con
 	if (length < 0) {
 
 		mpd_status_free(status);
-		DIE( "You have to have a playlist longer than 1 song in length to crop" );
+		DIE( "A playlist longer than 1 song in length is required to crop.\n" );
 
 	} else if (mpd_status_get_state(status) == MPD_STATE_PLAY ||
 		   mpd_status_get_state(status) == MPD_STATE_PAUSE) {
