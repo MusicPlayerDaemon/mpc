@@ -139,14 +139,14 @@ int parse_int(const char * str, int * ret)
 int parse_float(const char * str, float * ret)
 {
 	char * test;
-	double temp;
+	float temp;
 
-	temp = strtod(str, &test);
+	temp = strtof(str, &test);
 
 	if(*test != '\0')
 		return 0; /* failure */
 
-	*ret = (float)temp;
+	*ret = temp;
 	return 1; /* success */
 }
 
