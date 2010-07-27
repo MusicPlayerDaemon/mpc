@@ -130,6 +130,7 @@ handle_option(int c, const char *arg)
 		break;
 	case 'f':
 		options.format = arg;
+		options.custom_format = true;
 		break;
 
 	case 'w':

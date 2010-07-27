@@ -524,10 +524,17 @@ int cmd_listall ( int argc, char ** argv, struct mpd_connection *conn )
 		listall = charset_to_utf8(argv[i]);
 
 	do {
-		if (!mpd_send_list_all(conn, listall))
-			printErrorAndExit(conn);
+		if (options.custom_format) {
+			if (!mpd_send_list_all_meta(conn, listall))
+				printErrorAndExit(conn);
 
-		print_filenames(conn);
+			print_entity_list(conn);
+		} else {
+			if (!mpd_send_list_all(conn, listall))
+				printErrorAndExit(conn);
+
+			print_filenames(conn);
+		}
 
 		my_finishCommand(conn);
 

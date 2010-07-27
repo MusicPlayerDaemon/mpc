@@ -453,7 +453,11 @@ print_entity_list(struct mpd_connection *c)
 
 		case MPD_ENTITY_TYPE_SONG:
 			song = mpd_entity_get_song(entity);
-			printf("%s\n", charset_from_utf8(mpd_song_get_uri(song)));
+			if (options.custom_format) {
+				pretty_print_song(song);
+				puts("");
+			} else
+				printf("%s\n", charset_from_utf8(mpd_song_get_uri(song)));
 			break;
 
 		case MPD_ENTITY_TYPE_PLAYLIST:

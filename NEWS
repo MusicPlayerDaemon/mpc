@@ -1,6 +1,7 @@
 0.20 (not yet released)
 * reactivate "search filename"
 * MixRamp support
+* support --format with "ls" and "listall"
 
 
 0.19 (2009/12/06)
