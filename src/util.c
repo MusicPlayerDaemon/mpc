@@ -434,6 +434,39 @@ void pretty_print_song(struct mpd_song *song)
 }
 
 void
+print_entity_list(struct mpd_connection *c)
+{
+	struct mpd_entity *entity;
+	while ((entity = mpd_recv_entity(c)) != NULL) {
+		const struct mpd_directory *dir;
+		const struct mpd_song *song;
+		const struct mpd_playlist *playlist;
+
+		switch (mpd_entity_get_type(entity)) {
+		case MPD_ENTITY_TYPE_UNKNOWN:
+			break;
+
+		case MPD_ENTITY_TYPE_DIRECTORY:
+			dir = mpd_entity_get_directory(entity);
+			printf("%s\n", charset_from_utf8(mpd_directory_get_path(dir)));
+			break;
+
+		case MPD_ENTITY_TYPE_SONG:
+			song = mpd_entity_get_song(entity);
+			printf("%s\n", charset_from_utf8(mpd_song_get_uri(song)));
+			break;
+
+		case MPD_ENTITY_TYPE_PLAYLIST:
+			playlist = mpd_entity_get_playlist(entity);
+			printf("%s\n", charset_from_utf8(mpd_playlist_get_path(playlist)));
+			break;
+		}
+
+		mpd_entity_free(entity);
+	}
+}
+
+void
 print_filenames(struct mpd_connection *conn)
 {
 	struct mpd_song *song;

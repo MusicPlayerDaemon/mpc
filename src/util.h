@@ -48,6 +48,9 @@ int parse_int_value_change(const char *, struct int_value_change *);
 void pretty_print_song(struct mpd_song *song);
 
 void
+print_entity_list(struct mpd_connection *c);
+
+void
 print_filenames(struct mpd_connection *conn);
 
 #endif /* MPC_UTIL_H */	

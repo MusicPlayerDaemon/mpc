@@ -609,31 +609,7 @@ int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
 		if (!mpd_send_list_meta(conn, ls))
 			printErrorAndExit(conn);
 
-		while ((entity = mpd_recv_entity(conn)) != NULL) {
-			const struct mpd_directory *dir;
-			const struct mpd_song *song;
-
-			switch (mpd_entity_get_type(entity)) {
-			case MPD_ENTITY_TYPE_UNKNOWN:
-				break;
-
-			case MPD_ENTITY_TYPE_DIRECTORY:
-				dir = mpd_entity_get_directory(entity);
-				printf("%s\n", charset_from_utf8(mpd_directory_get_path(dir)));
-				break;
-
-			case MPD_ENTITY_TYPE_SONG:
-				song = mpd_entity_get_song(entity);
-				printf("%s\n", charset_from_utf8(mpd_song_get_uri(song)));
-				break;
-
-			case MPD_ENTITY_TYPE_PLAYLIST:
-				break;
-			}
-
-			mpd_entity_free(entity);
-		}
-
+		print_entity_list(conn);
 		my_finishCommand(conn);
 
 	} while (++i < argc && (ls = charset_to_utf8(argv[i])) != NULL);
@@ -653,16 +629,7 @@ int cmd_lsplaylists ( int argc, char ** argv, struct mpd_connection *conn )
 		if (!mpd_send_list_meta(conn, ls))
 			printErrorAndExit(conn);
 
-		while ((entity = mpd_recv_entity(conn)) != NULL) {
-			if (mpd_entity_get_type(entity) == MPD_ENTITY_TYPE_PLAYLIST) {
-				const struct mpd_playlist *playlist =
-					mpd_entity_get_playlist(entity);
-
-				printf("%s\n", charset_from_utf8(mpd_playlist_get_path(playlist)));
-			}
-			mpd_entity_free(entity);
-		}
-
+		print_entity_list(conn);
 		my_finishCommand(conn);
 
 	} while (++i < argc && (ls = charset_to_utf8(argv[i])) != NULL);
