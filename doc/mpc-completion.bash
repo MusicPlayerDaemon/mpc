@@ -130,6 +130,7 @@ _mpc ()
 	status)      ;; # no arguments
 	stop)        ;; # no arguments
 	toggle)      ;; # no arguments
+	update)      _mpc_ls ;;
 	version)     ;; # no arguments
 	volume)      ;; # don't complete numbers
 	*)           ;;
