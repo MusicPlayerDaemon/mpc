@@ -285,7 +285,7 @@ int main(int argc, char ** argv)
 
 	struct command *command = find_command(command_name);
 	if (command == NULL)
-		return print_help(argv[0], argv[1]);
+		return print_help("mpc", argv[1]);
 
 	argv = check_args(command, &argc, argv);
 
