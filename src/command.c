@@ -603,7 +603,6 @@ int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 
 int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	struct mpd_entity *entity;
 	const char *ls;
 	int i = 0;
 
@@ -626,7 +625,6 @@ int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_lsplaylists ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	struct mpd_entity *entity;
 	const char * ls = "";
 	int i = 0;
 
