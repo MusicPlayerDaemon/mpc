@@ -38,6 +38,7 @@ int cmd_stop(int argc, char **argv, struct mpd_connection *conn);
 int cmd_seek(int argc, char **argv, struct mpd_connection *conn);
 int cmd_clear(int argc, char **argv, struct mpd_connection *conn);
 int cmd_shuffle(int argc, char **argv, struct mpd_connection *conn);
+int cmd_clearerror(int argc, char **argv, struct mpd_connection *conn);
 int cmd_move(int argc, char **argv, struct mpd_connection *conn);
 int cmd_playlist(int argc, char **argv, struct mpd_connection *conn);
 int cmd_listall(int argc, char **argv, struct mpd_connection *conn);
