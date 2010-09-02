@@ -281,7 +281,7 @@ song_value(const struct mpd_song *song, const char *name)
 
 /* this is a little ugly... */
 static char *
-songToFormatedString(struct mpd_song *song,
+songToFormatedString(const struct mpd_song *song,
 		     const char *format, const char ** last)
 {
 	char * ret = NULL;
@@ -418,7 +418,8 @@ songToFormatedString(struct mpd_song *song,
 	return ret;
 }
 
-static void print_formatted_song(struct mpd_song *song, const char * format)
+static void
+print_formatted_song(const struct mpd_song *song, const char * format)
 {
 	char * str = songToFormatedString(song, format, NULL);
 
@@ -428,7 +429,8 @@ static void print_formatted_song(struct mpd_song *song, const char * format)
 	}
 }
 
-void pretty_print_song(struct mpd_song *song)
+void
+pretty_print_song(const struct mpd_song *song)
 {
 	print_formatted_song(song, options.format);
 }
