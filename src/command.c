@@ -705,8 +705,11 @@ int cmd_volume ( int argc, char ** argv, struct mpd_connection *conn )
 	} else {
 		status = getStatus(conn);
 
-		printf("volume:%3u%c   \n",
-		       mpd_status_get_volume(status), '%');
+		if (mpd_status_get_volume(status) >= 0)
+			printf("volume:%3i%c   ",
+			       mpd_status_get_volume(status), '%');
+		else
+			printf("volume: n/a   ");
 
 		mpd_status_free(status);
 
