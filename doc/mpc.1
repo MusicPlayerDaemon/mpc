@@ -92,8 +92,11 @@ Empties playlist.
 .B crop
 Remove all songs except for the currently playing song.
 .TP
-.B current
+.B current [--wait]
 Show the currently playing song
+
+With --wait, mpc waits until the song changes (or until playback is
+started/stopped) before it queries the current song from the server.
 .TP
 .B crossfade [<seconds>]
 Gets and sets the current amount of crossfading between songs (0 disables crossfading).

@@ -3,6 +3,7 @@
 * MixRamp support
 * support --format with "ls" and "listall"
 * new command "clearerror"
+* implement "current --wait"
 
 
 0.19 (2009/12/06)

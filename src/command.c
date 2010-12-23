@@ -138,8 +138,55 @@ cmd_crop(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *con
 	}
 }
 
+/**
+ * Returns the id of the current song, but only if it is really
+ * playing (playing or paused).
+ */
+static int
+get_active_song(const struct mpd_status *status)
+{
+	return mpd_status_get_state(status) == MPD_STATE_PLAY ||
+		mpd_status_get_state(status) == MPD_STATE_PAUSE
+		? mpd_status_get_song_id(status)
+		: -1;
+}
+
+/**
+ * Wait until the song changes or until playback is started/stopped.
+ */
+static void
+wait_current(struct mpd_connection *c)
+{
+	if (mpd_connection_cmp_server_version(c, 0, 14, 0) < 0)
+		fprintf(stderr, "warning: MPD 0.14 required for this command\n");
+
+	struct mpd_status *status = mpd_run_status(c);
+	if (status == NULL)
+		printErrorAndExit(c);
+
+	const int old_song = get_active_song(status);
+	mpd_status_free(status);
+
+	int new_song;
+	do {
+		enum mpd_idle idle = mpd_run_idle_mask(c, MPD_IDLE_PLAYER);
+		if (idle == 0)
+			printErrorAndExit(c);
+
+		status = mpd_run_status(c);
+		if (status == NULL)
+			printErrorAndExit(c);
+
+		new_song = get_active_song(status);
+		mpd_status_free(status);
+	} while (new_song == old_song);
+}
+
 int cmd_current(mpd_unused int argc, mpd_unused char ** argv, struct mpd_connection *conn)
 {
+	if (options.wait)
+		wait_current(conn);
+
 	struct mpd_status *status;
 
 	if (!mpd_command_list_begin(conn, true) ||
