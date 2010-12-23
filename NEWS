@@ -4,6 +4,7 @@
 * support --format with "ls" and "listall"
 * new command "clearerror"
 * implement "current --wait"
+* command "add": print the failed song
 
 
 0.19 (2009/12/06)

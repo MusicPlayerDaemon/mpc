@@ -93,8 +93,30 @@ int cmd_add (int argc, char ** argv, struct mpd_connection *conn )
 		mpd_send_add(conn, charset_to_utf8(argv[i]));
 	}
 
-	if (!mpd_command_list_end(conn) || !mpd_response_finish(conn))
+	if (!mpd_command_list_end(conn))
 		printErrorAndExit(conn);
+
+	if (!mpd_response_finish(conn)) {
+#if LIBMPDCLIENT_CHECK_VERSION(2,4,0)
+		if (mpd_connection_get_error(conn) == MPD_ERROR_SERVER) {
+			/* check which of the arguments has failed */
+			unsigned location =
+				mpd_connection_get_server_error_location(conn);
+			if (location < (unsigned)argc) {
+				/* we've got a valid location from the
+				   server */
+				const char *message =
+					mpd_connection_get_error_message(conn);
+				message = charset_from_utf8(message);
+				fprintf(stderr, "error adding %s: %s\n",
+					argv[location], message);
+				exit(EXIT_FAILURE);
+			}
+		}
+#endif
+
+		printErrorAndExit(conn);
+	}
 
 	return 0;
 }
