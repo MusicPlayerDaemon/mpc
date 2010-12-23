@@ -1,4 +1,5 @@
 0.20 (not yet released)
+* require libmpdclient 2.2
 * reactivate "search filename"
 * MixRamp support
 * support --format with "ls" and "listall"

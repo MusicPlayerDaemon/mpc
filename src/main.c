@@ -94,7 +94,6 @@ static struct command {
 	 "Find songs and add them to the current playlist"},
 	{"list",        1,   -1,  0,    cmd_list,        "<type> [<type> <query>]", "Show all tags of <type>"},
 	{"crossfade",   0,   1,   0,    cmd_crossfade,   "[<seconds>]", "Set and display crossfade settings"},
-#if defined(LIBMPDCLIENT_CHECK_VERSION)
 #if LIBMPDCLIENT_CHECK_VERSION(2,4,0)
 	{"clearerror",  0,   0,   0,    cmd_clearerror,  "", "Clear the current error"},
 #endif
@@ -102,12 +101,9 @@ static struct command {
 	{"mixrampdb",   0,   1,   0,    cmd_mixrampdb,   "[<dB>]", "Set and display mixrampdb settings"},
 	{"mixrampdelay",0,   1,   0,    cmd_mixrampdelay,"[<seconds>]", "Set and display mixrampdelay settings"},
 #endif
-#endif
 	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scan music directory for updates"},
-#if defined(LIBMPDCLIENT_CHECK_VERSION)
 #if LIBMPDCLIENT_CHECK_VERSION(2,1,0)
 	{"sticker",     1,   -1,  0,    cmd_sticker,     "<uri> <get|set|list|del> <args..>", "Sticker management"},
-#endif
 #endif
 	{"stats",       0,   -1,  0,    cmd_stats,       "", "Display statistics about MPD"},
 	{"version",     0,   0,   0,    cmd_version,     "", "Report version of MPD"},

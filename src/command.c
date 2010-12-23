@@ -62,10 +62,8 @@ SIMPLE_CMD(cmd_stop, mpd_run_stop, 1)
 SIMPLE_CMD(cmd_clear, mpd_run_clear, 1)
 SIMPLE_CMD(cmd_shuffle, mpd_run_shuffle, 1)
 
-#if defined(LIBMPDCLIENT_CHECK_VERSION)
 #if LIBMPDCLIENT_CHECK_VERSION(2,4,0)
 SIMPLE_CMD(cmd_clearerror, mpd_run_clearerror, 1)
-#endif
 #endif
 
 SIMPLE_ONEARG_CMD(cmd_save, mpd_run_save, 0)
@@ -926,7 +924,6 @@ int cmd_crossfade ( int argc, char ** argv, struct mpd_connection *conn )
 	return 0;
 }
 
-#if defined(LIBMPDCLIENT_CHECK_VERSION)
 #if LIBMPDCLIENT_CHECK_VERSION(2,2,0)
 int cmd_mixrampdb ( int argc, char ** argv, struct mpd_connection *conn )
 {
@@ -972,7 +969,6 @@ int cmd_mixrampdelay ( int argc, char ** argv, struct mpd_connection *conn )
 	}
 	return 0;
 }
-#endif
 #endif
 
 int
