@@ -32,3 +32,10 @@ PKG_CONFIG_PATH=/tmp/libmpdclient/diet-notcp/lib/pkgconfig \
 	--disable-debug --enable-werror
 $MAKE clean
 $MAKE install
+
+# WIN32
+PKG_CONFIG_PATH=/tmp/libmpdclient/win32/lib/pkgconfig \
+	CFLAGS="-O3" ./configure --prefix=$PREFIX/win32 \
+	--host=i586-mingw32msvc --disable-debug --enable-werror
+$MAKE clean
+$MAKE install
