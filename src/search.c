@@ -94,10 +94,10 @@ static void
 add_constraint(struct mpd_connection *conn,
 	       const struct constraint *constraint)
 {
-	if (constraint->type == SEARCH_TAG_ANY)
+	if (constraint->type == (enum mpd_tag_type)SEARCH_TAG_ANY)
 		mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
 						  charset_to_utf8(constraint->query));
-	else if (constraint->type == SEARCH_TAG_URI)
+	else if (constraint->type == (enum mpd_tag_type)SEARCH_TAG_URI)
 		mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
 						  charset_to_utf8(constraint->query));
 	else
