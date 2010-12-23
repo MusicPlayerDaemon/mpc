@@ -25,3 +25,10 @@ $MAKE install
         --disable-iconv
 $MAKE clean
 $MAKE install
+
+# dietlibc
+PKG_CONFIG_PATH=/tmp/libmpdclient/diet-notcp/lib/pkgconfig \
+	CC="diet -Os gcc -nostdinc" ./configure --prefix=$PREFIX/diet \
+	--disable-debug --enable-werror
+$MAKE clean
+$MAKE install
