@@ -1,4 +1,4 @@
-0.20 (not yet released)
+0.20 (2011/01/03)
 * require libmpdclient 2.2
 * reactivate "search filename"
 * MixRamp support
@@ -6,7 +6,6 @@
 * new command "clearerror"
 * implement "current --wait"
 * command "add": print the failed song
-
 
 0.19 (2009/12/06)
 * search: fix "mpc search any"
