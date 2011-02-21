@@ -46,7 +46,8 @@ int cmd_idle(int argc, char **argv,
 
 	idle = idle == 0 ? mpd_run_idle(connection)
 		: mpd_run_idle_mask(connection, idle);
-	if (idle == 0)
+	if (idle == 0 &&
+	    mpd_connection_get_error(connection) != MPD_ERROR_SUCCESS)
 		printErrorAndExit(connection);
 
 	for (unsigned j = 0;; ++j) {
