@@ -86,6 +86,11 @@ The port to connect to; if not given, the value of the environment variable MPD_
 .B add <file>
 Adds a song from the music database to the playlist. Can also read input from pipes. Use "mpc ls | mpc add" to add all files to the playlist.
 .TP
+.B insert <file>
+The insert command works similarly to
+.B add
+except it adds song(s) after the currently playing one, rather than at the end.
+.TP
 .B clear
 Empties playlist.
 .TP

@@ -81,6 +81,7 @@ static struct command {
 	{"ls",          0,   -1,  2,    cmd_ls,          "[<directory>]", "List the contents of <directory>"},
 	{"lsplaylists", 0,   -1,  2,    cmd_lsplaylists, "", "List currently available playlists"},
 	{"load",        0,   -1,  1,    cmd_load,        "<file>", "Load <file> as a playlist"},
+	{"insert",      0,   -1,  1,    cmd_insert,      "<file>", "Insert a song to the current playlist after the current track"},
 	{"save",        1,   1,   0,    cmd_save,        "<file>", "Save a playlist as <file>"},
 	{"rm",          1,   1,   0,    cmd_rm,          "<file>", "Remove a playlist"},
 	{"volume",      0,   1,   0,    cmd_volume,      "[+-]<num>", "Set volume to <num> or adjusts by [+-]<num>"},

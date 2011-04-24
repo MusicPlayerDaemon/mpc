@@ -731,6 +731,25 @@ int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
 	return 0;
 }
 
+int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
+{
+	int ret;
+	struct mpd_status *status = mpd_run_status(conn);
+	if (status == NULL)
+		printErrorAndExit(conn);
+
+	const int from = mpd_status_get_queue_length(status);
+
+	ret = cmd_add(argc, argv, conn);
+	const int cur_pos = mpd_status_get_song_pos(status);
+	mpd_status_free(status);
+	if (ret != 0) {
+		return ret;
+	}
+	return mpd_run_move_range(conn, from, from+argc,
+		cur_pos+1);
+}
+
 int cmd_list ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	enum mpd_tag_type type;
