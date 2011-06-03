@@ -23,6 +23,8 @@
 #ifndef MPC_UTIL_H
 #define MPC_UTIL_H
 
+#include <mpd/client.h>
+
 struct mpd_connection;
 struct mpd_song;
 
@@ -50,7 +52,7 @@ void
 pretty_print_song(const struct mpd_song *song);
 
 void
-print_entity_list(struct mpd_connection *c);
+print_entity_list(struct mpd_connection *c, enum mpd_entity_type filter_type);
 
 void
 print_filenames(struct mpd_connection *conn);

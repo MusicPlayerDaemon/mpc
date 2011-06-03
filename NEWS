@@ -1,6 +1,7 @@
 0.21 (not yet released)
 * idle: fix assertion failure on unknown idle event
 * new command "insert"
+* show only playlists on command "lsplaylists"
 
 
 0.20 (2011/01/03)

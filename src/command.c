@@ -601,7 +601,7 @@ int cmd_listall ( int argc, char ** argv, struct mpd_connection *conn )
 			if (!mpd_send_list_all_meta(conn, listall))
 				printErrorAndExit(conn);
 
-			print_entity_list(conn);
+			print_entity_list(conn, MPD_ENTITY_TYPE_UNKNOWN);
 		} else {
 			if (!mpd_send_list_all(conn, listall))
 				printErrorAndExit(conn);
@@ -688,7 +688,7 @@ int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
 		if (!mpd_send_list_meta(conn, ls))
 			printErrorAndExit(conn);
 
-		print_entity_list(conn);
+		print_entity_list(conn, MPD_ENTITY_TYPE_UNKNOWN);
 		my_finishCommand(conn);
 
 	} while (++i < argc && (ls = charset_to_utf8(argv[i])) != NULL);
@@ -707,7 +707,7 @@ int cmd_lsplaylists ( int argc, char ** argv, struct mpd_connection *conn )
 		if (!mpd_send_list_meta(conn, ls))
 			printErrorAndExit(conn);
 
-		print_entity_list(conn);
+		print_entity_list(conn, MPD_ENTITY_TYPE_PLAYLIST);
 		my_finishCommand(conn);
 
 	} while (++i < argc && (ls = charset_to_utf8(argv[i])) != NULL);
