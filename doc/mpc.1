@@ -189,13 +189,14 @@ Deletes a specific playlist.
 Saves playlist as <file>.
 .TP
 .B search <type> <query> [<type> <query>]...
-Searches for songs where all of the given tag <type>s match the given <query>s.
+Searches for substrings in song tags.
 Any number of tag type and query combinations can be specified.  Possible tag
 types are: artist, album, title, track, name, genre, date, composer, performer,
 comment, disc, filename, or any (to match any tag).
 .TP
 .B find <type> <query> [<type> <query>]...
-Same as search, but match <query>s exactly.
+Same as search, but tag values must match <query>s exactly instead of
+doing a substring match.
 .TP
 .B findadd <type> <query> [<type> <query>]...
 Same as find, but add the result to the current playlist instead of
