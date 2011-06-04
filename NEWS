@@ -1,8 +1,7 @@
-0.21 (not yet released)
+0.21 (2011/06/04)
 * idle: fix assertion failure on unknown idle event
 * new command "insert"
 * show only playlists on command "lsplaylists"
-
 
 0.20 (2011/01/03)
 * require libmpdclient 2.2
