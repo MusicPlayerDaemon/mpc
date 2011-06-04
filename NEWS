@@ -1,3 +1,6 @@
+0.22 (not yet released)
+
+
 0.21 (2011/06/04)
 * idle: fix assertion failure on unknown idle event
 * new command "insert"
