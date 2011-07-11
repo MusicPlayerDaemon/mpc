@@ -32,6 +32,8 @@ src_mpc_SOURCES = \
 	src/command.c \
 	src/sticker.c \
 	src/idle.c \
+	src/message.h \
+	src/message.c \
 	src/search.c \
 	src/options.c \
 	$(src_mpc_headers)

@@ -28,6 +28,7 @@
 #include "command.h"
 #include "sticker.h"
 #include "idle.h"
+#include "message.h"
 #include "search.h"
 #include "mpc.h"
 #include "options.h"
@@ -120,6 +121,17 @@ static struct command {
 	  "Continuously idle until an event occurs" },
 	{ "replaygain", 0, -1, 0, cmd_replaygain, "[off|track|album]",
 	  "Set or display the replay gain mode" },
+
+#if LIBMPDCLIENT_CHECK_VERSION(2,5,0)
+	{ "channels", 0, 0, 0, cmd_channels, "",
+	  "List the channels that other clients have subscribed to." },
+	{ "sendmessage", 2, 2, 0, cmd_sendmessage, "<channel> <message>",
+	  "Send a message to the specified channel." },
+	{ "waitmessage", 1, 1, 0, cmd_waitmessage, "<channel>",
+	  "Wait for at least one message on the specified channel." },
+	{ "subscribe", 1, 1, 0, cmd_subscribe, "<channel>",
+	  "Subscribe to the specified channel and continuously receive messages." },
+#endif /* libmpdclient 2.5 */
 
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */
 	{ .command = NULL }
