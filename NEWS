@@ -4,6 +4,8 @@
 * show only playlists on command "lsplaylists"
 * implement the client-to-client protocol (MPD 0.17)
 * sticker: fix crash bug
+* print newline after volume level
+* print status after no-op relative volume change
 
 
 0.20 (2011/01/03)

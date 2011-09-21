@@ -816,7 +816,7 @@ int cmd_volume ( int argc, char ** argv, struct mpd_connection *conn )
 			ch.value = 100;
 
 		if (ch.value == old_volume)
-			return 0;
+			return 1;
 	}
 
 	if (!mpd_run_set_volume(conn, ch.value))
