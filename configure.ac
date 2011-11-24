@@ -3,7 +3,7 @@ AC_INIT(mpc, 0.22~git, musicpd-dev-team@lists.sourceforge.net)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR(src/main.c)
 AM_INIT_AUTOMAKE([foreign 1.10 dist-bzip2])
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 
 
 dnl
