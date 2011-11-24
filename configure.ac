@@ -32,14 +32,12 @@ dnl OS specific defaults
 dnl
 
 case "$host" in
-*-mingw32* | *-windows*)
-	AM_CFLAGS="$AM_CFLAGS -mno-cygwin -mms-bitfields -fno-strict-aliasing"
-	AM_CPPFLAGS="$AM_CPPFLAGS -DMPD_NO_GAI"
-	MPC_LIBS="$MPC_LIBS -lws2_32"
-	;;
-*-cygwin*)
+*-mingw32* | *-windows* | *-cygwin*)
 	AM_CFLAGS="$AM_CFLAGS -mms-bitfields -fno-strict-aliasing"
 	AM_CPPFLAGS="$AM_CPPFLAGS -DMPD_NO_GAI"
+	;;
+*-mingw32* | *-windows*)
+	MPC_LIBS="$MPC_LIBS -lws2_32"
 	;;
 esac
 
