@@ -1,9 +1,9 @@
 AC_PREREQ(2.60)
-AC_INIT(mpc, 0.21~git, musicpd-dev-team@lists.sourceforge.net)
+AC_INIT(mpc, 0.22~git, musicpd-dev-team@lists.sourceforge.net)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR(src/main.c)
 AM_INIT_AUTOMAKE([foreign 1.10 dist-bzip2])
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 
 
 dnl
@@ -32,14 +32,12 @@ dnl OS specific defaults
 dnl
 
 case "$host" in
-*-mingw32* | *-windows*)
-	AM_CFLAGS="$AM_CFLAGS -mno-cygwin -mms-bitfields -fno-strict-aliasing"
-	AM_CPPFLAGS="$AM_CPPFLAGS -DMPD_NO_GAI"
-	MPC_LIBS="$MPC_LIBS -lws2_32"
-	;;
-*-cygwin*)
+*-mingw32* | *-windows* | *-cygwin*)
 	AM_CFLAGS="$AM_CFLAGS -mms-bitfields -fno-strict-aliasing"
 	AM_CPPFLAGS="$AM_CPPFLAGS -DMPD_NO_GAI"
+	;;
+*-mingw32* | *-windows*)
+	MPC_LIBS="$MPC_LIBS -lws2_32"
 	;;
 esac
 
@@ -140,15 +138,15 @@ dnl
 dnl CFLAGS
 dnl
 
-CHECK_CFLAG([-Wall])
-CHECK_CFLAG([-Wextra])
-CHECK_CFLAG([-Wno-deprecated-declarations])
-CHECK_CFLAG([-Wmissing-prototypes])
-CHECK_CFLAG([-Wshadow])
-CHECK_CFLAG([-Wpointer-arith])
-CHECK_CFLAG([-Wstrict-prototypes])
-CHECK_CFLAG([-Wcast-qual])
-CHECK_CFLAG([-Wwrite-strings])
+AX_APPEND_COMPILE_FLAGS([-Wall])
+AX_APPEND_COMPILE_FLAGS([-Wextra])
+AX_APPEND_COMPILE_FLAGS([-Wno-deprecated-declarations])
+AX_APPEND_COMPILE_FLAGS([-Wmissing-prototypes])
+AX_APPEND_COMPILE_FLAGS([-Wshadow])
+AX_APPEND_COMPILE_FLAGS([-Wpointer-arith])
+AX_APPEND_COMPILE_FLAGS([-Wstrict-prototypes])
+AX_APPEND_COMPILE_FLAGS([-Wcast-qual])
+AX_APPEND_COMPILE_FLAGS([-Wwrite-strings])
 
 
 dnl
