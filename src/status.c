@@ -37,7 +37,7 @@ elapsed_percent(const struct mpd_status *status)
 	unsigned elapsed = mpd_status_get_elapsed_time(status);
 	unsigned total = mpd_status_get_total_time(status);
 
-	if (total <= 0)
+	if (total == 0)
 		return 0;
 
 	if (elapsed >= total)
