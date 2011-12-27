@@ -835,7 +835,7 @@ cmd_pause(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *co
 
 int cmd_repeat ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	bool mode;
+	int mode;
 
 	if(argc==1) {
 		mode = get_boolean(argv[0]);
@@ -857,7 +857,7 @@ int cmd_repeat ( int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_random ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	bool mode;
+	int mode;
 
 	if(argc==1) {
 		mode = get_boolean(argv[0]);
@@ -879,7 +879,7 @@ int cmd_random ( int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_single ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	bool mode;
+	int mode;
 
 	if(argc==1) {
 		mode = get_boolean(argv[0]);
