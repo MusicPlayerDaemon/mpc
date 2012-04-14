@@ -222,7 +222,7 @@ static const char * skipFormatting(const char * p) {
 		
 	while (*p != '\0') {
 		if(*p == '[') stack++;
-		if(*p == '#' && p[1] != '\0') {
+		else if(*p == '#' && p[1] != '\0') {
 			/* skip escaped stuff */
 			++p;
 		}
