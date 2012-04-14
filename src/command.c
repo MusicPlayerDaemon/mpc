@@ -180,9 +180,7 @@ wait_current(struct mpd_connection *c)
 	if (mpd_connection_cmp_server_version(c, 0, 14, 0) < 0)
 		fprintf(stderr, "warning: MPD 0.14 required for this command\n");
 
-	struct mpd_status *status = mpd_run_status(c);
-	if (status == NULL)
-		printErrorAndExit(c);
+	struct mpd_status *status = getStatus(c);
 
 	const int old_song = get_active_song(status);
 	mpd_status_free(status);
@@ -193,10 +191,7 @@ wait_current(struct mpd_connection *c)
 		if (idle == 0)
 			printErrorAndExit(c);
 
-		status = mpd_run_status(c);
-		if (status == NULL)
-			printErrorAndExit(c);
-
+		status = getStatus(c);
 		new_song = get_active_song(status);
 		mpd_status_free(status);
 	} while (new_song == old_song);
@@ -657,10 +652,7 @@ int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 
 		/* determine the current "update id" */
 
-		status = mpd_run_status(conn);
-		if (status == NULL)
-			printErrorAndExit(conn);
-
+		status = getStatus(conn);
 		current_id = mpd_status_get_update_id(status);
 		mpd_status_free(status);
 
@@ -734,9 +726,7 @@ int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
 int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 {
 	int ret;
-	struct mpd_status *status = mpd_run_status(conn);
-	if (status == NULL)
-		printErrorAndExit(conn);
+	struct mpd_status *status = getStatus(conn);
 
 	const int from = mpd_status_get_queue_length(status);
 
