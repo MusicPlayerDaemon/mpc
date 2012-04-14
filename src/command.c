@@ -1099,7 +1099,7 @@ static char * DHMS(unsigned long t)
 	t %= SECSPERMIN;
 	secs = t;
 
-	snprintf(buf, sizeof(buf) - 1, "%d days, %d:%02d:%02d",
+	snprintf(buf, sizeof(buf), "%d days, %d:%02d:%02d",
 	    days, hours, mins, secs);
 	return buf;
 }
