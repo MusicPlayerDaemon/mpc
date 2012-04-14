@@ -28,13 +28,10 @@
 struct mpd_connection;
 struct mpd_song;
 
-#define VALUE_CHANGE(type) \
-struct type##_value_change { \
-        type value; \
-        int is_relative; \
+struct int_value_change {
+        int value;
+        int is_relative;
 };
-
-VALUE_CHANGE(int) /* struct int_value_change */
 
 void
 printErrorAndExit(struct mpd_connection *conn);
