@@ -30,7 +30,7 @@ struct mpd_song;
 
 struct int_value_change {
         int value;
-        int is_relative;
+        bool is_relative;
 };
 
 void
