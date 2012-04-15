@@ -19,6 +19,7 @@
 
 #include "message.h"
 #include "util.h"
+#include "charset.h"
 
 #include <mpd/client.h>
 
@@ -39,6 +40,7 @@ cmd_channels(mpd_unused int argc, mpd_unused char **argv,
 
 	struct mpd_pair *pair;
 	while ((pair = mpd_recv_channel_pair(connection)) != NULL) {
+		/* channel names may only contain certain ASCII characters */
 		printf("%s\n", pair->value);
 		mpd_return_pair(connection, pair);
 	}
@@ -53,7 +55,8 @@ int
 cmd_sendmessage(mpd_unused int argc, char **argv,
 		struct mpd_connection *connection)
 {
-	if (!mpd_run_send_message(connection, argv[0], argv[1]))
+	const char *text = charset_to_utf8(argv[1]);
+	if (!mpd_run_send_message(connection, argv[0], text))
 		printErrorAndExit(connection);
 
 	return 0;
@@ -70,7 +73,8 @@ cmd_waitmessage(mpd_unused int argc, char **argv,
 
 	struct mpd_message *message;
 	while ((message = mpd_recv_message(connection)) != NULL) {
-		printf("%s\n", mpd_message_get_text(message));
+		const char *tmp = mpd_message_get_text(message);
+		printf("%s\n", charset_from_utf8(tmp));
 		mpd_message_free(message);
 	}
 
@@ -94,7 +98,8 @@ cmd_subscribe(mpd_unused int argc, char **argv,
 
 		struct mpd_message *message;
 		while ((message = mpd_recv_message(connection)) != NULL) {
-			printf("%s\n", mpd_message_get_text(message));
+			const char *tmp = mpd_message_get_text(message);
+			printf("%s\n", charset_from_utf8(tmp));
 			mpd_message_free(message);
 		}
 
