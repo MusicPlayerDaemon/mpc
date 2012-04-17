@@ -666,21 +666,21 @@ int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 	return 1;
 }
 
-int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
+static int
+ls_entity(int argc, char **argv, struct mpd_connection *conn,
+	  enum mpd_entity_type type)
 {
-	const char *ls;
+	const char *ls = "";
 	int i = 0;
 
 	if (argc > 0)
 		ls = charset_to_utf8(argv[i]);
-	else
-		ls = strdup("");
 
 	do {
 		if (!mpd_send_list_meta(conn, ls))
 			printErrorAndExit(conn);
 
-		print_entity_list(conn, MPD_ENTITY_TYPE_UNKNOWN);
+		print_entity_list(conn, type);
 		my_finishCommand(conn);
 
 	} while (++i < argc && (ls = charset_to_utf8(argv[i])) != NULL);
@@ -688,22 +688,14 @@ int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
 	return 0;
 }
 
+int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
+{
+	return ls_entity(argc, argv, conn, MPD_ENTITY_TYPE_UNKNOWN);
+}
+
 int cmd_lsplaylists ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	const char * ls = "";
-	int i = 0;
-
-	if(argc>0) ls = charset_to_utf8(argv[i]);
-
-	do {
-		if (!mpd_send_list_meta(conn, ls))
-			printErrorAndExit(conn);
-
-		print_entity_list(conn, MPD_ENTITY_TYPE_PLAYLIST);
-		my_finishCommand(conn);
-
-	} while (++i < argc && (ls = charset_to_utf8(argv[i])) != NULL);
-	return 0;
+	return ls_entity(argc, argv, conn, MPD_ENTITY_TYPE_PLAYLIST);
 }
 
 int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
