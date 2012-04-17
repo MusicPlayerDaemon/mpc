@@ -56,6 +56,21 @@ static void my_finishCommand(struct mpd_connection *conn) {
 		printErrorAndExit(conn);
 }
 
+static void
+strip_trailing_slash(char *s)
+{
+	size_t len = strlen(s);
+
+	if (len == 0)
+		return;
+	--len;
+
+	if (s[len] == '/')
+		s[len] = '\0';
+
+	return;
+}
+
 SIMPLE_CMD(cmd_next, mpd_run_next, 1)
 SIMPLE_CMD(cmd_prev, mpd_run_previous, 1)
 SIMPLE_CMD(cmd_stop, mpd_run_stop, 1)
@@ -86,6 +101,7 @@ int cmd_add (int argc, char ** argv, struct mpd_connection *conn )
 		printErrorAndExit(conn);
 
 	for(i=0;i<argc;i++) {
+		strip_trailing_slash(argv[i]);
 		if (options.verbosity >= V_VERBOSE)
 			printf("adding: %s\n", argv[i]);
 		mpd_send_add(conn, charset_to_utf8(argv[i]));
@@ -592,20 +608,23 @@ int cmd_listall ( int argc, char ** argv, struct mpd_connection *conn )
 		listall = charset_to_utf8(argv[i]);
 
 	do {
+		char *tmp = strdup(listall);
+		strip_trailing_slash(tmp);
+
 		if (options.custom_format) {
-			if (!mpd_send_list_all_meta(conn, listall))
+			if (!mpd_send_list_all_meta(conn, tmp))
 				printErrorAndExit(conn);
 
 			print_entity_list(conn, MPD_ENTITY_TYPE_UNKNOWN);
 		} else {
-			if (!mpd_send_list_all(conn, listall))
+			if (!mpd_send_list_all(conn, tmp))
 				printErrorAndExit(conn);
 
 			print_filenames(conn);
 		}
 
 		my_finishCommand(conn);
-
+		free(tmp);
 	} while (++i < argc && (listall = charset_to_utf8(argv[i])) != NULL);
 
 	return 0;
@@ -623,7 +642,10 @@ int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 	if(argc > 0) update = charset_to_utf8(argv[i]);
 
 	do {
-		mpd_send_update(conn, update);
+		char *tmp = strdup(update);
+		strip_trailing_slash(tmp);
+		mpd_send_update(conn, tmp);
+		free(tmp);
 	} while (++i < argc && (update = charset_to_utf8(argv[i])) != NULL);
 
 	if (!mpd_command_list_end(conn))
@@ -682,7 +704,6 @@ ls_entity(int argc, char **argv, struct mpd_connection *conn,
 
 		print_entity_list(conn, type);
 		my_finishCommand(conn);
-
 	} while (++i < argc && (ls = charset_to_utf8(argv[i])) != NULL);
 
 	return 0;
@@ -690,6 +711,9 @@ ls_entity(int argc, char **argv, struct mpd_connection *conn,
 
 int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
 {
+	for (int i = 0; i < argc; i++)
+		strip_trailing_slash(argv[i]);
+
 	return ls_entity(argc, argv, conn, MPD_ENTITY_TYPE_UNKNOWN);
 }
 
