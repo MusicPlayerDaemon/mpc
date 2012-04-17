@@ -59,7 +59,7 @@ static struct command {
 	const char *help;
 } mpc_table [] = {
 	/* command,     min, max, pipe, handler,         usage, help */
-	{"add",         0,   -1,  1,    cmd_add,         "<file>", "Add a song to the current playlist"},
+	{"add",         0,   -1,  1,    cmd_add,         "<uri>", "Add a song to the current playlist"},
 	{"crop",        0,   0,   0,    cmd_crop,        "", "Remove all but the currently playing song"},
 	{ "current", 0, 0, 0, cmd_current,
 	  "", "Show the currently playing song"},
@@ -82,7 +82,7 @@ static struct command {
 	{"ls",          0,   -1,  2,    cmd_ls,          "[<directory>]", "List the contents of <directory>"},
 	{"lsplaylists", 0,   -1,  2,    cmd_lsplaylists, "", "List currently available playlists"},
 	{"load",        0,   -1,  1,    cmd_load,        "<file>", "Load <file> as a playlist"},
-	{"insert",      0,   -1,  1,    cmd_insert,      "<file>", "Insert a song to the current playlist after the current track"},
+	{"insert",      0,   -1,  1,    cmd_insert,      "<uri>", "Insert a song to the current playlist after the current track"},
 	{"save",        1,   1,   0,    cmd_save,        "<file>", "Save a playlist as <file>"},
 	{"rm",          1,   1,   0,    cmd_rm,          "<file>", "Remove a playlist"},
 	{"volume",      0,   1,   0,    cmd_volume,      "[+-]<num>", "Set volume to <num> or adjusts by [+-]<num>"},
