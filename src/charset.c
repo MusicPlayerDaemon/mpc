@@ -45,7 +45,7 @@ static int ignore_invalid;
 static void
 charset_close(void);
 
-/* code from iconv_prog.c (omiting invalid symbols): */
+/* code from iconv_prog.c (omitting invalid symbols): */
 static inline char * mpc_strchrnul(const char *s, int c)
 {
 	char *ret = strchr(s, c);

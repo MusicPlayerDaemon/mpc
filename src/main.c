@@ -49,7 +49,7 @@ static struct command {
 	                       * 1: implicit pipe read, `-' optional as argv[2]
 	                       * 2: explicit pipe read, `-' needed as argv[2]
 	                       *
-	                       * multipled by -1 if used, so that it can signal
+	                       * multiplied by -1 if used, so that it can signal
 	                       * a free() before the program exits
 	                       */
 	cmdhandler handler;
