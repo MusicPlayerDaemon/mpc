@@ -369,20 +369,38 @@ cmd_outputs(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *
 }
 
 static unsigned
-count_outputs(struct mpd_connection *conn)
+match_outputs(struct mpd_connection *conn,
+	      char **names, char **names_end, unsigned **ids_end)
 {
 	struct mpd_output *output;
-	unsigned max = 0;
+	unsigned max = 0, *id = *ids_end;
 
 	mpd_send_outputs(conn);
 
 	while ((output = mpd_recv_output(conn)) != NULL) {
+		const char *name = mpd_output_get_name(output);
 		max = mpd_output_get_id(output);
+
+		for (char **n = names; n != names_end; ++n) {
+			if (!strcmp(*n, name)) {
+				*id = max;
+				++id;
+				*n = *names;
+				++names;
+				break;
+			}
+		}
+
 		mpd_output_free(output);
 	}
 
 	mpd_response_finish(conn);
 
+	for (char **n = names; n != names_end; ++n) {
+		fprintf(stderr, "%s: no such output\n", *n);
+	}
+
+	*ids_end = id;
 	return max;
 }
 
@@ -391,6 +409,7 @@ enable_disable(int argc, char **argv, struct mpd_connection *conn,
 	       bool (*matched)(struct mpd_connection *conn, unsigned id),
 	       bool (*not_matched)(struct mpd_connection *conn, unsigned id))
 {
+	char **names = argv, **names_end = argv;
 	unsigned *ids, *ids_end, max;
 	bool only = false;
 	int arg;
@@ -407,7 +426,10 @@ enable_disable(int argc, char **argv, struct mpd_connection *conn,
 	ids_end = ids;
 
 	for (int i = argc; i; --i, ++argv) {
-		if (!parse_int(*argv, &arg) || arg <= 0) {
+		if (!parse_int(*argv, &arg)) {
+			*names_end = *argv;
+			++names_end;
+		} else if (arg <= 0) {
 			fprintf(stderr, "%s: not a positive integer\n", *argv);
 		} else {
 			/* We decrement by 1 to make it natural to the user. */
@@ -415,12 +437,12 @@ enable_disable(int argc, char **argv, struct mpd_connection *conn,
 		}
 	}
 
-	if (ids == ids_end) {
-		goto done;
+	if (only || names != names_end) {
+		max = match_outputs(conn, names, names_end, &ids_end);
 	}
 
-	if (only) {
-		max = count_outputs(conn);
+	if (ids == ids_end) {
+		goto done;
 	}
 
 	if (!mpd_command_list_begin(conn, false)) {
