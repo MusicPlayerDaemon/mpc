@@ -368,30 +368,47 @@ cmd_outputs(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *
 	return( 0 );
 }
 
-int
-cmd_enable(mpd_unused int argc, char **argv, struct mpd_connection *conn)
+static int
+enable_disable(int argc, char **argv, struct mpd_connection *conn,
+	       bool (*callback)(struct mpd_connection *conn, unsigned id))
 {
+	bool show_outputs = false;
 	int arg;
 
-        if( ! parse_int( argv[0], &arg ) || arg <= 0 ) {
-		DIE( "Not a positive integer\n" );
+	if (!mpd_command_list_begin(conn, false)) {
+		printErrorAndExit(conn);
 	}
 
-	mpd_run_enable_output(conn, arg - 1);
-	return cmd_outputs(0, NULL, conn);
+	for (int i = argc; i; --i, ++argv) {
+		if (!parse_int(*argv, &arg) || arg <= 0) {
+			fprintf(stderr, "%s: not a positive integer\n", *argv);
+		} else {
+			/* We decrement by 1 to make it natural to the user. */
+			callback(conn, arg - 1);
+			show_outputs = true;
+		}
+	}
+
+	if (!mpd_command_list_end(conn) || !mpd_response_finish(conn)) {
+		printErrorAndExit(conn);
+	}
+
+	if (show_outputs) {
+		cmd_outputs(0, NULL, conn);
+	}
+	return 0;
+}
+
+int
+cmd_enable(int argc, char **argv, struct mpd_connection *conn)
+{
+	return enable_disable(argc, argv, conn, mpd_send_enable_output);
 }
 
 int
 cmd_disable(mpd_unused int argc, char **argv, struct mpd_connection *conn)
 {
-	int arg;
-
-        if( ! parse_int( argv[0], &arg ) || arg <= 0 ) {
-		DIE( "Not a positive integer\n" );
-	}
-
-	mpd_run_disable_output(conn, arg - 1);
-	return cmd_outputs(0, NULL, conn);
+	return enable_disable(argc, argv, conn, mpd_send_disable_output);
 }
 
 int cmd_play ( int argc, char ** argv, struct mpd_connection *conn )
