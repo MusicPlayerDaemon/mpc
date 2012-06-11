@@ -368,24 +368,78 @@ cmd_outputs(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *
 	return( 0 );
 }
 
+static unsigned
+count_outputs(struct mpd_connection *conn)
+{
+	struct mpd_output *output;
+	unsigned max = 0;
+
+	mpd_send_outputs(conn);
+
+	while ((output = mpd_recv_output(conn)) != NULL) {
+		max = mpd_output_get_id(output);
+		mpd_output_free(output);
+	}
+
+	mpd_response_finish(conn);
+
+	return max;
+}
+
 static int
 enable_disable(int argc, char **argv, struct mpd_connection *conn,
-	       bool (*callback)(struct mpd_connection *conn, unsigned id))
+	       bool (*matched)(struct mpd_connection *conn, unsigned id),
+	       bool (*not_matched)(struct mpd_connection *conn, unsigned id))
 {
-	bool show_outputs = false;
+	unsigned *ids, *ids_end, max;
+	bool only = false;
 	int arg;
 
-	if (!mpd_command_list_begin(conn, false)) {
-		printErrorAndExit(conn);
+	if (!strcmp(argv[0], "only")) {
+		only = true;
+		++argv;
+		if (!--argc) {
+			DIE("No outputs specified.");
+		}
 	}
+
+	ids = malloc(argc * sizeof *ids);
+	ids_end = ids;
 
 	for (int i = argc; i; --i, ++argv) {
 		if (!parse_int(*argv, &arg) || arg <= 0) {
 			fprintf(stderr, "%s: not a positive integer\n", *argv);
 		} else {
 			/* We decrement by 1 to make it natural to the user. */
-			callback(conn, arg - 1);
-			show_outputs = true;
+			*ids_end++ = arg - 1;
+		}
+	}
+
+	if (ids == ids_end) {
+		goto done;
+	}
+
+	if (only) {
+		max = count_outputs(conn);
+	}
+
+	if (!mpd_command_list_begin(conn, false)) {
+		printErrorAndExit(conn);
+	}
+
+	if (only) {
+		for (unsigned i = 0; i <= max; ++i) {
+			bool found = false;
+			for (unsigned *id = ids;
+			     !found && id != ids_end;
+			     ++id) {
+				found = *id == i;
+			}
+			(found ? matched : not_matched)(conn, i);
+		}
+	} else {
+		for (unsigned *id = ids; id != ids_end; ++id) {
+			matched(conn, *id);
 		}
 	}
 
@@ -393,22 +447,25 @@ enable_disable(int argc, char **argv, struct mpd_connection *conn,
 		printErrorAndExit(conn);
 	}
 
-	if (show_outputs) {
-		cmd_outputs(0, NULL, conn);
-	}
+	cmd_outputs(0, NULL, conn);
+
+done:
+	free(ids);
 	return 0;
 }
 
 int
 cmd_enable(int argc, char **argv, struct mpd_connection *conn)
 {
-	return enable_disable(argc, argv, conn, mpd_send_enable_output);
+	return enable_disable(argc, argv, conn, mpd_send_enable_output,
+			      mpd_send_disable_output);
 }
 
 int
 cmd_disable(mpd_unused int argc, char **argv, struct mpd_connection *conn)
 {
-	return enable_disable(argc, argv, conn, mpd_send_disable_output);
+	return enable_disable(argc, argv, conn, mpd_send_disable_output,
+			      mpd_send_enable_output);
 }
 
 int cmd_play ( int argc, char ** argv, struct mpd_connection *conn )
