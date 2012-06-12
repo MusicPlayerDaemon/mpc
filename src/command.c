@@ -935,92 +935,52 @@ cmd_pause(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *co
 	return 1;
 }
 
-int cmd_repeat ( int argc, char ** argv, struct mpd_connection *conn )
+static int
+bool_cmd(int argc, char **argv, struct mpd_connection *conn,
+	 bool (*get_mode)(const struct mpd_status *status),
+	 bool (*run_set_mode)(struct mpd_connection *conn, bool mode))
 {
-	int mode;
+	bool mode;
 
-	if(argc==1) {
+	if (argc == 1) {
 		mode = get_boolean(argv[0]);
 		if (mode < 0)
 			return -1;
-	}
-	else {
+	} else {
 		struct mpd_status *status;
 		status = getStatus(conn);
-		mode = !mpd_status_get_repeat(status);
+		mode = !get_mode(status);
 		mpd_status_free(status);
 	}
 
-	if (!mpd_run_repeat(conn, mode))
+	if (!run_set_mode(conn, mode))
 		printErrorAndExit(conn);
 
 	return 1;
 }
 
-int cmd_random ( int argc, char ** argv, struct mpd_connection *conn )
+int cmd_repeat(int argc, char ** argv, struct mpd_connection *conn)
 {
-	int mode;
-
-	if(argc==1) {
-		mode = get_boolean(argv[0]);
-		if (mode < 0)
-			return -1;
-	}
-	else {
-		struct mpd_status *status;
-		status = getStatus(conn);
-		mode = !mpd_status_get_random(status);
-		mpd_status_free(status);
-	}
-
-	if (!mpd_run_random(conn, mode))
-		printErrorAndExit(conn);
-
-	return 1;
+	return bool_cmd(argc, argv, conn,
+			mpd_status_get_repeat, mpd_run_repeat);
 }
 
-int cmd_single ( int argc, char ** argv, struct mpd_connection *conn )
+int cmd_random(int argc, char ** argv, struct mpd_connection *conn)
 {
-	int mode;
-
-	if(argc==1) {
-		mode = get_boolean(argv[0]);
-		if (mode < 0)
-			return -1;
-	}
-	else {
-		struct mpd_status *status;
-		status = getStatus(conn);
-		mode = !mpd_status_get_single(status);
-		mpd_status_free(status);
-	}
-
-	if (!mpd_run_single(conn, mode))
-		printErrorAndExit(conn);
-
-	return 1;
+	return bool_cmd(argc, argv, conn,
+			mpd_status_get_random, mpd_run_random);
 }
 
-int cmd_consume ( int argc, char ** argv, struct mpd_connection *conn )
+int cmd_single(int argc, char ** argv, struct mpd_connection *conn)
 {
-	int mode;
+	return bool_cmd(argc, argv, conn,
+			mpd_status_get_single, mpd_run_single);
+}
 
-	if(argc==1) {
-		mode = get_boolean(argv[0]);
-		if (mode < 0)
-			return -1;
-	}
-	else {
-		struct mpd_status *status;
-		status = getStatus(conn);
-		mode = !mpd_status_get_consume(status);
-		mpd_status_free(status);
-	}
-
-	if (!mpd_run_consume(conn, mode))
-		printErrorAndExit(conn);
-
-	return 1;
+int cmd_consume(int argc, char ** argv, struct mpd_connection *conn)
+{
+	return bool_cmd(argc, argv, conn,
+			mpd_status_get_consume, mpd_run_consume);
 }
 
 int cmd_crossfade ( int argc, char ** argv, struct mpd_connection *conn )
