@@ -115,11 +115,11 @@ Gets and sets the volume level at which songs with MIXRAMP tags will be overlapp
 .B del <songpos>
 Removes a playlist number from the playlist. Can also read input from pipes (0 deletes the current playing song).
 .TP
-.B disable <output #>
-Disables the output, number is required.
+.B disable [only] <output # or name> [...]
+Disables the output(s); a list of one or more names or numbers is required. If "only" is the first argument, all other outputs are enabled.
 .TP
-.B enable <output #>
-Enables the output, number is required.
+.B enable [only] <output # or name> [...]
+Enables the output(s); a list of one or more names or numbers is required. If "only" is the first argument, all other outputs are disabled.
 .TP
 .B idle [events]
 Waits until an event occurs.  Prints a list of event names, one per
