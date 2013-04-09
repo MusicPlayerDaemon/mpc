@@ -36,6 +36,7 @@ src_mpc_SOURCES = \
 	src/message.c \
 	src/search.c \
 	src/options.c \
+	src/path.c src/path.h \
 	$(src_mpc_headers)
 
 if HAVE_ICONV

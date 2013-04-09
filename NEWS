@@ -3,6 +3,7 @@
 * allow trailing slashes in paths that can be directories
 * make "mv" a shortcut for "move"
 * new command "cdprev"
+* support absolute paths in "add" and "update"
 * enable/disable: support output names, multiple arguments, and "only" mode
 * doc: document missing format keywords
 

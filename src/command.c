@@ -26,6 +26,7 @@
 #include "util.h"
 #include "search.h"
 #include "status.h"
+#include "path.h"
 #include "gcc.h"
 
 #include <mpd/client.h>
@@ -93,8 +94,21 @@ getStatus(struct mpd_connection *conn) {
 	return ret;
 }
 
+static bool
+contains_absolute_path(unsigned argc, char **argv)
+{
+	for (unsigned i = 0; i < argc; ++i)
+		if (argv[i][0] == '/')
+			return true;
+
+	return false;
+}
+
 int cmd_add (int argc, char ** argv, struct mpd_connection *conn )
 {
+	if (contains_absolute_path(argc, argv) && !path_prepare(conn))
+		printErrorAndExit(conn);
+
 	int i;
 
 	if (!mpd_command_list_begin(conn, false))
@@ -102,9 +116,15 @@ int cmd_add (int argc, char ** argv, struct mpd_connection *conn )
 
 	for(i=0;i<argc;i++) {
 		strip_trailing_slash(argv[i]);
+
+		const char *path = argv[i];
+		const char *relative_path = to_relative_path(path);
+		if (relative_path != NULL)
+			path = relative_path;
+
 		if (options.verbosity >= V_VERBOSE)
-			printf("adding: %s\n", argv[i]);
-		mpd_send_add(conn, charset_to_utf8(argv[i]));
+			printf("adding: %s\n", path);
+		mpd_send_add(conn, charset_to_utf8(path));
 	}
 
 	if (!mpd_command_list_end(conn))
@@ -748,6 +768,9 @@ int cmd_listall ( int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 {
+	if (contains_absolute_path(argc, argv) && !path_prepare(conn))
+		printErrorAndExit(conn);
+
 	const char * update = "";
 	int i = 0;
 	unsigned id = 0;
@@ -760,7 +783,13 @@ int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 	do {
 		char *tmp = strdup(update);
 		strip_trailing_slash(tmp);
-		mpd_send_update(conn, tmp);
+
+		const char *path = tmp;
+		const char *relative_path = to_relative_path(path);
+		if (relative_path != NULL)
+			path = relative_path;
+
+		mpd_send_update(conn, path);
 		free(tmp);
 	} while (++i < argc && (update = charset_to_utf8(argv[i])) != NULL);
 
