@@ -114,7 +114,7 @@ _mpc ()
 	load)        _mpc_playlists ;;
 	ls)          _mpc_ls ;;
 	lsplaylists) ;; # no arguments
-	move)        ;; # don't complete numbers
+	move | mv)   ;; # don't complete numbers
 	next)        ;; # no arguments
 	pause)       ;; # no arguments
 	play)        ;; # don't complete numbers
