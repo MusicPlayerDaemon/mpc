@@ -171,6 +171,12 @@ AC_ARG_ENABLE(debug,
 
 if test x$ENABLE_DEBUG = xno; then
 	AM_CPPFLAGS="$AM_CPPFLAGS -DNDEBUG"
+
+	AX_APPEND_COMPILE_FLAGS([-ffunction-sections])
+	AX_APPEND_COMPILE_FLAGS([-fdata-sections])
+	AX_APPEND_COMPILE_FLAGS([-fvisibility=hidden])
+
+	AX_APPEND_LINK_FLAGS([-Wl,--gc-sections])
 fi
 
 
