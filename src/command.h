@@ -66,6 +66,7 @@ int cmd_loadtab(int argc, char **argv, struct mpd_connection *conn);
 int cmd_lstab(int argc, char **argv, struct mpd_connection *conn);
 int cmd_tab(int argc, char **argv, struct mpd_connection *conn);
 int cmd_stats(int argc, char **argv, struct mpd_connection *conn);
+int cmd_cdprev(int argc, char **argv, struct mpd_connection *conn);
 int cmd_toggle(int argc, char **argv, struct mpd_connection *conn);
 
 int

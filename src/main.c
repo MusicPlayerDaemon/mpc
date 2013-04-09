@@ -69,6 +69,7 @@ static struct command {
 	{"prev",        0,   0,   0,    cmd_prev,        "", "Play the previous song in the current playlist"},
 	{"pause",       0,   0,   0,    cmd_pause,       "", "Pauses the currently playing song"},
 	{"toggle",      0,   0,   0,    cmd_toggle,      "", "Toggles Play/Pause, plays if stopped"},
+	{"cdprev",      0,   0,   0,    cmd_cdprev,      "", "Compact disk player-like previous command"},
 	{"stop",        0,   0,   0,    cmd_stop,        "", "Stop the currently playing playlists"},
 	{"seek",        1,   1,   0,    cmd_seek,        "[+-][HH:MM:SS]|<0-100>%", "Seeks to the specified position"},
 	{"clear",       0,   0,   0,    cmd_clear,       "", "Clear the current playlist"},

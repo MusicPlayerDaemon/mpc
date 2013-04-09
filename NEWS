@@ -2,6 +2,7 @@
 * do character set conversions on client-to-client messages
 * allow trailing slashes in paths that can be directories
 * make "mv" a shortcut for "move"
+* new command "cdprev"
 * enable/disable: support output names, multiple arguments, and "only" mode
 * doc: document missing format keywords
 

@@ -331,6 +331,26 @@ int cmd_del ( int argc, char ** argv, struct mpd_connection *conn )
 }
 
 int
+cmd_cdprev(mpd_unused int argc, mpd_unused char **argv,
+	   struct mpd_connection *conn)
+{
+	struct mpd_status *status;
+	status = getStatus(conn);
+
+	/* go to previous track if mpd is playing first 3 seconds of
+	   current track otherwise seek to beginning of current
+	   track */
+	if (mpd_status_get_elapsed_time(status) < 3) {
+		cmd_prev(0, NULL, conn);
+	} else {
+		if (!mpd_run_seek_id(conn, mpd_status_get_song_id(status), 0))
+			printErrorAndExit(conn);
+	}
+
+	return 1;
+}
+
+int
 cmd_toggle(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
 	struct mpd_status *status;
