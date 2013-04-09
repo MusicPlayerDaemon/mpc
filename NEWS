@@ -2,6 +2,7 @@
 * do character set conversions on client-to-client messages
 * allow trailing slashes in paths that can be directories
 * enable/disable: support output names, multiple arguments, and "only" mode
+* doc: document missing format keywords
 
 0.22 (2012/02/04)
 * implement the client-to-client protocol (MPD 0.17)
