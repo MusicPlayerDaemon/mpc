@@ -23,9 +23,6 @@ dnl
 AC_SUBST(AM_CFLAGS)
 AC_SUBST(AM_CPPFLAGS)
 
-AC_SUBST(MPC_LIBS)
-MPC_LIBS=""
-
 
 dnl
 dnl OS specific defaults
@@ -34,10 +31,6 @@ dnl
 case "$host" in
 *-mingw32* | *-windows* | *-cygwin*)
 	AM_CFLAGS="$AM_CFLAGS -mms-bitfields -fno-strict-aliasing"
-	AM_CPPFLAGS="$AM_CPPFLAGS -DMPD_NO_GAI"
-	;;
-*-mingw32* | *-windows*)
-	MPC_LIBS="$MPC_LIBS -lws2_32"
 	;;
 esac
 
@@ -81,8 +74,6 @@ fi
 dnl
 dnl libc features
 dnl
-
-AC_CHECK_LIB(socket, socket, MPC_LIBS="$MPC_LIBS -lsocket",)
 
 PKG_CHECK_MODULES([LIBMPDCLIENT], [libmpdclient >= 2.2],,
 	[AC_MSG_ERROR([libmpdclient2 is required])])
