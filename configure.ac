@@ -83,7 +83,6 @@ dnl libc features
 dnl
 
 AC_CHECK_LIB(socket, socket, MPC_LIBS="$MPC_LIBS -lsocket",)
-AC_CHECK_LIB(nsl, gethostbyname, MPC_LIBS="$MPC_LIBS -lnsl",)
 
 PKG_CHECK_MODULES([LIBMPDCLIENT], [libmpdclient >= 2.2],,
 	[AC_MSG_ERROR([libmpdclient2 is required])])
