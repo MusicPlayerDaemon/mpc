@@ -76,6 +76,9 @@ static struct command {
 	{"outputs",     0,   0,   0,    cmd_outputs,     "", "Show the current outputs"},
 	{"enable",      1,   -1,  0,    cmd_enable,      "[only] <output # or name> [...]", "Enable output(s)"},
 	{"disable",     1,   -1,  0,    cmd_disable,     "[only] <output # or name> [...]", "Disable output(s)"},
+#if LIBMPDCLIENT_CHECK_VERSION(2,9,0)
+	{"toggleoutput", 1, -1,   0,    cmd_toggle_output, "<output # or name> [...]", "Toggle output(s)"},
+#endif
 	{"shuffle",     0,   0,   0,    cmd_shuffle,     "", "Shuffle the current playlist"},
 	{"move",        2,   2,   0,    cmd_move,        "<from> <to>", "Move song in playlist"},
         /* mv is an alias for move */

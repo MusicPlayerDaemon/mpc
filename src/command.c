@@ -454,7 +454,7 @@ enable_disable(int argc, char **argv, struct mpd_connection *conn,
 	bool only = false;
 	int arg;
 
-	if (!strcmp(argv[0], "only")) {
+	if (not_matched != NULL && !strcmp(argv[0], "only")) {
 		only = true;
 		++argv;
 		if (!--argc) {
@@ -529,6 +529,17 @@ cmd_disable(mpd_unused int argc, char **argv, struct mpd_connection *conn)
 	return enable_disable(argc, argv, conn, mpd_send_disable_output,
 			      mpd_send_enable_output);
 }
+
+#if LIBMPDCLIENT_CHECK_VERSION(2,9,0)
+
+int
+cmd_toggle_output(int argc, char **argv, struct mpd_connection *conn)
+{
+	return enable_disable(argc, argv, conn, mpd_send_toggle_output,
+			      mpd_send_toggle_output);
+}
+
+#endif
 
 int cmd_play ( int argc, char ** argv, struct mpd_connection *conn )
 {
