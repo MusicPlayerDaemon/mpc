@@ -57,9 +57,21 @@ static void my_finishCommand(struct mpd_connection *conn) {
 		printErrorAndExit(conn);
 }
 
+static bool
+uri_has_scheme(const char *uri)
+{
+	return strstr(uri, "://") != NULL;
+}
+
 static void
 strip_trailing_slash(char *s)
 {
+	if (uri_has_scheme(s))
+		/* strip slashes only if this string is relative to
+		   the music directory; absolute URLs are not, for
+		   sure */
+		return;
+
 	size_t len = strlen(s);
 
 	if (len == 0)
