@@ -99,8 +99,8 @@ add_constraint(struct mpd_connection *conn,
 		mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
 						  charset_to_utf8(constraint->query));
 	else if (constraint->type == (enum mpd_tag_type)SEARCH_TAG_URI)
-		mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
-						  charset_to_utf8(constraint->query));
+		mpd_search_add_uri_constraint(conn, MPD_OPERATOR_DEFAULT,
+					      charset_to_utf8(constraint->query));
 	else
 		mpd_search_add_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
 					      constraint->type,
