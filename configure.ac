@@ -2,7 +2,7 @@ AC_PREREQ(2.60)
 AC_INIT(mpc, 0.24~git, musicpd-dev-team@lists.sourceforge.net)
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR(src/main.c)
-AM_INIT_AUTOMAKE([foreign 1.10 dist-bzip2])
+AM_INIT_AUTOMAKE([foreign 1.11 dist-bzip2 dist-xz])
 AC_CONFIG_HEADERS(config.h)
 
 
