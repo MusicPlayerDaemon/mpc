@@ -1,4 +1,4 @@
-0.24 (not yet released)
+0.24 (2013/10/29)
 * configure.ac: fix syntax error
 * new command "toggleoutput"
 * use the "volume" command on MPD 0.18
