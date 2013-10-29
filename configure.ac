@@ -91,9 +91,9 @@ AC_ARG_ENABLE(iconv,
 if test x$enable_iconv = xyes; then
 	AC_CHECK_FUNC(iconv,
 		[ICONV_CFLAGS="" ICONV_LIBS=""],
-		AC_CHECK_LIB(intl, iconv,
+		[AC_CHECK_LIB(intl, iconv,
 			[ICONV_CFLAGS="" ICONV_LIBS="-lintl"],
-			[enable_iconv=no]))
+			[enable_iconv=no])])
 fi
 
 if test x$enable_iconv = xyes; then
