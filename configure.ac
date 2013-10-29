@@ -145,21 +145,19 @@ dnl
 
 AC_ARG_ENABLE(werror,
 	AS_HELP_STRING([--enable-werror],
-		[Treat warnings as errors (default: disabled)]),
-	ENABLE_WERROR=$enableval,
-	ENABLE_WERROR=no)
+		[Treat warnings as errors @<:@default=disabled@:>@]),
+	enable_werror=no)
 
-if test x$ENABLE_WERROR = xyes; then
+if test "x$enable_werror" = xyes; then
 	AM_CFLAGS="$AM_CFLAGS -Werror -pedantic-errors"
 fi
 
 AC_ARG_ENABLE(debug,
 	AS_HELP_STRING([--enable-debug],
-		[Enable debugging (default: disabled)]),
-	ENABLE_DEBUG=$enableval,
-	ENABLE_DEBUG=no)
+		[Enable debugging @<:@default=disabled@:>@]),
+	enable_debug=no)
 
-if test x$ENABLE_DEBUG = xno; then
+if test "x$enable_debug" = xno; then
 	AM_CPPFLAGS="$AM_CPPFLAGS -DNDEBUG"
 
 	AX_APPEND_COMPILE_FLAGS([-ffunction-sections])
