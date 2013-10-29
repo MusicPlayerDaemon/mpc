@@ -40,6 +40,11 @@ get_search_type(const char *name)
 	if (strcasecmp(name, "filename") == 0)
 		return SEARCH_TAG_URI;
 
+#if LIBMPDCLIENT_CHECK_VERSION(2,9,0)
+	if (strcasecmp(name, "base") == 0)
+		return SEARCH_TAG_BASE;
+#endif
+
 	type = mpd_tag_name_iparse(name);
 	if (type != MPD_TAG_UNKNOWN)
 		return type;
@@ -101,6 +106,11 @@ add_constraint(struct mpd_connection *conn,
 	else if (constraint->type == (enum mpd_tag_type)SEARCH_TAG_URI)
 		mpd_search_add_uri_constraint(conn, MPD_OPERATOR_DEFAULT,
 					      charset_to_utf8(constraint->query));
+#if LIBMPDCLIENT_CHECK_VERSION(2,9,0)
+	else if (constraint->type == (enum mpd_tag_type)SEARCH_TAG_BASE)
+		mpd_search_add_base_constraint(conn, MPD_OPERATOR_DEFAULT,
+					       charset_to_utf8(constraint->query));
+#endif
 	else
 		mpd_search_add_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
 					      constraint->type,
