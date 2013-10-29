@@ -3,6 +3,7 @@
 * new command "toggleoutput"
 * use the "volume" command on MPD 0.18
 * fix search/find with "filename" constraint
+* add search/find with "base" constraint
 
 0.23 (2013/04/09)
 * do character set conversions on client-to-client messages
