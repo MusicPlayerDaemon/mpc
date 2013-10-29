@@ -1,6 +1,7 @@
 0.24 (not yet released)
 * configure.ac: fix syntax error
 * new command "toggleoutput"
+* use the "volume" command on MPD 0.18
 
 0.23 (2013/04/09)
 * do character set conversions on client-to-client messages
