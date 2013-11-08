@@ -64,10 +64,8 @@ int cmd_idle(int argc, char **argv,
 int
 cmd_idleloop(int argc, char **argv, struct mpd_connection *connection)
 {
-	int ret;
-
 	while (true) {
-		ret = cmd_idle(argc, argv, connection);
+		int ret = cmd_idle(argc, argv, connection);
 		fflush(stdout);
 		if (ret != 0)
 			return ret;

@@ -86,9 +86,7 @@ option_error(int error, const char *option, const char *arg)
 static const arg_opt_t *
 lookup_long_option(const char *l, size_t len)
 {
-	unsigned i;
-
-	for (i = 0; i < option_table_size; ++i) {
+	for (unsigned i = 0; i < option_table_size; ++i) {
 		if (strncmp(l, option_table[i].longopt, len) == 0)
 			return &option_table[i];
 	}
@@ -99,9 +97,7 @@ lookup_long_option(const char *l, size_t len)
 static const arg_opt_t *
 lookup_short_option(int s)
 {
-	unsigned i;
-
-	for (i = 0; i < option_table_size; ++i) {
+	for (unsigned i = 0; i < option_table_size; ++i) {
 		if (s == option_table[i].shortopt)
 			return &option_table[i];
 	}
@@ -147,9 +143,7 @@ handle_option(int c, const char *arg)
 void
 print_option_help(void)
 {
-	unsigned i;
-
-	for (i = 0; i < option_table_size; i++) {
+	for (unsigned i = 0; i < option_table_size; i++) {
 		printf("  -%c, ", option_table[i].shortopt);
 		if (option_table[i].argument)
 			printf("--%s=%-*s",
@@ -178,7 +172,6 @@ parse_options(int * argc_p, char ** argv)
 		if (arg[0] == '-' && (arg[1] < '0' || arg[1] > '9')) {
 			if (arg[1] == '-') {
 				/* arg is a long option */
-				char *value;
 				size_t name_len = len - 2;
 
 				/* if arg is "--", there can be no more options */
@@ -195,6 +188,7 @@ parse_options(int * argc_p, char ** argv)
 					option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
 
 				/* retrieve a option argument */
+				char *value;
 				if ((value = strchr(arg + 2, '=')) != NULL) {
 					name_len = value - arg - 2;
 					value++;

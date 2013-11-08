@@ -148,8 +148,6 @@ print_usage(FILE * outfp, char * progname)
 
 static int print_help(char * progname, char * command)
 {
-	int i, max = 0;
-
 	if (command && strcmp(command, "help")) {
 		fprintf(stderr,"unknown command \"%s\"\n",command);
 		print_usage(stderr, progname);
@@ -166,22 +164,22 @@ static int print_help(char * progname, char * command)
 
 	printf("Commands:\n");
 
-	for (i=0; mpc_table[i].command; ++i) {
+	unsigned max = 0;
+	for (unsigned i = 0; mpc_table[i].command != NULL; ++i) {
 		if (mpc_table[i].help) {
-			int tmp = strlen(mpc_table[i].command) +
-					strlen(mpc_table[i].usage);
+			unsigned tmp = strlen(mpc_table[i].command) +
+				strlen(mpc_table[i].usage);
 			max = (tmp > max) ? tmp : max;
 		}
 	}
 
 	printf("  %s %*s  Display status\n",progname,max," ");
 
-	for (i=0; mpc_table[i].command; ++i) {
-		int spaces;
-
+	for (unsigned i = 0; mpc_table[i].command != NULL; ++i) {
 		if (!mpc_table[i].help)
 			continue ;
-		spaces = max-(strlen(mpc_table[i].command)+strlen(mpc_table[i].usage));
+
+		int spaces = max-(strlen(mpc_table[i].command)+strlen(mpc_table[i].usage));
 		spaces += !spaces ? 0 : 1;
 
 		printf("  %s %s %s%*s%s\n",progname,
@@ -196,9 +194,7 @@ static int print_help(char * progname, char * command)
 static struct mpd_connection *
 setup_connection(void)
 {
-	struct mpd_connection *conn;
-
-	conn = mpd_connection_new(options.host, options.port, 0);
+	struct mpd_connection *conn = mpd_connection_new(options.host, options.port, 0);
 	if (conn == NULL) {
 		fputs("Out of memory\n", stderr);
 		exit(EXIT_FAILURE);
@@ -228,7 +224,6 @@ static char **
 check_args(struct command *command, int * argc, char ** argv)
 {
 	char ** array;
-	int i;
 
 	if ((command->pipe == 1 &&
 		(2==*argc || (3==*argc && 0==strcmp(argv[2],STDIN_SYMBOL) )))
@@ -239,7 +234,7 @@ check_args(struct command *command, int * argc, char ** argv)
 	} else {
 		*argc -= 2;
 		array = malloc( (*argc * (sizeof(char *))));
-		for(i=0;i<*argc;++i) {
+		for(int i = 0; i < *argc; ++i) {
 			array[i]=argv[i+2];
 		}
 	}
@@ -255,15 +250,12 @@ check_args(struct command *command, int * argc, char ** argv)
 static int
 run(const struct command *command, int argc, char **array)
 {
-	int ret;
-	struct mpd_connection *conn;
-
-	conn = setup_connection();
+	struct mpd_connection *conn = setup_connection();
 
 	if (mpd_connection_cmp_server_version(conn, 0, 16, 0) < 0)
 		fprintf(stderr, "warning: MPD 0.16 required\n");
 
-	ret = command->handler(argc, array, conn);
+	int ret = command->handler(argc, array, conn);
 	if (ret != 0 && options.verbosity > V_QUIET) {
 		print_status(conn);
 	}
@@ -274,14 +266,11 @@ run(const struct command *command, int argc, char **array)
 
 int main(int argc, char ** argv)
 {
-	int ret;
-	const char *command_name;
-	struct command *command;
-
 	parse_options(&argc, argv);
 
 	/* parse command and arguments */
 
+	const char *command_name;
 	if (argc >= 2)
 		command_name = argv[1];
 	else {
@@ -293,7 +282,7 @@ int main(int argc, char ** argv)
 		argc = 2;
 	}
 
-	command = find_command(command_name);
+	struct command *command = find_command(command_name);
 	if (command == NULL)
 		return print_help(argv[0], argv[1]);
 
@@ -305,7 +294,7 @@ int main(int argc, char ** argv)
 
 	/* run */
 
-	ret = run(command, argc, argv);
+	int ret = run(command, argc, argv);
 
 	/* cleanup */
 

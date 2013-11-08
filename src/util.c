@@ -38,11 +38,9 @@
 void
 printErrorAndExit(struct mpd_connection *conn)
 {
-	const char *message;
-
 	assert(mpd_connection_get_error(conn) != MPD_ERROR_SUCCESS);
 
-	message = mpd_connection_get_error_message(conn);
+	const char *message = mpd_connection_get_error_message(conn);
 	if (mpd_connection_get_error(conn) == MPD_ERROR_SERVER)
 		/* messages received from the server are UTF-8; the
 		   rest is either US-ASCII or locale */
@@ -56,21 +54,18 @@ printErrorAndExit(struct mpd_connection *conn)
 int stdinToArgArray(char *** array)
 {
 	List * list = makeList(NULL);
-	ListNode * node;
 	char buffer[4096];
-	int size;
-	int i;
-	char * sp;
 
 	while(fgets(buffer, sizeof(buffer), stdin)) {
+		char *sp;
 		if((sp = strchr(buffer,'\n'))) *sp = '\0';
 		insertInListWithoutKey(list,strdup(buffer));
 	}
 
-	size = list->numberOfNodes;
+	const unsigned size = list->numberOfNodes;
 	*array = malloc((sizeof(char *))*size);
-	i = 0;
-	node = list->firstNode;
+	unsigned i = 0;
+	ListNode * node = list->firstNode;
 	while(node) {
 		(*array)[i++] = (char *)node->data;
 		node = node->nextNode;
@@ -90,7 +85,6 @@ void free_pipe_array (int max, char ** array)
 
 int get_boolean (const char * arg)
 {
-	int i;
 	static const struct _bool_table {
 		const char * on;
 		const char * off;
@@ -102,7 +96,7 @@ int get_boolean (const char * arg)
 		{ .on = NULL }
 	};
 
-	for (i=0; bool_table[i].on; ++i) {
+	for (unsigned i = 0; bool_table[i].on; ++i) {
 		if (! strcasecmp(arg,bool_table[i].on))
 			return 1;
 		else if (! strcasecmp(arg,bool_table[i].off))
@@ -111,7 +105,7 @@ int get_boolean (const char * arg)
 	
 	fprintf(stderr,"\"%s\" is not a boolean value: <",arg);
 	
-	for (i=0; bool_table[i].on; ++i) {
+	for (unsigned i = 0; bool_table[i].on; ++i) {
 		fprintf(stderr,"%s|%s%s", bool_table[i].on,
 			bool_table[i].off,
 			( bool_table[i+1].off ? "|" : ">\n"));
@@ -124,9 +118,7 @@ int get_boolean (const char * arg)
 int parse_int(const char * str, int * ret)
 {
         char * test;
-        int temp;
-
-        temp = strtol(str, &test, 10);
+	int temp = strtol(str, &test, 10);
 
         if(*test != '\0')
                 return 0; /* failure */
@@ -140,9 +132,7 @@ int parse_int(const char * str, int * ret)
 int parse_float(const char * str, float * ret)
 {
 	char * test;
-	float temp;
-
-	temp = strtof(str, &test);
+	float temp = strtof(str, &test);
 
 	if(*test != '\0')
 		return 0; /* failure */
@@ -155,15 +145,13 @@ int parse_float(const char * str, float * ret)
  * the number in any other way for that matter */
 int parse_songnum(const char * str, int * ret)
 {
-        int song;
-        char * endptr;
-
         if(!str)
                 return 0;
         if(*str == '#')
                 str++;
 
-        song = strtol(str, &endptr, 10);
+	char *endptr;
+	int song = strtol(str, &endptr, 10);
 
         if(str == endptr || (*endptr != ')' && *endptr != '\0') || song < 0)
                 return 0;
@@ -175,20 +163,18 @@ int parse_songnum(const char * str, int * ret)
 
 int parse_int_value_change(const char * str, struct int_value_change * ret)
 {
-        int len;
-        int change;
-        int relative = 0;
-
-        len = strlen(str);
+	const size_t len = strlen(str);
 
         if(len < 1)
                 return 0;
 
+	int relative = 0;
         if(*str == '+')
                 relative = 1;
         else if(*str == '-')
                 relative = -1;
 
+	int change;
         if(!parse_int(str, &change))
                 return 0;
 
@@ -286,11 +272,8 @@ songToFormatedString(const struct mpd_song *song,
 		     const char *format, const char ** last)
 {
 	char * ret = NULL;
-	const char *p, *end;
-	const char *temp;
-	char name[32];
-	int length;
-	int found = 0;
+	const char *p;
+	bool found = false;
 
 	/* we won't mess up format, we promise... */
 	for (p = format; *p != '\0'; )
@@ -311,11 +294,11 @@ songToFormatedString(const struct mpd_song *song,
 		
 		if (p[0] == '&') {
 			++p;
-			if(found == 0) {
+			if(!found) {
 				p = skipFormatting(p);
 			}
 			else {
-				found = 0;
+				found = false;
 			}
 			continue;
 		}
@@ -326,7 +309,7 @@ songToFormatedString(const struct mpd_song *song,
 			if(t != NULL) {
 				ret = appendToString(ret, t, strlen(t));
 				free(t);
-				found = 1;
+				found = true;
 			}
 			continue;
 		}
@@ -379,14 +362,13 @@ songToFormatedString(const struct mpd_song *song,
 		/* advance past the esc character */
 
 		/* find the extent of this format specifier (stop at \0, ' ', or esc) */
-		temp = NULL;
-
-		end  = p+1;
+		const char *end = p+1;
 		while(*end >= 'a' && *end <= 'z')
 		{
 			end++;
 		}
-		length = end - p + 1;
+
+		const size_t length = end - p + 1;
 
 		if (*end != '%') {
 			ret = appendToString(ret, p, length - 1);
@@ -394,6 +376,7 @@ songToFormatedString(const struct mpd_song *song,
 			continue;
 		}
 
+		char name[32];
 		if (length > (int)sizeof(name)) {
 			ret = appendToString(ret, p, length);
 			p += length;
@@ -403,10 +386,10 @@ songToFormatedString(const struct mpd_song *song,
 		memcpy(name, p + 1, length - 2);
 		name[length - 2] = 0;
 
-		temp = song_value(song, name);
+		const char *temp = song_value(song, name);
 		if (temp != NULL) {
 			if (*temp != 0)
-				found = 1;
+				found = true;
 			ret = appendToString(ret, temp, strlen(temp));
 		} else
 			ret = appendToString(ret, p, length);

@@ -58,7 +58,6 @@ static char * skip_invalid(const char *to)
 {
 	const char *errhand = mpc_strchrnul(to, '/');
 	int nslash = 2;
-	char *newp, *cp;
 
 	if (*errhand == '/') {
 		--nslash;
@@ -70,9 +69,9 @@ static char * skip_invalid(const char *to)
 		}
 	}
 
-	newp = (char *)malloc(errhand - to + nslash + 7 + 1);
+	char *newp = (char *)malloc(errhand - to + nslash + 7 + 1);
 	memcpy(newp, to, errhand - to);
-	cp = newp + (errhand - to);
+	char *cp = newp + (errhand - to);
 	while (nslash-- > 0)
 		*cp++ = '/';
 	if (cp[-1] != '/')
@@ -102,14 +101,12 @@ static int
 charset_set(const char *to, const char *from)
 {
 	char *allocated;
-	int ret;
-
 	if (ignore_invalid)
 		to = allocated = skip_invalid(to);
 	else
 		allocated = NULL;
 
-	ret = charset_set2(to, from);
+	int ret = charset_set2(to, from);
 
 	if (allocated != NULL)
 		free(allocated);
@@ -134,23 +131,20 @@ static inline size_t deconst_iconv(iconv_t cd,
 static char *
 charset_conv_strdup(const char *string)
 {
-	char buffer[BUFFER_SIZE];
-	size_t inleft = strlen(string);
-	char * ret;
-	size_t outleft;
-	size_t retlen = 0;
-	size_t err;
-	char * bufferPtr;
-
 	if(!char_conv_to) return NULL;
 
-	ret = strdup("");
+	size_t inleft = strlen(string);
+	size_t retlen = 0;
+
+	char *ret = strdup("");
 
 	while(inleft) {
-		bufferPtr = buffer;
-		outleft = BUFFER_SIZE;
-		err = deconst_iconv(char_conv_iconv,&string,&inleft,&bufferPtr,
-				    &outleft);
+		char buffer[BUFFER_SIZE];
+		char *bufferPtr = buffer;
+		size_t outleft = BUFFER_SIZE;
+		size_t err = deconst_iconv(char_conv_iconv,
+					   &string, &inleft, &bufferPtr,
+					   &outleft);
 		if (outleft == BUFFER_SIZE ||
 		    (err == (size_t)-1 && errno != E2BIG)) {
 			free(ret);
@@ -181,18 +175,16 @@ charset_close(void)
 void
 charset_init(bool enable_input, bool enable_output)
 {
-	const char *original_locale, *charset;
-
 	if (!enable_input && !enable_output)
 		return;
 
 	ignore_invalid = isatty(STDOUT_FILENO) && isatty(STDIN_FILENO);
 
-	original_locale = setlocale(LC_CTYPE,"");
+	const char *original_locale = setlocale(LC_CTYPE,"");
 	if (original_locale == NULL)
 		return;
 
-	charset = nl_langinfo(CODESET);
+	const char *charset = nl_langinfo(CODESET);
 	if (charset != NULL)
 		locale_charset = strdup(charset);
 

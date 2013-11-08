@@ -32,8 +32,6 @@
 enum mpd_tag_type
 get_search_type(const char *name)
 {
-	enum mpd_tag_type type;
-
 	if (strcasecmp(name, "any") == 0)
 		return SEARCH_TAG_ANY;
 
@@ -45,7 +43,7 @@ get_search_type(const char *name)
 		return SEARCH_TAG_BASE;
 #endif
 
-	type = mpd_tag_name_iparse(name);
+	enum mpd_tag_type type = mpd_tag_name_iparse(name);
 	if (type != MPD_TAG_UNKNOWN)
 		return type;
 
@@ -121,17 +119,15 @@ bool
 add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 {
 	struct constraint *constraints;
-	int numconstraints;
-	int i;
 
 	if (argc % 2 != 0)
 		DIE("arguments must be pairs of search types and queries\n");
 
-	numconstraints = get_constraints(argc, argv, &constraints);
+	int numconstraints = get_constraints(argc, argv, &constraints);
 	if (numconstraints < 0)
 		return false;
 
-	for (i = 0; i < numconstraints; i++) {
+	for (int i = 0; i < numconstraints; i++) {
 		add_constraint(conn, &constraints[i]);
 	}
 

@@ -121,12 +121,10 @@ int cmd_add (int argc, char ** argv, struct mpd_connection *conn )
 	if (contains_absolute_path(argc, argv) && !path_prepare(conn))
 		printErrorAndExit(conn);
 
-	int i;
-
 	if (!mpd_command_list_begin(conn, false))
 		printErrorAndExit(conn);
 
-	for(i=0;i<argc;i++) {
+	for (int i=0; i <argc; ++i) {
 		strip_trailing_slash(argv[i]);
 
 		const char *path = argv[i];
@@ -247,26 +245,22 @@ int cmd_current(mpd_unused int argc, mpd_unused char ** argv, struct mpd_connect
 	if (options.wait)
 		wait_current(conn);
 
-	struct mpd_status *status;
-
 	if (!mpd_command_list_begin(conn, true) ||
 	    !mpd_send_status(conn) ||
 	    !mpd_send_current_song(conn) ||
 	    !mpd_command_list_end(conn))
 		printErrorAndExit(conn);
 
-	status = mpd_recv_status(conn);
+	struct mpd_status *status = mpd_recv_status(conn);
 	if (status == NULL)
 		printErrorAndExit(conn);
 
 	if (mpd_status_get_state(status) == MPD_STATE_PLAY ||
 	    mpd_status_get_state(status) == MPD_STATE_PAUSE) {
-		struct mpd_song *song;
-
 		if (!mpd_response_next(conn))
 			printErrorAndExit(conn);
 
-		song = mpd_recv_song(conn);
+		struct mpd_song *song = mpd_recv_song(conn);
 		if (song != NULL) {
 			pretty_print_song(song);
 			printf("\n");
@@ -284,27 +278,20 @@ int cmd_current(mpd_unused int argc, mpd_unused char ** argv, struct mpd_connect
 
 int cmd_del ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	int i,j;
-	char * s;
-	char * t;
-	char * t2;
-	int range[2];
-	int songsDeleted = 0;
-	int plLength = 0;
-	char * songsToDel;
-	struct mpd_status *status;
+	struct mpd_status *status = getStatus(conn);
 
-	status = getStatus(conn);
+	const int plLength = mpd_status_get_queue_length(status);
 
-	plLength = mpd_status_get_queue_length(status);
-
-	songsToDel = malloc(plLength);
+	char *songsToDel = malloc(plLength);
 	memset(songsToDel,0,plLength);
 
-	for(i=0;i<argc;i++) {
+	for (int i = 0; i < argc; ++i) {
+		char *s;
 		if(argv[i][0]=='#') s = &(argv[i][1]);
 		else s = argv[i];
 
+		char *t;
+		int range[2];
 		range[0] = strtol(s,&t,10);
 
 		/* If argument is 0 current song and we're not stopped */
@@ -316,6 +303,7 @@ int cmd_del ( int argc, char ** argv, struct mpd_connection *conn )
 		if(s==t)
 			DIE("error parsing song numbers from: %s\n",argv[i]);
 		else if(*t=='-') {
+			char *t2;
 			range[1] = strtol(t+1,&t2,10);
 			if(t+1==t2 || *t2!='\0')
 				DIE("error parsing range from: %s\n",argv[i]);
@@ -337,13 +325,15 @@ int cmd_del ( int argc, char ** argv, struct mpd_connection *conn )
 		if(range[1]>plLength)
 			DIE("song number does not exist: %i\n",range[1]);
 
-		for(j=range[0];j<=range[1];j++) songsToDel[j-1] = 1;
+		for (int j = range[0]; j <= range[1]; j++)
+			songsToDel[j - 1] = 1;
 	}
 
 	if (!mpd_command_list_begin(conn, false))
 		printErrorAndExit(conn);
 
-	for(i=0;i<plLength;i++) {
+	int songsDeleted = 0;
+	for (int i = 0; i < plLength; ++i) {
 		if(songsToDel[i]) {
 			mpd_send_delete(conn, i - songsDeleted);
 			songsDeleted++;
@@ -363,8 +353,7 @@ int
 cmd_cdprev(mpd_unused int argc, mpd_unused char **argv,
 	   struct mpd_connection *conn)
 {
-	struct mpd_status *status;
-	status = getStatus(conn);
+	struct mpd_status *status = getStatus(conn);
 
 	/* go to previous track if mpd is playing first 3 seconds of
 	   current track otherwise seek to beginning of current
@@ -382,8 +371,7 @@ cmd_cdprev(mpd_unused int argc, mpd_unused char **argv,
 int
 cmd_toggle(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	struct mpd_status *status;
-	status = getStatus(conn);
+	struct mpd_status *status = getStatus(conn);
 
 	if (mpd_status_get_state(status) == MPD_STATE_PLAY) {
 		cmd_pause(0, NULL, conn);
@@ -396,10 +384,9 @@ cmd_toggle(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *c
 int
 cmd_outputs(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	struct mpd_output *output;
-
 	mpd_send_outputs(conn);
 
+	struct mpd_output *output;
 	while ((output = mpd_recv_output(conn)) != NULL) {
 		/* We increment by 1 to make it natural to the user  */
 		int id = mpd_output_get_id(output) + 1;
@@ -421,11 +408,11 @@ static unsigned
 match_outputs(struct mpd_connection *conn,
 	      char **names, char **names_end, unsigned **ids_end)
 {
-	struct mpd_output *output;
 	unsigned max = 0, *id = *ids_end;
 
 	mpd_send_outputs(conn);
 
+	struct mpd_output *output;
 	while ((output = mpd_recv_output(conn)) != NULL) {
 		const char *name = mpd_output_get_name(output);
 		max = mpd_output_get_id(output);
@@ -459,10 +446,8 @@ enable_disable(int argc, char **argv, struct mpd_connection *conn,
 	       bool (*not_matched)(struct mpd_connection *conn, unsigned id))
 {
 	char **names = argv, **names_end = argv;
-	unsigned *ids, *ids_end, max;
-	bool only = false;
-	int arg;
 
+	bool only = false;
 	if (not_matched != NULL && !strcmp(argv[0], "only")) {
 		only = true;
 		++argv;
@@ -471,10 +456,11 @@ enable_disable(int argc, char **argv, struct mpd_connection *conn,
 		}
 	}
 
-	ids = malloc(argc * sizeof *ids);
-	ids_end = ids;
+	unsigned *ids = malloc(argc * sizeof *ids);
+	unsigned *ids_end = ids;
 
 	for (int i = argc; i; --i, ++argv) {
+		int arg;
 		if (!parse_int(*argv, &arg)) {
 			*names_end = *argv;
 			++names_end;
@@ -486,6 +472,7 @@ enable_disable(int argc, char **argv, struct mpd_connection *conn,
 		}
 	}
 
+	unsigned max;
 	if (only || names != names_end) {
 		max = match_outputs(conn, names, names_end, &ids_end);
 	}
@@ -553,23 +540,21 @@ cmd_toggle_output(int argc, char **argv, struct mpd_connection *conn)
 int cmd_play ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	int song;
-	int i;
 
 	if(0==argc) song = -1;
 	else {
-		struct mpd_status *status;
-
-		for(i=0;i<argc-1;i++)
+		for (int i = 0; i < argc - 1; ++i)
 			printf("skipping: %s\n",argv[i]);
 
-                if(!parse_songnum(argv[i], &song))
-			DIE("error parsing song numbers from: %s\n",argv[i]);
+		if (!parse_songnum(argv[argc - 1], &song))
+			DIE("error parsing song numbers from: %s\n",
+			    argv[argc - 1]);
 
 		song--;
 
 		/* This is necessary, otherwise mpc will output the wrong playlist number */
-		status = getStatus(conn);
-		i = mpd_status_get_queue_length(status);
+		struct mpd_status *status = getStatus(conn);
+		int i = mpd_status_get_queue_length(status);
 		mpd_status_free(status);
 		if(song >= i)
 			DIE("song number greater than playlist length.\n");
@@ -588,11 +573,9 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *con
 {
 	struct mpd_status *status;
 	char * arg = argv[0];
-	char * test;
 
 	int seekchange;
 	int total_secs;
-	int seekto;
         int rel = 0;
 
 	status = getStatus(conn);
@@ -608,15 +591,12 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *con
 
 	/* If seeking by percent */
 	if( arg[strlen(arg)-1] == '%' ) {
-
-		double perc;
-
 		/* Remove the % */
 		arg[ strlen(arg) - 1 ] = '\0';
 
 		/* percent seek, strtod is needed for percent with decimals */
-		perc = strtod(arg,&test);
-
+		char *test;
+		double perc = strtod(arg,&test);
 		if(( *test!='\0' ) || (!rel && (perc<0 || perc>100)) || (rel && perc>abs(100)))
 			DIE("\"%s\" is not an number between 0 and 100\n",arg);
 
@@ -625,22 +605,19 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *con
 	} else { /* If seeking by absolute seek time */
 
 		if( strchr( arg, ':' )) {
-			char * sec_ptr;
-			char * min_ptr;
-			char * hr_ptr;
-
 			int hr = 0;
 			int min = 0;
 			int sec = 0;
 
 			/* Take the seconds off the end of arg */
-			sec_ptr = strrchr( arg, ':' );
+			char *sec_ptr = strrchr(arg, ':');
 
 			/* Remove ':' and move the pointer one byte up */
 			* sec_ptr = '\0';
 			++sec_ptr;
 
 			/* If hour is in the argument, else just point to the arg */
+			char *min_ptr;
 			if(( min_ptr = strrchr( arg, ':' ))) {
 
 				/* Remove ':' and move the pointer one byte up */
@@ -649,7 +626,8 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *con
 
 				/* If the argument still exists, it's the hour  */
 				if( arg != NULL ) {
-					hr_ptr = arg;
+					char *hr_ptr = arg;
+					char *test;
 					hr = strtol( hr_ptr, &test, 10 );
 
 					if( *test != '\0' || ( ! rel && hr < 0 ))
@@ -660,6 +638,7 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *con
 			}
 
 			/* Change the pointers to a integer  */
+			char *test;
 			sec = strtol( sec_ptr, &test, 10 );
 
 			if( *test != '\0' || ( ! rel && sec < 0 ))
@@ -687,6 +666,7 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *con
 		} else {
 
 			/* absolute seek (in seconds) */
+			char *test;
 			total_secs = strtol( arg, &test, 10 ); /* get the # of seconds */
 
 			if( *test != '\0' || ( ! rel && total_secs < 0 ))
@@ -696,6 +676,7 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *con
 	}
 
 	/* This detects +/- and is necessary due to the parsing of HH:MM:SS numbers*/
+	int seekto;
 	if(rel == 1) {
 		seekto = mpd_status_get_elapsed_time(status) + seekchange;
 	} else if (rel == -1) {
@@ -719,11 +700,10 @@ int
 cmd_move(mpd_unused int argc, char **argv, struct mpd_connection *conn)
 {
 	int from;
-	int to;
-
 	if(!parse_int(argv[0], &from) || from<=0)
 		DIE("\"%s\" is not a positive integer\n",argv[0]);
 
+	int to;
 	if(!parse_int(argv[1], &to) || to<=0)
 		DIE("\"%s\" is not a positive integer\n",argv[1]);
 
@@ -739,11 +719,10 @@ cmd_move(mpd_unused int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_playlist(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	struct mpd_song *song;
-
 	if (!mpd_send_list_queue_meta(conn))
 		printErrorAndExit(conn);
 
+	struct mpd_song *song;
 	while ((song = mpd_recv_song(conn)) != NULL) {
 		pretty_print_song(song);
 		mpd_song_free(song);
@@ -791,13 +770,11 @@ int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 	if (contains_absolute_path(argc, argv) && !path_prepare(conn))
 		printErrorAndExit(conn);
 
-	const char * update = "";
-	int i = 0;
-	unsigned id = 0;
-
 	if (!mpd_command_list_begin(conn, false))
 		printErrorAndExit(conn);
 
+	int i = 0;
+	const char * update = "";
 	if(argc > 0) update = charset_to_utf8(argv[i]);
 
 	do {
@@ -818,6 +795,7 @@ int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 
 	/* obtain the last "update id" response */
 
+	unsigned id = 0;
 	while (true) {
 		unsigned next_id = mpd_recv_update_id(conn);
 		if (next_id == 0)
@@ -859,7 +837,6 @@ ls_entity(int argc, char **argv, struct mpd_connection *conn,
 {
 	const char *ls = "";
 	int i = 0;
-
 	if (argc > 0)
 		ls = charset_to_utf8(argv[i]);
 
@@ -889,12 +866,10 @@ int cmd_lsplaylists ( int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	int i;
-
 	if (!mpd_command_list_begin(conn, false))
 		printErrorAndExit(conn);
 
-	for(i=0;i<argc;i++) {
+	for (int i = 0; i < argc; ++i) {
 		printf("loading: %s\n",argv[i]);
 		mpd_send_load(conn, charset_to_utf8(argv[i]));
 	}
@@ -906,12 +881,11 @@ int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 {
-	int ret;
 	struct mpd_status *status = getStatus(conn);
 
 	const int from = mpd_status_get_queue_length(status);
 
-	ret = cmd_add(argc, argv, conn);
+	int ret = cmd_add(argc, argv, conn);
 	const int cur_pos = mpd_status_get_song_pos(status);
 	mpd_status_free(status);
 	if (ret != 0) {
@@ -923,10 +897,7 @@ int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_list ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	enum mpd_tag_type type;
-	struct mpd_pair *pair;
-
-	type = get_search_type(argv[0]);
+	enum mpd_tag_type type = get_search_type(argv[0]);
 	if (type == MPD_TAG_UNKNOWN)
 		return -1;
 
@@ -941,6 +912,7 @@ int cmd_list ( int argc, char ** argv, struct mpd_connection *conn )
 	if (!mpd_search_commit(conn))
 		printErrorAndExit(conn);
 
+	struct mpd_pair *pair;
 	while ((pair = mpd_recv_pair_tag(conn, type)) != NULL) {
 		printf("%s\n", charset_from_utf8(pair->value));
 		mpd_return_pair(conn, pair);
@@ -954,13 +926,12 @@ int cmd_list ( int argc, char ** argv, struct mpd_connection *conn )
 int cmd_volume ( int argc, char ** argv, struct mpd_connection *conn )
 {
         struct int_value_change ch;
-	struct mpd_status *status;
 
 	if(argc==1) {
                 if(!parse_int_value_change(argv[0], &ch))
 			DIE("\"%s\" is not an integer\n", argv[0]);
 	} else {
-		status = getStatus(conn);
+		struct mpd_status *status = getStatus(conn);
 
 		if (mpd_status_get_volume(status) >= 0)
 			printf("volume:%3i%c\n",
@@ -984,10 +955,8 @@ int cmd_volume ( int argc, char ** argv, struct mpd_connection *conn )
 		}
 #endif
 
-		int old_volume;
-
-		status = getStatus(conn);
-		old_volume = mpd_status_get_volume(status);
+		struct mpd_status *status = getStatus(conn);
+		int old_volume = mpd_status_get_volume(status);
 		mpd_status_free(status);
 
 		ch.value += old_volume;
@@ -1064,9 +1033,8 @@ int cmd_consume(int argc, char ** argv, struct mpd_connection *conn)
 
 int cmd_crossfade ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	int seconds;
-
 	if(argc==1) {
+		int seconds;
                 if(!parse_int(argv[0], &seconds) || seconds<0)
 			DIE("\"%s\" is not 0 or positive integer\n",argv[0]);
 
@@ -1086,9 +1054,8 @@ int cmd_crossfade ( int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_mixrampdb ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	float db;
-
 	if(argc==1) {
+		float db;
 		if(!parse_float(argv[0], &db))
 			DIE("\"%s\" is not a floating point number\n",argv[0]);
 
@@ -1096,8 +1063,7 @@ int cmd_mixrampdb ( int argc, char ** argv, struct mpd_connection *conn )
                 my_finishCommand(conn);
 	}
 	else {
-		struct mpd_status *status;
-		status = getStatus(conn);
+		struct mpd_status *status = getStatus(conn);
 
 		printf("mixrampdb: %f\n", mpd_status_get_mixrampdb(status));
 
@@ -1108,9 +1074,8 @@ int cmd_mixrampdb ( int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_mixrampdelay ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	float seconds;
-
 	if(argc==1) {
+		float seconds;
 		if(!parse_float(argv[0], &seconds))
 			DIE("\"%s\" is not a floating point number\n",argv[0]);
 
@@ -1145,14 +1110,13 @@ cmd_version(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *
 
 int cmd_loadtab ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	struct mpd_playlist *pl;
-
 	if (argc != 1)
 		return 0;
 
 	if (!mpd_send_list_meta(conn, NULL))
 		printErrorAndExit(conn);
 
+	struct mpd_playlist *pl;
 	while ((pl = mpd_recv_playlist(conn)) != NULL) {
 		if (strncmp(mpd_playlist_get_path(pl), argv[0],
 			    strlen(argv[0])) == 0)
@@ -1168,14 +1132,13 @@ int cmd_loadtab ( int argc, char ** argv, struct mpd_connection *conn )
 
 int cmd_lstab ( int argc, char ** argv, struct mpd_connection *conn )
 {
-	struct mpd_directory *dir;
-
 	if (argc != 1)
 		return 0;
 
 	if (!mpd_send_list_all(conn, NULL))
 		printErrorAndExit(conn);
 
+	struct mpd_directory *dir;
 	while ((dir = mpd_recv_directory(conn)) != NULL) {
 		if (strncmp(mpd_directory_get_path(dir), argv[0],
 			    strlen(argv[0])) == 0)
@@ -1195,13 +1158,12 @@ int cmd_tab ( int argc, char ** argv, struct mpd_connection *conn )
 	struct mpd_song *song;
 	char empty[] = "";
 	char *dir = empty;
-	char *tmp = NULL;
 
 	if (argc == 1) {
 		if (strrchr(argv[0], '/')) {
 			dir = strdup(argv[0]);
 			if (!dir) return 0;
-			tmp = strrchr(dir, '/');
+			char *tmp = strrchr(dir, '/');
 			if (tmp) *tmp = '\0'; // XXX: It's unpossible for tmp to be NULL.
 		}
 	}
@@ -1228,7 +1190,6 @@ int cmd_tab ( int argc, char ** argv, struct mpd_connection *conn )
 static char * DHMS(unsigned long t)
 {
 	static char buf[32];	/* Ugh */
-	int days, hours, mins, secs;
 
 #ifndef SECSPERDAY
 #define SECSPERDAY 86400
@@ -1240,13 +1201,13 @@ static char * DHMS(unsigned long t)
 #define SECSPERMIN 60
 #endif
 
-	days = t / SECSPERDAY;
+	unsigned days = t / SECSPERDAY;
 	t %= SECSPERDAY;
-	hours = t / SECSPERHOUR;
+	unsigned hours = t / SECSPERHOUR;
 	t %= SECSPERHOUR;
-	mins = t / SECSPERMIN;
+	unsigned mins = t / SECSPERMIN;
 	t %= SECSPERMIN;
-	secs = t;
+	unsigned secs = t;
 
 	snprintf(buf, sizeof(buf), "%d days, %d:%02d:%02d",
 	    days, hours, mins, secs);
@@ -1256,21 +1217,20 @@ static char * DHMS(unsigned long t)
 int
 cmd_stats(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
 {
-	struct mpd_stats *stats;
-	time_t t;
-
-	stats = mpd_run_stats(conn);
+	struct mpd_stats *stats = mpd_run_stats(conn);
 	if (stats == NULL)
 		printErrorAndExit(conn);
 
-	t = mpd_stats_get_db_update_time(stats);
 	printf("Artists: %6d\n", mpd_stats_get_number_of_artists(stats));
 	printf("Albums:  %6d\n", mpd_stats_get_number_of_albums(stats));
 	printf("Songs:   %6d\n", mpd_stats_get_number_of_songs(stats));
 	printf("\n");
 	printf("Play Time:    %s\n", DHMS(mpd_stats_get_play_time(stats)));
 	printf("Uptime:       %s\n", DHMS(mpd_stats_get_uptime(stats)));
+
+	time_t t = mpd_stats_get_db_update_time(stats);
 	printf("DB Updated:   %s", ctime(&t));	/* no \n needed */
+
 	printf("DB Play Time: %s\n", DHMS(mpd_stats_get_db_play_time(stats)));
 
 	mpd_stats_free(stats);
@@ -1292,9 +1252,9 @@ cmd_replaygain(int argc, char **argv, struct mpd_connection *connection)
 	   have to roll our own with mpd_send_command() */
 
 	if (argc == 0) {
-		struct mpd_pair *pair;
-
 		mpd_send_command(connection, "replay_gain_status", NULL);
+
+		struct mpd_pair *pair;
 		while ((pair = mpd_recv_pair(connection)) != NULL) {
 			printf("%s: %s\n", pair->name, pair->value);
 			mpd_return_pair(connection, pair);

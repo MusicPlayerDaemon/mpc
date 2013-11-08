@@ -34,12 +34,11 @@
 static unsigned
 elapsed_percent(const struct mpd_status *status)
 {
-	unsigned elapsed = mpd_status_get_elapsed_time(status);
 	unsigned total = mpd_status_get_total_time(status);
-
 	if (total == 0)
 		return 0;
 
+	unsigned elapsed = mpd_status_get_elapsed_time(status);
 	if (elapsed >= total)
 		return 100;
 
@@ -49,26 +48,22 @@ elapsed_percent(const struct mpd_status *status)
 void
 print_status(struct mpd_connection *conn)
 {
-	struct mpd_status *status;
-
 	if (!mpd_command_list_begin(conn, true) ||
 	    !mpd_send_status(conn) ||
 	    !mpd_send_current_song(conn) ||
 	    !mpd_command_list_end(conn))
 		printErrorAndExit(conn);
 
-	status = mpd_recv_status(conn);
+	struct mpd_status *status = mpd_recv_status(conn);
 	if (status == NULL)
 		printErrorAndExit(conn);
 
 	if (mpd_status_get_state(status) == MPD_STATE_PLAY ||
 	    mpd_status_get_state(status) == MPD_STATE_PAUSE) {
-		struct mpd_song *song;
-
 		if (!mpd_response_next(conn))
 			printErrorAndExit(conn);
 
-		song = mpd_recv_song(conn);
+		struct mpd_song *song = mpd_recv_song(conn);
 		if (song != NULL) {
 			pretty_print_song(song);
 			printf("\n");
