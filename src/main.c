@@ -260,6 +260,9 @@ run(const struct command *command, int argc, char **array)
 
 	conn = setup_connection();
 
+	if (mpd_connection_cmp_server_version(conn, 0, 16, 0) < 0)
+		fprintf(stderr, "warning: MPD 0.16 required\n");
+
 	ret = command->handler(argc, array, conn);
 	if (ret != 0 && options.verbosity > V_QUIET) {
 		print_status(conn);

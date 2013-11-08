@@ -225,9 +225,6 @@ get_active_song(const struct mpd_status *status)
 static void
 wait_current(struct mpd_connection *c)
 {
-	if (mpd_connection_cmp_server_version(c, 0, 14, 0) < 0)
-		fprintf(stderr, "warning: MPD 0.14 required for this command\n");
-
 	struct mpd_status *status = getStatus(c);
 
 	const int old_song = get_active_song(status);
@@ -1293,9 +1290,6 @@ cmd_replaygain(int argc, char **argv, struct mpd_connection *connection)
 {
 	/* libmpdclient 2.0 doesn't support these commands yet, we
 	   have to roll our own with mpd_send_command() */
-
-	if (mpd_connection_cmp_server_version(connection, 0, 16, 0) < 0)
-		fprintf(stderr, "warning: MPD 0.16 required for this command\n");
 
 	if (argc == 0) {
 		struct mpd_pair *pair;

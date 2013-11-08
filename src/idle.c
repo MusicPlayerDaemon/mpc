@@ -30,9 +30,6 @@ int cmd_idle(int argc, char **argv,
 {
 	enum mpd_idle idle = 0;
 
-	if (mpd_connection_cmp_server_version(connection, 0, 14, 0) < 0)
-		fprintf(stderr, "warning: MPD 0.14 required for this command\n");
-
 	for (int i = 0; i < argc; ++i) {
 		enum mpd_idle parsed = mpd_idle_name_parse(argv[i]);
 		if (parsed == 0) {

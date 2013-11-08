@@ -170,9 +170,6 @@ cmd_find(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_findadd(int argc, char **argv, struct mpd_connection *conn)
 {
-	if (mpd_connection_cmp_server_version(conn, 0, 16, 0) < 0)
-		fprintf(stderr, "warning: MPD 0.16 required for this command\n");
-
 	mpd_search_add_db_songs(conn, true);
 	if (!add_constraints(argc, argv, conn))
 		return -1;
