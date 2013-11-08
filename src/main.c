@@ -105,14 +105,10 @@ static struct command {
 #if LIBMPDCLIENT_CHECK_VERSION(2,4,0)
 	{"clearerror",  0,   0,   0,    cmd_clearerror,  "", "Clear the current error"},
 #endif
-#if LIBMPDCLIENT_CHECK_VERSION(2,2,0)
 	{"mixrampdb",   0,   1,   0,    cmd_mixrampdb,   "[<dB>]", "Set and display mixrampdb settings"},
 	{"mixrampdelay",0,   1,   0,    cmd_mixrampdelay,"[<seconds>]", "Set and display mixrampdelay settings"},
-#endif
 	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scan music directory for updates"},
-#if LIBMPDCLIENT_CHECK_VERSION(2,1,0)
 	{"sticker",     2,   -1,  0,    cmd_sticker,     "<uri> <get|set|list|delete|find> [args..]", "Sticker management"},
-#endif
 	{"stats",       0,   -1,  0,    cmd_stats,       "", "Display statistics about MPD"},
 	{"version",     0,   0,   0,    cmd_version,     "", "Report version of MPD"},
 	/* loadtab, lstab, and tab used for completion-scripting only */

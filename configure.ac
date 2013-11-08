@@ -75,8 +75,8 @@ dnl
 dnl libc features
 dnl
 
-PKG_CHECK_MODULES([LIBMPDCLIENT], [libmpdclient >= 2.2],,
-	[AC_MSG_ERROR([libmpdclient2 is required])])
+PKG_CHECK_MODULES([LIBMPDCLIENT], [libmpdclient >= 2.3],,
+	[AC_MSG_ERROR([libmpdclient 2.3 is required])])
 
 
 dnl

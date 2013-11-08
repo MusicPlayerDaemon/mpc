@@ -1087,7 +1087,6 @@ int cmd_crossfade ( int argc, char ** argv, struct mpd_connection *conn )
 	return 0;
 }
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,2,0)
 int cmd_mixrampdb ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	float db;
@@ -1132,7 +1131,6 @@ int cmd_mixrampdelay ( int argc, char ** argv, struct mpd_connection *conn )
 	}
 	return 0;
 }
-#endif
 
 int
 cmd_version(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
