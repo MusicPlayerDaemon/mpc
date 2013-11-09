@@ -20,6 +20,7 @@
 #include "message.h"
 #include "util.h"
 #include "charset.h"
+#include "Compiler.h"
 
 #include <mpd/client.h>
 
@@ -32,7 +33,7 @@
 #if LIBMPDCLIENT_CHECK_VERSION(2,5,0)
 
 int
-cmd_channels(mpd_unused int argc, mpd_unused char **argv,
+cmd_channels(gcc_unused int argc, gcc_unused char **argv,
 	     struct mpd_connection *connection)
 {
 	if (!mpd_send_channels(connection))
@@ -52,7 +53,7 @@ cmd_channels(mpd_unused int argc, mpd_unused char **argv,
 }
 
 int
-cmd_sendmessage(mpd_unused int argc, char **argv,
+cmd_sendmessage(gcc_unused int argc, char **argv,
 		struct mpd_connection *connection)
 {
 	const char *text = charset_to_utf8(argv[1]);
@@ -63,7 +64,7 @@ cmd_sendmessage(mpd_unused int argc, char **argv,
 }
 
 int
-cmd_waitmessage(mpd_unused int argc, char **argv,
+cmd_waitmessage(gcc_unused int argc, char **argv,
 		struct mpd_connection *connection)
 {
 	if (!mpd_run_subscribe(connection, argv[0]) ||
@@ -85,7 +86,7 @@ cmd_waitmessage(mpd_unused int argc, char **argv,
 }
 
 int
-cmd_subscribe(mpd_unused int argc, char **argv,
+cmd_subscribe(gcc_unused int argc, char **argv,
 	      struct mpd_connection *connection)
 {
 	if (!mpd_run_subscribe(connection, argv[0]))

@@ -53,7 +53,6 @@ path_prepare(struct mpd_connection *conn)
 	return mpd_response_finish(conn) || mpd_connection_clear_error(conn);
 }
 
-mpd_pure
 const char *
 to_relative_path(const char *path)
 {

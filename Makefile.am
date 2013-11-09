@@ -23,7 +23,7 @@ src_mpc_SOURCES = \
 	src/search.c src/search.h \
 	src/options.c src/options.h \
 	src/path.c src/path.h \
-	src/gcc.h
+	src/Compiler.h
 
 if HAVE_ICONV
 src_mpc_SOURCES += src/charset.c src/charset.h

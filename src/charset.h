@@ -24,6 +24,7 @@
 #define CHAR_CONV_H
 
 #include "config.h"
+#include "Compiler.h"
 
 #include <stdbool.h>
 
@@ -40,9 +41,11 @@ charset_init(bool enable_input, bool enable_output);
 
 void charset_deinit(void);
 
+gcc_pure
 const char *
 charset_to_utf8(const char *from);
 
+gcc_pure
 const char *
 charset_from_utf8(const char *from);
 

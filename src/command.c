@@ -27,7 +27,7 @@
 #include "search.h"
 #include "status.h"
 #include "path.h"
-#include "gcc.h"
+#include "Compiler.h"
 
 #include <mpd/client.h>
 
@@ -38,7 +38,7 @@
 #define DIE(...) do { fprintf(stderr, __VA_ARGS__); return -1; } while(0)
 
 #define SIMPLE_CMD(funcname, libmpdclient_funcname, ret) \
-int funcname(mpd_unused int argc, mpd_unused char **argv, \
+int funcname(gcc_unused int argc, gcc_unused char **argv, \
 	     struct mpd_connection *conn) { \
         libmpdclient_funcname(conn); \
         my_finishCommand(conn); \
@@ -46,7 +46,7 @@ int funcname(mpd_unused int argc, mpd_unused char **argv, \
 }
 
 #define SIMPLE_ONEARG_CMD(funcname, libmpdclient_funcname, ret) \
-int funcname (mpd_unused int argc, char **argv, struct mpd_connection *conn) { \
+int funcname (gcc_unused int argc, char **argv, struct mpd_connection *conn) { \
 	if (!libmpdclient_funcname(conn, charset_to_utf8(argv[0]))) \
 		printErrorAndExit(conn); \
         return ret; \
@@ -161,7 +161,7 @@ int cmd_add (int argc, char ** argv, struct mpd_connection *conn )
 }
 
 int
-cmd_crop(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
+cmd_crop(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
 {
 	struct mpd_status *status = getStatus( conn );
 	int length = mpd_status_get_queue_length(status) - 1;
@@ -235,7 +235,7 @@ wait_current(struct mpd_connection *c)
 	} while (new_song == old_song);
 }
 
-int cmd_current(mpd_unused int argc, mpd_unused char ** argv, struct mpd_connection *conn)
+int cmd_current(gcc_unused int argc, gcc_unused char ** argv, struct mpd_connection *conn)
 {
 	if (options.wait)
 		wait_current(conn);
@@ -345,7 +345,7 @@ int cmd_del ( int argc, char ** argv, struct mpd_connection *conn )
 }
 
 int
-cmd_cdprev(mpd_unused int argc, mpd_unused char **argv,
+cmd_cdprev(gcc_unused int argc, gcc_unused char **argv,
 	   struct mpd_connection *conn)
 {
 	struct mpd_status *status = getStatus(conn);
@@ -364,7 +364,7 @@ cmd_cdprev(mpd_unused int argc, mpd_unused char **argv,
 }
 
 int
-cmd_toggle(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
+cmd_toggle(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
 {
 	struct mpd_status *status = getStatus(conn);
 
@@ -377,7 +377,7 @@ cmd_toggle(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *c
 }
 
 int
-cmd_outputs(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
+cmd_outputs(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
 {
 	mpd_send_outputs(conn);
 
@@ -515,7 +515,7 @@ cmd_enable(int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
-cmd_disable(mpd_unused int argc, char **argv, struct mpd_connection *conn)
+cmd_disable(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 {
 	return enable_disable(argc, argv, conn, mpd_send_disable_output,
 			      mpd_send_enable_output);
@@ -564,7 +564,7 @@ int cmd_play ( int argc, char ** argv, struct mpd_connection *conn )
 }
 
 int
-cmd_seek(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
+cmd_seek(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
 {
 	struct mpd_status *status;
 	char * arg = argv[0];
@@ -692,7 +692,7 @@ cmd_seek(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *con
 }
 
 int
-cmd_move(mpd_unused int argc, char **argv, struct mpd_connection *conn)
+cmd_move(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 {
 	int from;
 	if(!parse_int(argv[0], &from) || from<=0)
@@ -712,7 +712,7 @@ cmd_move(mpd_unused int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
-cmd_playlist(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
+cmd_playlist(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
 {
 	if (!mpd_send_list_queue_meta(conn))
 		printErrorAndExit(conn);
@@ -970,7 +970,7 @@ int cmd_volume ( int argc, char ** argv, struct mpd_connection *conn )
 }
 
 int
-cmd_pause(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
+cmd_pause(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
 {
 	mpd_send_pause(conn, true);
 	my_finishCommand(conn);
@@ -1090,7 +1090,7 @@ int cmd_mixrampdelay ( int argc, char ** argv, struct mpd_connection *conn )
 }
 
 int
-cmd_version(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
+cmd_version(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
 {
 	const unsigned *version = mpd_connection_get_server_version(conn);
 
@@ -1131,7 +1131,7 @@ static char * DHMS(unsigned long t)
 }
 
 int
-cmd_stats(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *conn)
+cmd_stats(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
 {
 	struct mpd_stats *stats = mpd_run_stats(conn);
 	if (stats == NULL)
@@ -1154,7 +1154,7 @@ cmd_stats(mpd_unused int argc, mpd_unused char **argv, struct mpd_connection *co
 }
 
 int
-cmd_status(mpd_unused  int argc, mpd_unused char **argv, struct mpd_connection *conn)
+cmd_status(gcc_unused  int argc, gcc_unused char **argv, struct mpd_connection *conn)
 {
 	if (options.verbosity >= V_DEFAULT)
 		print_status(conn);

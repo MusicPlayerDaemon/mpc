@@ -23,7 +23,7 @@
 #include "tab.h"
 #include "charset.h"
 #include "util.h"
-#include "gcc.h"
+#include "Compiler.h"
 
 #include <mpd/client.h>
 
