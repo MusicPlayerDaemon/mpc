@@ -1,4 +1,4 @@
-0.25 (not yet released)
+0.25 (2013/11/09)
 * fix "insert" with directory argument
 * optimize tab completion commands
 * do character set conversion for tab completion commands
