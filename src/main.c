@@ -27,6 +27,7 @@
 #include "status.h"
 #include "command.h"
 #include "sticker.h"
+#include "tab.h"
 #include "idle.h"
 #include "message.h"
 #include "search.h"
