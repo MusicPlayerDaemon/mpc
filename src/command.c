@@ -22,6 +22,7 @@
 #include "charset.h"
 #include "options.h"
 #include "util.h"
+#include "args.h"
 #include "search.h"
 #include "status.h"
 #include "path.h"

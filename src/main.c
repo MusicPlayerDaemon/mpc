@@ -22,6 +22,7 @@
 #include "charset.h"
 #include "password.h"
 #include "util.h"
+#include "args.h"
 #include "status.h"
 #include "command.h"
 #include "sticker.h"

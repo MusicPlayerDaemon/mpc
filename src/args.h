@@ -18,31 +18,47 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MPC_UTIL_H
-#define MPC_UTIL_H
+#ifndef MPC_ARGS_H
+#define MPC_ARGS_H
 
-#include <mpd/client.h>
+#include <stdbool.h>
 
-struct mpd_connection;
-struct mpd_song;
+struct int_value_change {
+	int value;
+	bool is_relative;
+};
+
+int
+stdinToArgArray(char ***array);
 
 void
-printErrorAndExit(struct mpd_connection *conn);
+free_pipe_array(unsigned max, char **array);
+
+int
+get_boolean(const char *arg);
 
 /**
- * Call mpd_response_finish(), and if that fails, call
- * printErrorAndExit().
+ * @return true on success
  */
-void
-my_finishCommand(struct mpd_connection *conn);
+bool
+parse_int(const char *s, int *value_r);
 
-void
-pretty_print_song(const struct mpd_song *song);
+/**
+ * @return true on success
+ */
+bool
+parse_float(const char *s, float *value_r);
 
-void
-print_entity_list(struct mpd_connection *c, enum mpd_entity_type filter_type);
+/**
+ * note - simply strips number out of formatting; does not -1 or +1 or
+ * change the number in any other way for that matter
+ *
+ * @return true on success
+ */
+bool
+parse_songnum(const char *s, int *value_r);
 
-void
-print_filenames(struct mpd_connection *conn);
+bool
+parse_int_value_change(const char *s, struct int_value_change *value_r);
 
-#endif /* MPC_UTIL_H */	
+#endif
