@@ -114,9 +114,9 @@ cmd_tab(gcc_unused int argc, char ** argv, struct mpd_connection *conn)
 
 	struct mpd_song *song;
 	while ((song = mpd_recv_song(conn)) != NULL) {
-		if (memcmp(mpd_song_get_uri(song), prefix, prefix_length) == 0)
-			printf("%s\n",
-			       charset_from_utf8(mpd_song_get_uri(song)));
+		const char *path = mpd_song_get_uri(song);
+		if (memcmp(path, prefix, prefix_length) == 0)
+			printf("%s\n", charset_from_utf8(path));
 
 		mpd_song_free(song);
 	}
