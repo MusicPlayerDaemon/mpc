@@ -34,6 +34,9 @@ stdinToArgArray(char ***array);
 void
 free_pipe_array(unsigned max, char **array);
 
+void
+strip_trailing_slash(char *s);
+
 int
 get_boolean(const char *arg);
 

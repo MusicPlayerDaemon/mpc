@@ -65,6 +65,34 @@ free_pipe_array(unsigned max, char ** array)
 		free(array[i]);
 }
 
+gcc_pure
+static bool
+uri_has_scheme(const char *uri)
+{
+	return strstr(uri, "://") != NULL;
+}
+
+void
+strip_trailing_slash(char *s)
+{
+	if (uri_has_scheme(s))
+		/* strip slashes only if this string is relative to
+		   the music directory; absolute URLs are not, for
+		   sure */
+		return;
+
+	size_t len = strlen(s);
+
+	if (len == 0)
+		return;
+	--len;
+
+	if (s[len] == '/')
+		s[len] = '\0';
+
+	return;
+}
+
 int
 get_boolean(const char *arg)
 {

@@ -34,33 +34,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-static bool
-uri_has_scheme(const char *uri)
-{
-	return strstr(uri, "://") != NULL;
-}
-
-static void
-strip_trailing_slash(char *s)
-{
-	if (uri_has_scheme(s))
-		/* strip slashes only if this string is relative to
-		   the music directory; absolute URLs are not, for
-		   sure */
-		return;
-
-	size_t len = strlen(s);
-
-	if (len == 0)
-		return;
-	--len;
-
-	if (s[len] == '/')
-		s[len] = '\0';
-
-	return;
-}
-
 SIMPLE_CMD(cmd_next, mpd_run_next, 1)
 SIMPLE_CMD(cmd_prev, mpd_run_previous, 1)
 SIMPLE_CMD(cmd_stop, mpd_run_stop, 1)
