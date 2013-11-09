@@ -1,4 +1,5 @@
 0.25 (not yet released)
+* fix "insert" with directory argument
 * optimize tab completion commands
 * do character set conversion for tab completion commands
 * require libmpdclient 2.3, MPD 0.16

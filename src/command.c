@@ -874,6 +874,16 @@ int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
 	return 0;
 }
 
+gcc_pure
+static unsigned
+query_queue_length(struct mpd_connection *conn)
+{
+	struct mpd_status *status = getStatus(conn);
+	const unsigned length = mpd_status_get_queue_length(status);
+	mpd_status_free(status);
+	return length;
+}
+
 int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 {
 	struct mpd_status *status = getStatus(conn);
@@ -885,7 +895,15 @@ int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 	if (ret != 0) {
 		return ret;
 	}
-	return mpd_run_move_range(conn, from, from+argc,
+
+	/* check the new queue length to find out how many songs were
+	   appended  */
+	const unsigned end = query_queue_length(conn);
+	if (end == from)
+		return 0;
+
+	/* move those songs to right after the current one */
+	return mpd_run_move_range(conn, from, end,
 		cur_pos+1);
 }
 
