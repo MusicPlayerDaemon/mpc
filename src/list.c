@@ -239,7 +239,7 @@ void freeList(void * list) {
 
 	tmpNode = ((List *)list)->firstNode;
 
-	if(((List *)list)->nodesArray) free(((List *)list)->nodesArray);
+	free(((List *)list)->nodesArray);
 
 	while(tmpNode!=NULL) {
 		tmpNode2 = tmpNode->nextNode;

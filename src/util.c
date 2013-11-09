@@ -281,10 +281,8 @@ songToFormatedString(const struct mpd_song *song,
 		if (p[0] == '|') {
 			++p;
 			if(!found) {
-				if(ret) {
-					free(ret);
-					ret = NULL;
-				}
+				free(ret);
+				ret = NULL;
 			}
 			else {
 				p = skipFormatting(p);
@@ -317,7 +315,7 @@ songToFormatedString(const struct mpd_song *song,
 		if (p[0] == ']')
 		{
 			if(last) *last = p+1;
-			if(!found && ret) {
+			if (!found) {
 				free(ret);
 				ret = NULL;
 			}

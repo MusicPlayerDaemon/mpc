@@ -108,8 +108,7 @@ charset_set(const char *to, const char *from)
 
 	int ret = charset_set2(to, from);
 
-	if (allocated != NULL)
-		free(allocated);
+	free(allocated);
 
 	return ret;
 }
@@ -211,7 +210,7 @@ charset_to_utf8(const char *from) {
 		/* no locale: return raw input */
 		return from;
 
-	if(to) free(to);
+	free(to);
 
 	charset_set("UTF-8", locale_charset);
 	to = charset_conv_strdup(from);
@@ -230,7 +229,7 @@ charset_from_utf8(const char *from) {
 		/* no locale: return raw UTF-8 */
 		return from;
 
-	if(to) free(to);
+	free(to);
 
 	charset_set(locale_charset, "UTF-8");
 	to = charset_conv_strdup(from);
