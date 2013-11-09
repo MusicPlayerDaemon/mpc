@@ -1156,14 +1156,14 @@ int cmd_lstab ( int argc, char ** argv, struct mpd_connection *conn )
 int cmd_tab ( int argc, char ** argv, struct mpd_connection *conn )
 {
 	struct mpd_song *song;
-	char empty[] = "";
-	char *dir = empty;
+	char *allocated = NULL;
+	const char *dir = "";
 
 	if (argc == 1) {
 		if (strrchr(argv[0], '/')) {
-			dir = strdup(argv[0]);
-			if (!dir) return 0;
-			char *tmp = strrchr(dir, '/');
+			dir = allocated = strdup(argv[0]);
+			if (allocated == NULL) return 0;
+			char *tmp = strrchr(allocated, '/');
 			if (tmp) *tmp = '\0'; // XXX: It's unpossible for tmp to be NULL.
 		}
 	}
@@ -1171,7 +1171,7 @@ int cmd_tab ( int argc, char ** argv, struct mpd_connection *conn )
 	if (!mpd_send_list_all(conn, dir))
 		printErrorAndExit(conn);
 
-	if (*dir) free(dir);
+	free(allocated);
 
 	while ((song = mpd_recv_song(conn)) != NULL) {
 		if (argc != 1 ||
