@@ -113,9 +113,9 @@ static struct command {
 	{"stats",       0,   -1,  0,    cmd_stats,       "", "Display statistics about MPD"},
 	{"version",     0,   0,   0,    cmd_version,     "", "Report version of MPD"},
 	/* loadtab, lstab, and tab used for completion-scripting only */
-	{"loadtab",     0,   1,   0,    cmd_loadtab,     "<directory>", NULL},
-	{"lstab",       0,   1,   0,    cmd_lstab,       "<directory>", NULL},
-	{"tab",         0,   1,   0,    cmd_tab,         "<path>", NULL},
+	{"loadtab",     1,   1,   0,    cmd_loadtab,     "<directory>", NULL},
+	{"lstab",       1,   1,   0,    cmd_lstab,       "<directory>", NULL},
+	{"tab",         1,   1,   0,    cmd_tab,         "<path>", NULL},
 	/* status was added for pedantic reasons */
 	{"status",      0,   -1,  0,    cmd_status,      "", NULL},
 	{ "idle", 0, -1, 0, cmd_idle, "[events]",
