@@ -21,6 +21,8 @@
 #ifndef MPC_ARGS_H
 #define MPC_ARGS_H
 
+#include "Compiler.h"
+
 #include <stdbool.h>
 
 struct int_value_change {
@@ -33,6 +35,10 @@ stdinToArgArray(char ***array);
 
 void
 free_pipe_array(unsigned max, char **array);
+
+gcc_pure
+bool
+contains_absolute_path(unsigned argc, char **argv);
 
 void
 strip_trailing_slash(char *s);

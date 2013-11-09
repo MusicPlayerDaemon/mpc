@@ -47,16 +47,6 @@ SIMPLE_CMD(cmd_clearerror, mpd_run_clearerror, 1)
 SIMPLE_ONEARG_CMD(cmd_save, mpd_run_save, 0)
 SIMPLE_ONEARG_CMD(cmd_rm, mpd_run_rm, 0)
 
-static bool
-contains_absolute_path(unsigned argc, char **argv)
-{
-	for (unsigned i = 0; i < argc; ++i)
-		if (argv[i][0] == '/')
-			return true;
-
-	return false;
-}
-
 int cmd_add (int argc, char ** argv, struct mpd_connection *conn )
 {
 	if (contains_absolute_path(argc, argv) && !path_prepare(conn))

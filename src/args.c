@@ -65,6 +65,16 @@ free_pipe_array(unsigned max, char ** array)
 		free(array[i]);
 }
 
+bool
+contains_absolute_path(unsigned argc, char **argv)
+{
+	for (unsigned i = 0; i < argc; ++i)
+		if (argv[i][0] == '/')
+			return true;
+
+	return false;
+}
+
 gcc_pure
 static bool
 uri_has_scheme(const char *uri)
