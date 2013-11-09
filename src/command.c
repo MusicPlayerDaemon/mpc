@@ -1158,10 +1158,15 @@ int cmd_tab ( int argc, char ** argv, struct mpd_connection *conn )
 	struct mpd_song *song;
 	char *allocated = NULL;
 	const char *dir = "";
+	const char *prefix = "";
+	size_t prefix_length = 0;
 
 	if (argc == 1) {
-		if (strrchr(argv[0], '/')) {
-			dir = allocated = strdup(argv[0]);
+		prefix = argv[0];
+		prefix_length = strlen(prefix);
+
+		if (strrchr(prefix, '/')) {
+			dir = allocated = strdup(prefix);
 			if (allocated == NULL) return 0;
 			char *tmp = strrchr(allocated, '/');
 			if (tmp) *tmp = '\0'; // XXX: It's unpossible for tmp to be NULL.
@@ -1174,9 +1179,7 @@ int cmd_tab ( int argc, char ** argv, struct mpd_connection *conn )
 	free(allocated);
 
 	while ((song = mpd_recv_song(conn)) != NULL) {
-		if (argc != 1 ||
-		    strncmp(mpd_song_get_uri(song), argv[0],
-			    strlen(argv[0])) == 0)
+		if (memcmp(mpd_song_get_uri(song), prefix, prefix_length) == 0)
 			printf("%s\n",
 			       charset_from_utf8(mpd_song_get_uri(song)));
 
