@@ -53,6 +53,9 @@ printErrorAndExit(struct mpd_connection *conn);
 void
 my_finishCommand(struct mpd_connection *conn);
 
+struct mpd_status *
+getStatus(struct mpd_connection *conn);
+
 void
 pretty_print_song(const struct mpd_song *song);
 

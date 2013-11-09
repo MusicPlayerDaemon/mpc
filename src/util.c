@@ -56,6 +56,16 @@ my_finishCommand(struct mpd_connection *conn)
 		printErrorAndExit(conn);
 }
 
+struct mpd_status *
+getStatus(struct mpd_connection *conn)
+{
+	struct mpd_status *ret = mpd_run_status(conn);
+	if (ret == NULL)
+		printErrorAndExit(conn);
+
+	return ret;
+}
+
 static char * appendToString(char * dest, const char * src, int len) {
 	int destlen;
 

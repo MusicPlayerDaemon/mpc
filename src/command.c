@@ -47,15 +47,6 @@ SIMPLE_CMD(cmd_clearerror, mpd_run_clearerror, 1)
 SIMPLE_ONEARG_CMD(cmd_save, mpd_run_save, 0)
 SIMPLE_ONEARG_CMD(cmd_rm, mpd_run_rm, 0)
 
-static struct mpd_status *
-getStatus(struct mpd_connection *conn) {
-	struct mpd_status *ret = mpd_run_status(conn);
-	if (ret == NULL)
-		printErrorAndExit(conn);
-
-	return ret;
-}
-
 static bool
 contains_absolute_path(unsigned argc, char **argv)
 {
