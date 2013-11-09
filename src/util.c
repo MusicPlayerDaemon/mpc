@@ -51,6 +51,13 @@ printErrorAndExit(struct mpd_connection *conn)
 	exit(EXIT_FAILURE);
 }
 
+void
+my_finishCommand(struct mpd_connection *conn)
+{
+	if (!mpd_response_finish(conn))
+		printErrorAndExit(conn);
+}
+
 int stdinToArgArray(char *** array)
 {
 	List * list = makeList(NULL);

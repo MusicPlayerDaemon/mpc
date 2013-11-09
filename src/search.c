@@ -89,11 +89,6 @@ get_constraints(int argc, char **argv, struct constraint **constraints)
 	return numconstraints;
 }
 
-static void my_finishCommand(struct mpd_connection *conn) {
-	if (!mpd_response_finish(conn))
-		printErrorAndExit(conn);
-}
-
 static void
 add_constraint(struct mpd_connection *conn,
 	       const struct constraint *constraint)

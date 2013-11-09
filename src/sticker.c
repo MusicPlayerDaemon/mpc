@@ -25,11 +25,6 @@
 #include <string.h>
 #include <stdio.h>
 
-static void my_finishCommand(struct mpd_connection *conn) {
-	if (!mpd_response_finish(conn))
-		printErrorAndExit(conn);
-}
-
 static void
 recv_print_stickers(struct mpd_connection *connection)
 {

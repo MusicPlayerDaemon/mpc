@@ -52,11 +52,6 @@ int funcname (mpd_unused int argc, char **argv, struct mpd_connection *conn) { \
         return ret; \
 }
 
-static void my_finishCommand(struct mpd_connection *conn) {
-	if (!mpd_response_finish(conn))
-		printErrorAndExit(conn);
-}
-
 static bool
 uri_has_scheme(const char *uri)
 {

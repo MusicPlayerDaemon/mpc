@@ -36,6 +36,13 @@ struct int_value_change {
 void
 printErrorAndExit(struct mpd_connection *conn);
 
+/**
+ * Call mpd_response_finish(), and if that fails, call
+ * printErrorAndExit().
+ */
+void
+my_finishCommand(struct mpd_connection *conn);
+
 void free_pipe_array (int max, char ** array);
 int stdinToArgArray(char *** array);
 int get_boolean (const char * arg);
