@@ -1165,11 +1165,13 @@ int cmd_tab ( int argc, char ** argv, struct mpd_connection *conn )
 		prefix = argv[0];
 		prefix_length = strlen(prefix);
 
-		if (strrchr(prefix, '/')) {
-			dir = allocated = strdup(prefix);
+		const char *slash = strrchr(prefix, '/');
+		if (slash != NULL) {
+			const size_t length = slash - prefix;
+			dir = allocated = malloc(length + 1);
 			if (allocated == NULL) return 0;
-			char *tmp = strrchr(allocated, '/');
-			if (tmp) *tmp = '\0'; // XXX: It's unpossible for tmp to be NULL.
+			memcpy(allocated, prefix, length);
+			allocated[length] = '\0';
 		}
 	}
 
