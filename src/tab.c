@@ -32,6 +32,20 @@
 #include <string.h>
 #include <stdlib.h>
 
+static char *
+tab_base(const char *prefix)
+{
+	const char *slash = strrchr(prefix, '/');
+	if (slash == NULL)
+		return NULL;
+
+	const size_t length = slash - prefix;
+	char *p = malloc(length + 1);
+	memcpy(p, prefix, length);
+	p[length] = '\0';
+	return p;
+}
+
 int
 cmd_loadtab(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 {
@@ -89,24 +103,12 @@ cmd_tab(gcc_unused int argc, char ** argv, struct mpd_connection *conn)
 	const char *const prefix = argv[0];
 	const size_t prefix_length = strlen(prefix);
 
-	struct mpd_song *song;
-	char *allocated = NULL;
-	const char *dir = "";
-
-	const char *slash = strrchr(prefix, '/');
-	if (slash != NULL) {
-		const size_t length = slash - prefix;
-		dir = allocated = malloc(length + 1);
-		if (allocated == NULL) return 0;
-		memcpy(allocated, prefix, length);
-		allocated[length] = '\0';
-	}
-
-	if (!mpd_send_list_all(conn, dir))
+	char *base = tab_base(prefix);
+	if (!mpd_send_list_all(conn, base))
 		printErrorAndExit(conn);
+	free(base);
 
-	free(allocated);
-
+	struct mpd_song *song;
 	while ((song = mpd_recv_song(conn)) != NULL) {
 		if (memcmp(mpd_song_get_uri(song), prefix, prefix_length) == 0)
 			printf("%s\n",
