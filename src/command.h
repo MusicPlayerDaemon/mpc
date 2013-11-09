@@ -24,26 +24,19 @@
 struct mpd_connection;
 
 int cmd_status(int argc, char **argv, struct mpd_connection *conn);
-int cmd_add(int argc, char **argv, struct mpd_connection *conn);
-int cmd_crop(int argc, char **argv, struct mpd_connection *conn);
 int cmd_current(int argc, char **argv, struct mpd_connection *conn);
-int cmd_del(int argc, char **argv, struct mpd_connection *conn);
 int cmd_play(int argc, char **argv, struct mpd_connection *conn);
 int cmd_next(int argc, char **argv, struct mpd_connection *conn);
 int cmd_prev(int argc, char **argv, struct mpd_connection *conn);
 int cmd_pause(int argc, char **argv, struct mpd_connection *conn);
 int cmd_stop(int argc, char **argv, struct mpd_connection *conn);
 int cmd_seek(int argc, char **argv, struct mpd_connection *conn);
-int cmd_clear(int argc, char **argv, struct mpd_connection *conn);
-int cmd_shuffle(int argc, char **argv, struct mpd_connection *conn);
 int cmd_clearerror(int argc, char **argv, struct mpd_connection *conn);
 int cmd_move(int argc, char **argv, struct mpd_connection *conn);
-int cmd_playlist(int argc, char **argv, struct mpd_connection *conn);
 int cmd_listall(int argc, char **argv, struct mpd_connection *conn);
 int cmd_ls(int argc, char **argv, struct mpd_connection *conn);
 int cmd_lsplaylists(int argc, char **argv, struct mpd_connection *conn);
 int cmd_load(int argc, char **argv, struct mpd_connection *conn);
-int cmd_insert(int argc, char **argv, struct mpd_connection *conn);
 int cmd_list(int argc, char **argv, struct mpd_connection *conn);
 int cmd_save(int argc, char **argv, struct mpd_connection *conn);
 int cmd_rm(int argc, char **argv, struct mpd_connection *conn);

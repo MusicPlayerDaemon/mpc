@@ -17,6 +17,7 @@ src_mpc_SOURCES = \
 	src/args.c src/args.h \
 	src/util.c src/util.h \
 	src/command.c src/command.h \
+	src/queue.c src/queue.h \
 	src/sticker.c src/sticker.h \
 	src/tab.c src/tab.h \
 	src/idle.c src/idle.h \
