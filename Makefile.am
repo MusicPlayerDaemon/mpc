@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
-AUTOMAKE_OPTIONS = foreign 1.11 dist-bzip2 dist-xz
+AUTOMAKE_OPTIONS = foreign 1.11 dist-xz
 
 man_MANS = doc/mpc.1
 doc_DATA = AUTHORS COPYING NEWS README \
