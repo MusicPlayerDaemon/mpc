@@ -1113,15 +1113,17 @@ int cmd_loadtab ( int argc, char ** argv, struct mpd_connection *conn )
 	if (argc != 1)
 		return 0;
 
+	const char *const prefix = argv[0];
+	const size_t prefix_length = strlen(prefix);
+
 	if (!mpd_send_list_meta(conn, NULL))
 		printErrorAndExit(conn);
 
 	struct mpd_playlist *pl;
 	while ((pl = mpd_recv_playlist(conn)) != NULL) {
-		if (strncmp(mpd_playlist_get_path(pl), argv[0],
-			    strlen(argv[0])) == 0)
-			printf("%s\n",
-			       charset_from_utf8(mpd_playlist_get_path(pl)));
+		const char *path = mpd_playlist_get_path(pl);
+		if (memcmp(path, prefix, prefix_length) == 0)
+			printf("%s\n", charset_from_utf8(path));
 
 		mpd_playlist_free(pl);
 	}
@@ -1135,15 +1137,17 @@ int cmd_lstab ( int argc, char ** argv, struct mpd_connection *conn )
 	if (argc != 1)
 		return 0;
 
+	const char *const prefix = argv[0];
+	const size_t prefix_length = strlen(prefix);
+
 	if (!mpd_send_list_all(conn, NULL))
 		printErrorAndExit(conn);
 
 	struct mpd_directory *dir;
 	while ((dir = mpd_recv_directory(conn)) != NULL) {
-		if (strncmp(mpd_directory_get_path(dir), argv[0],
-			    strlen(argv[0])) == 0)
-			printf("%s\n",
-			       charset_from_utf8(mpd_directory_get_path(dir)));
+		const char *path = mpd_directory_get_path(dir);
+		if (memcmp(path, prefix, prefix_length) == 0)
+			printf("%s\n", charset_from_utf8(path));
 
 		mpd_directory_free(dir);
 	}
