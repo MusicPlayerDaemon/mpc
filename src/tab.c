@@ -46,6 +46,15 @@ tab_base(const char *prefix)
 	return p;
 }
 
+static void
+tab_send_list(const char *prefix, struct mpd_connection *conn)
+{
+	char *base = tab_base(prefix);
+	if (!mpd_send_list_meta(conn, base))
+		printErrorAndExit(conn);
+	free(base);
+}
+
 int
 cmd_loadtab(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 {
@@ -54,8 +63,7 @@ cmd_loadtab(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 	const char *const prefix = argv[0];
 	const size_t prefix_length = strlen(prefix);
 
-	if (!mpd_send_list_meta(conn, NULL))
-		printErrorAndExit(conn);
+	tab_send_list(prefix, conn);
 
 	struct mpd_playlist *pl;
 	while ((pl = mpd_recv_playlist(conn)) != NULL) {
@@ -78,8 +86,7 @@ cmd_lstab(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 	const char *const prefix = argv[0];
 	const size_t prefix_length = strlen(prefix);
 
-	if (!mpd_send_list_all(conn, NULL))
-		printErrorAndExit(conn);
+	tab_send_list(prefix, conn);
 
 	struct mpd_directory *dir;
 	while ((dir = mpd_recv_directory(conn)) != NULL) {
@@ -103,10 +110,7 @@ cmd_tab(gcc_unused int argc, char ** argv, struct mpd_connection *conn)
 	const char *const prefix = argv[0];
 	const size_t prefix_length = strlen(prefix);
 
-	char *base = tab_base(prefix);
-	if (!mpd_send_list_all(conn, base))
-		printErrorAndExit(conn);
-	free(base);
+	tab_send_list(prefix, conn);
 
 	struct mpd_song *song;
 	while ((song = mpd_recv_song(conn)) != NULL) {
