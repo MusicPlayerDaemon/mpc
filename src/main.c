@@ -147,7 +147,8 @@ print_usage(FILE * outfp, char * progname)
 		"mpc version: "VERSION"\n",progname);
 }
 
-static int print_help(char * progname, char * command)
+static int
+print_help(const char *progname, const char *command)
 {
 	if (command && strcmp(command, "help")) {
 		fprintf(stderr,"unknown command \"%s\"\n",command);
