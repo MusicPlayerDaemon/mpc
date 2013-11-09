@@ -1,4 +1,6 @@
 0.25 (not yet released)
+* optimize tab completion commands
+* do character set conversion for tab completion commands
 * require libmpdclient 2.3, MPD 0.16
 
 0.24 (2013/10/29)

@@ -60,7 +60,7 @@ cmd_loadtab(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 {
 	assert(argc == 1);
 
-	const char *const prefix = argv[0];
+	const char *const prefix = charset_to_utf8(argv[0]);
 	const size_t prefix_length = strlen(prefix);
 
 	tab_send_list(prefix, conn);
@@ -83,7 +83,7 @@ cmd_lstab(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 {
 	assert(argc == 1);
 
-	const char *const prefix = argv[0];
+	const char *const prefix = charset_to_utf8(argv[0]);
 	const size_t prefix_length = strlen(prefix);
 
 	tab_send_list(prefix, conn);
@@ -107,7 +107,7 @@ cmd_tab(gcc_unused int argc, char ** argv, struct mpd_connection *conn)
 {
 	assert(argc == 1);
 
-	const char *const prefix = argv[0];
+	const char *const prefix = charset_to_utf8(argv[0]);
 	const size_t prefix_length = strlen(prefix);
 
 	tab_send_list(prefix, conn);
