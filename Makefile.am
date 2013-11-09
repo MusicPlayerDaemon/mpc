@@ -11,7 +11,7 @@ bin_PROGRAMS = src/mpc
 
 src_mpc_SOURCES = \
 	src/main.c src/mpc.h \
-	src/list.c list.h \
+	src/list.c src/list.h \
 	src/password.c src/password.h \
 	src/status.c src/status.h \
 	src/args.c src/args.h \
