@@ -9,38 +9,23 @@ EXTRA_DIST = $(man_MANS) $(doc_DATA)
 
 bin_PROGRAMS = src/mpc
 
-src_mpc_headers = \
-	src/list.h \
-	src/password.h \
-	src/charset.h \
-	src/status.h \
-	src/util.h \
-	src/command.h \
-	src/idle.h \
-	src/search.h \
-	src/sticker.h \
-	src/mpc.h \
-	src/options.h \
+src_mpc_SOURCES = \
+	src/main.c src/mpc.h \
+	src/list.c list.h \
+	src/password.c src/password.h \
+	src/status.c src/status.h \
+	src/util.c src/util.h \
+	src/command.c src/command.h \
+	src/sticker.c src/sticker.h \
+	src/idle.c src/idle.h \
+	src/message.c src/message.h \
+	src/search.c src/search.h \
+	src/options.c src/options.h \
+	src/path.c src/path.h \
 	src/gcc.h
 
-src_mpc_SOURCES = \
-	src/main.c \
-	src/list.c \
-	src/password.c \
-	src/status.c \
-	src/util.c \
-	src/command.c \
-	src/sticker.c \
-	src/idle.c \
-	src/message.h \
-	src/message.c \
-	src/search.c \
-	src/options.c \
-	src/path.c src/path.h \
-	$(src_mpc_headers)
-
 if HAVE_ICONV
-src_mpc_SOURCES += src/charset.c
+src_mpc_SOURCES += src/charset.c src/charset.h
 endif
 
 src_mpc_CPPFLAGS = $(AM_CPPFLAGS) $(ICONV_CFLAGS) $(LIBMPDCLIENT_CFLAGS)
