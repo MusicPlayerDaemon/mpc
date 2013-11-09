@@ -26,6 +26,23 @@
 struct mpd_connection;
 struct mpd_song;
 
+#define DIE(...) do { fprintf(stderr, __VA_ARGS__); return -1; } while(0)
+
+#define SIMPLE_CMD(funcname, libmpdclient_funcname, ret) \
+int funcname(gcc_unused int argc, gcc_unused char **argv, \
+	     struct mpd_connection *conn) { \
+	libmpdclient_funcname(conn); \
+	my_finishCommand(conn); \
+	return ret; \
+}
+
+#define SIMPLE_ONEARG_CMD(funcname, libmpdclient_funcname, ret) \
+int funcname (gcc_unused int argc, char **argv, struct mpd_connection *conn) { \
+	if (!libmpdclient_funcname(conn, charset_to_utf8(argv[0]))) \
+		printErrorAndExit(conn); \
+	return ret; \
+}
+
 void
 printErrorAndExit(struct mpd_connection *conn);
 

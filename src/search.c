@@ -28,8 +28,6 @@
 #include <string.h>
 #include <strings.h>
 
-#define DIE(...) do { fprintf(stderr, __VA_ARGS__); return false; } while(0)
-
 enum mpd_tag_type
 get_search_type(const char *name)
 {
