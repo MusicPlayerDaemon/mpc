@@ -877,12 +877,11 @@ int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
 int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 {
 	struct mpd_status *status = getStatus(conn);
-
-	const int from = mpd_status_get_queue_length(status);
-
-	int ret = cmd_add(argc, argv, conn);
+	const unsigned from = mpd_status_get_queue_length(status);
 	const int cur_pos = mpd_status_get_song_pos(status);
 	mpd_status_free(status);
+
+	int ret = cmd_add(argc, argv, conn);
 	if (ret != 0) {
 		return ret;
 	}
