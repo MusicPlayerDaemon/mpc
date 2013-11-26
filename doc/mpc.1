@@ -120,7 +120,7 @@ Gets and sets the current amount of crossfading between songs (0 disables crossf
 Gets and sets the volume level at which songs with MIXRAMP tags will be overlapped. This disables the fading of the crossfade command and simply mixes the songs. \-50.0 will effectively remove any gaps, 0.0 will mash tracks together. The amount of overlap is limited by the audio_buffer_size MPD configuration parameter.
 .TP
 .B mixrampdelay [<seconds>]
-+Gets and sets the current amount of extra delay added to the value computed from the MIXRAMP tags. (A negative value disables overlapping with MIXRAMP tags and restores the previous value of crossfade).
+Gets and sets the current amount of extra delay added to the value computed from the MIXRAMP tags. (A negative value disables overlapping with MIXRAMP tags and restores the previous value of crossfade).
 .TP
 .B del <songpos>
 Removes a playlist number from the playlist. Can also read input from pipes (0 deletes the current playing song).
