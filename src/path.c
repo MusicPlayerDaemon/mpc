@@ -54,7 +54,7 @@ path_prepare(struct mpd_connection *conn)
 const char *
 to_relative_path(const char *path)
 {
-	if (path[0] != '/')
+	if (music_directory == NULL || path[0] != '/')
 		return NULL;
 
 	const size_t path_length = strlen(path);

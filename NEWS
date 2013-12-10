@@ -1,4 +1,5 @@
 0.26 (not yet released)
+* fix segfault when adding absolute paths
 
 0.25 (2013/11/09)
 * fix "insert" with directory argument
