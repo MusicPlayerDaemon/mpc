@@ -197,9 +197,13 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
-cmd_playlist(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
+cmd_playlist(int argc, char **argv, struct mpd_connection *conn)
 {
-	if (!mpd_send_list_queue_meta(conn))
+	bool ret = argc > 0
+		? mpd_send_list_playlist_meta(conn, argv[0])
+		: mpd_send_list_queue_meta(conn);
+
+	if (ret == false)
 		printErrorAndExit(conn);
 
 	struct mpd_song *song;

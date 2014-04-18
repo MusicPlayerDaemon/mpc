@@ -84,7 +84,7 @@ static struct command {
 	{"move",        2,   2,   0,    cmd_move,        "<from> <to>", "Move song in playlist"},
         /* mv is an alias for move */
 	{"mv",          2,   2,   0,    cmd_move,        "<from> <to>", NULL},
-	{"playlist",    0,   0,   0,    cmd_playlist,    "", "Print the current playlist"},
+	{"playlist",    0,   1,   0,    cmd_playlist,    "[<playlist>]", "Print <playlist>"},
 	{"listall",     0,   -1,  2,    cmd_listall,     "[<file>]", "List all songs in the music dir"},
 	{"ls",          0,   -1,  2,    cmd_ls,          "[<directory>]", "List the contents of <directory>"},
 	{"lsplaylists", 0,   -1,  2,    cmd_lsplaylists, "", "List currently available playlists"},
