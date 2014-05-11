@@ -219,6 +219,8 @@ songToFormatedString(const struct mpd_song *song,
 				case 'v':	ltemp = '\v'; break;
 				case 'f':	ltemp = '\f'; break;
 				case 'r':	ltemp = '\r'; break;
+				case '[':	ltemp = '['; break;
+				case ']':	ltemp = ']'; break;
 				default:	ltemp = p[0]; p-=1; break;
 			}
 			ret = appendToString(ret, &ltemp, 1);
