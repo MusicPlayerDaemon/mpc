@@ -155,6 +155,7 @@ songToFormatedString(const struct mpd_song *song,
 {
 	char * ret = NULL;
 	const char *p;
+	bool hit_escape;
 	bool found = false;
 
 	/* we won't mess up format, we promise... */
@@ -205,6 +206,7 @@ songToFormatedString(const struct mpd_song *song,
 		}
 
 		/* take care of escape sequences */
+		hit_escape = false;
 		while (p[0] == '\\')
 		{
 			char ltemp;
@@ -217,11 +219,17 @@ songToFormatedString(const struct mpd_song *song,
 				case 'v':	ltemp = '\v'; break;
 				case 'f':	ltemp = '\f'; break;
 				case 'r':	ltemp = '\r'; break;
+				case '[':	ltemp = '['; break;
+				case ']':	ltemp = ']'; break;
 				default:	ltemp = p[0]; p-=1; break;
 			}
 			ret = appendToString(ret, &ltemp, 1);
 			p+=2;
+			hit_escape = true;
 		}
+
+		if (hit_escape)
+			continue;
 
 		/* pass-through non-escaped portions of the format string */
 		if (p[0] != '#' && p[0] != '%')
