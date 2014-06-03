@@ -727,9 +727,11 @@ bool_cmd(int argc, char **argv, struct mpd_connection *conn,
 	bool mode;
 
 	if (argc == 1) {
-		mode = get_boolean(argv[0]);
-		if (mode < 0)
+		int mode_i = get_boolean(argv[0]);
+		if (mode_i < 0)
 			return -1;
+
+		mode = (bool)mode_i;
 	} else {
 		struct mpd_status *status;
 		status = getStatus(conn);
