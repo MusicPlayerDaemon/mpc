@@ -138,7 +138,7 @@ static int do_search ( int argc, char ** argv, struct mpd_connection *conn, int 
 	if (!mpd_search_commit(conn))
 		printErrorAndExit(conn);
 
-	print_filenames(conn);
+	print_entity_list(conn, MPD_ENTITY_TYPE_SONG);
 
 	my_finishCommand(conn);
 

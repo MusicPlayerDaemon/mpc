@@ -1,6 +1,7 @@
 0.26 (not yet released)
 * fix segfault when adding absolute paths
 * "playlist" can show stored playlist
+* "search" supports --format
 
 0.25 (2013/11/09)
 * fix "insert" with directory argument
