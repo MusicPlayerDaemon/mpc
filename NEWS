@@ -8,6 +8,7 @@
 * show directories in command "tab"
 * bash completion: escape '&'
 * add %mtime% and %mdate% to --format
+* recognize command by unambiguous prefix
 
 0.26 (2014/06/03)
 * fix segfault when adding absolute paths

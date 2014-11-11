@@ -215,11 +215,24 @@ setup_connection(void)
 static struct command *
 find_command(const char *name)
 {
-	for (unsigned i = 0; mpc_table[i].command != NULL; ++i)
-		if (strcmp(name, mpc_table[i].command) == 0)
-			return &mpc_table[i];
+	unsigned n_matches = 0;
+	size_t name_length = strlen(name);
+	struct command *command = NULL;
 
-	return NULL;
+	for (unsigned i = 0; mpc_table[i].command != NULL; ++i) {
+		if (memcmp(name, mpc_table[i].command, name_length) == 0) {
+			command = &mpc_table[i];
+			++n_matches;
+
+			if (command->command[name_length] == 0)
+				/* exact match */
+				return &mpc_table[i];
+		}
+	}
+
+	return n_matches == 1
+		? command
+		: /* ambiguous or nonexistent */ NULL;
 }
 
 /* check arguments to see if they are valid */
