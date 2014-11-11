@@ -1,3 +1,5 @@
+0.27 (not yet released)
+
 0.26 (2014/06/03)
 * fix segfault when adding absolute paths
 * "playlist" can show stored playlist
