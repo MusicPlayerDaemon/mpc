@@ -34,7 +34,6 @@ string_append(char *dest, const char *src, size_t len)
 
 	if (dest == NULL) {
 		dest = malloc(len + 1);
-		memset(dest, 0, len + 1);
 		destlen = 0;
 	} else {
 		destlen = strlen(dest);
