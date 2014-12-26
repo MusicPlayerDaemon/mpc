@@ -15,6 +15,7 @@ src_mpc_SOURCES = \
 	src/password.c src/password.h \
 	src/status.c src/status.h \
 	src/args.c src/args.h \
+	src/format.c src/format.h \
 	src/util.c src/util.h \
 	src/command.c src/command.h \
 	src/queue.c src/queue.h \
