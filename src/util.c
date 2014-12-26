@@ -67,7 +67,7 @@ getStatus(struct mpd_connection *conn)
 static void
 print_formatted_song(const struct mpd_song *song, const char * format)
 {
-	char * str = songToFormatedString(song, format, NULL);
+	char * str = format_song(song, format, NULL);
 
 	if(str) {
 		printf("%s", str);

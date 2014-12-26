@@ -27,42 +27,43 @@
 #include <string.h>
 #include <stdlib.h>
 
-static char * appendToString(char * dest, const char * src, int len) {
+static char *
+string_append(char *dest, const char *src, int len)
+{
 	int destlen;
 
-	if(dest == NULL) {
-		dest = malloc(len+1);
-		memset(dest, 0, len+1);
+	if (dest == NULL) {
+		dest = malloc(len + 1);
+		memset(dest, 0, len + 1);
 		destlen = 0;
-	}
-	else {
+	} else {
 		destlen = strlen(dest);
-		dest = realloc(dest, destlen+len+1);
+		dest = realloc(dest, destlen + len + 1);
 	}
 
-	memcpy(dest+destlen, src, len);
-	dest[destlen+len] = '\0';
+	memcpy(dest + destlen, src, len);
+	dest[destlen + len] = '\0';
 
 	return dest;
 }
 
-static const char * skipFormatting(const char * p) {
+static const char *
+skip_format(const char *p)
+{
 	int stack = 0;
-		
+
 	while (*p != '\0') {
-		if(*p == '[') stack++;
-		else if(*p == '#' && p[1] != '\0') {
+		if (*p == '[')
+			stack++;
+		else if (*p == '#' && p[1] != '\0')
 			/* skip escaped stuff */
 			++p;
-		}
-		else if(stack) {
-			if(*p == ']') stack--;
-		}
-		else {
-			if(*p == '&' || *p == '|' || *p == ']') {
-				break;
-			}
-		}
+		else if (stack > 0) {
+			if (*p == ']')
+				--stack;
+		} else if (*p == '&' || *p == '|' || *p == ']')
+			break;
+
 		++p;
 	}
 
@@ -87,7 +88,7 @@ song_value(const struct mpd_song *song, const char *name)
 		} else
 			value = NULL;
 	} else if (strcmp(name, "position") == 0) {
-	        unsigned pos = mpd_song_get_pos(song);
+		unsigned pos = mpd_song_get_pos(song);
 		snprintf(buffer, sizeof(buffer), "%d", pos+1);
 		value = buffer;
 	} else if (strcmp(name, "id") == 0) {
@@ -111,54 +112,50 @@ song_value(const struct mpd_song *song, const char *name)
 
 /* this is a little ugly... */
 char *
-songToFormatedString(const struct mpd_song *song,
-		     const char *format, const char ** last)
+format_song(const struct mpd_song *song,
+	    const char *format, const char **last)
 {
-	char * ret = NULL;
+	char *ret = NULL;
 	const char *p;
 	bool hit_escape;
 	bool found = false;
 
 	/* we won't mess up format, we promise... */
-	for (p = format; *p != '\0'; )
-	{
+	for (p = format; *p != '\0';) {
 		if (p[0] == '|') {
 			++p;
-			if(!found) {
+			if (!found) {
 				free(ret);
 				ret = NULL;
-			}
-			else {
-				p = skipFormatting(p);
-			}
+			} else
+				p = skip_format(p);
+
 			continue;
 		}
-		
+
 		if (p[0] == '&') {
 			++p;
-			if(!found) {
-				p = skipFormatting(p);
-			}
-			else {
+			if (!found)
+				p = skip_format(p);
+			else
 				found = false;
-			}
+
 			continue;
 		}
-		
-		if (p[0] == '[')
-		{
-			char *t = songToFormatedString(song, p+1, &p);
-			if(t != NULL) {
-				ret = appendToString(ret, t, strlen(t));
+
+		if (p[0] == '[') {
+			char *t = format_song(song, p + 1, &p);
+			if (t != NULL) {
+				ret = string_append(ret, t, strlen(t));
 				free(t);
 				found = true;
 			}
 			continue;
 		}
 
-		if (p[0] == ']')
-		{
-			if(last) *last = p+1;
+		if (p[0] == ']') {
+			if (last != NULL)
+				*last = p + 1;
 			if (!found) {
 				free(ret);
 				ret = NULL;
@@ -168,24 +165,53 @@ songToFormatedString(const struct mpd_song *song,
 
 		/* take care of escape sequences */
 		hit_escape = false;
-		while (p[0] == '\\')
-		{
+		while (p[0] == '\\') {
 			char ltemp;
-			switch (p[1]) 
-			{
-				case 'a':	ltemp = '\a'; break;
-				case 'b':	ltemp = '\b'; break;
-				case 't':	ltemp = '\t'; break;
-				case 'n':	ltemp = '\n'; break;
-				case 'v':	ltemp = '\v'; break;
-				case 'f':	ltemp = '\f'; break;
-				case 'r':	ltemp = '\r'; break;
-				case '[':	ltemp = '['; break;
-				case ']':	ltemp = ']'; break;
-				default:	ltemp = p[0]; p-=1; break;
+			switch (p[1]) {
+			case 'a':
+				ltemp = '\a';
+				break;
+
+			case 'b':
+				ltemp = '\b';
+				break;
+
+			case 't':
+				ltemp = '\t';
+				break;
+
+			case 'n':
+				ltemp = '\n';
+				break;
+
+			case 'v':
+				ltemp = '\v';
+				break;
+
+			case 'f':
+				ltemp = '\f';
+				break;
+
+			case 'r':
+				ltemp = '\r';
+				break;
+
+			case '[':
+				ltemp = '[';
+				break;
+
+			case ']':
+				ltemp = ']';
+				break;
+
+			default:
+				ltemp = p[0];
+				--p;
+				break;
 			}
-			ret = appendToString(ret, &ltemp, 1);
-			p+=2;
+
+			ret = string_append(ret, &ltemp, 1);
+			p += 2;
 			hit_escape = true;
 		}
 
@@ -193,41 +219,37 @@ songToFormatedString(const struct mpd_song *song,
 			continue;
 
 		/* pass-through non-escaped portions of the format string */
-		if (p[0] != '#' && p[0] != '%')
-		{
-			ret = appendToString(ret, p, 1);
+		if (p[0] != '#' && p[0] != '%') {
+			ret = string_append(ret, p, 1);
 			++p;
 			continue;
 		}
 
 		/* let the escape character escape itself */
-		if (p[0] == '#' && p[1] != '\0')
-		{
-			ret = appendToString(ret, p+1, 1);
-			p+=2;
+		if (p[0] == '#' && p[1] != '\0') {
+			ret = string_append(ret, p + 1, 1);
+			p += 2;
 			continue;
 		}
 
 		/* advance past the esc character */
 
 		/* find the extent of this format specifier (stop at \0, ' ', or esc) */
-		const char *end = p+1;
-		while(*end >= 'a' && *end <= 'z')
-		{
-			end++;
-		}
+		const char *end = p + 1;
+		while (*end >= 'a' && *end <= 'z')
+			++end;
 
 		const size_t length = end - p + 1;
 
 		if (*end != '%') {
-			ret = appendToString(ret, p, length - 1);
+			ret = string_append(ret, p, length - 1);
 			p += length - 1;
 			continue;
 		}
 
 		char name[32];
 		if (length > (int)sizeof(name)) {
-			ret = appendToString(ret, p, length);
+			ret = string_append(ret, p, length);
 			p += length;
 			continue;
 		}
@@ -239,14 +261,15 @@ songToFormatedString(const struct mpd_song *song,
 		if (temp != NULL) {
 			if (*temp != 0)
 				found = true;
-			ret = appendToString(ret, temp, strlen(temp));
+			ret = string_append(ret, temp, strlen(temp));
 		} else
-			ret = appendToString(ret, p, length);
+			ret = string_append(ret, p, length);
 
 		/* advance past the specifier */
 		p += length;
 	}
 
-	if(last) *last = p;
+	if (last != NULL)
+		*last = p;
 	return ret;
 }

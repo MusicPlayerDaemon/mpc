@@ -24,7 +24,7 @@
 struct mpd_song;
 
 char *
-songToFormatedString(const struct mpd_song *song,
-		     const char *format, const char ** last);
+format_song(const struct mpd_song *song,
+	    const char *format, const char **last);
 
 #endif
