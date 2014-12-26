@@ -30,16 +30,11 @@
 static char *
 string_append(char *dest, const char *src, size_t len)
 {
-	size_t destlen;
+	size_t destlen = dest != NULL
+		? strlen(dest)
+		: 0;
 
-	if (dest == NULL) {
-		dest = malloc(len + 1);
-		destlen = 0;
-	} else {
-		destlen = strlen(dest);
-		dest = realloc(dest, destlen + len + 1);
-	}
-
+	dest = realloc(dest, destlen + len + 1);
 	memcpy(dest + destlen, src, len);
 	dest[destlen + len] = '\0';
 
