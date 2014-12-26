@@ -28,9 +28,9 @@
 #include <stdlib.h>
 
 static char *
-string_append(char *dest, const char *src, int len)
+string_append(char *dest, const char *src, size_t len)
 {
-	int destlen;
+	size_t destlen;
 
 	if (dest == NULL) {
 		dest = malloc(len + 1);
