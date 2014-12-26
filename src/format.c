@@ -111,7 +111,6 @@ format_song(const struct mpd_song *song,
 {
 	char *ret = NULL;
 	const char *p;
-	bool hit_escape;
 	bool found = false;
 
 	/* we won't mess up format, we promise... */
@@ -158,7 +157,7 @@ format_song(const struct mpd_song *song,
 		}
 
 		/* take care of escape sequences */
-		hit_escape = false;
+		bool hit_escape = false;
 		while (p[0] == '\\') {
 			char ltemp;
 			switch (p[1]) {
