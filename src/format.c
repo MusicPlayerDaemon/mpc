@@ -50,7 +50,7 @@ string_append(char *dest, const char *src, size_t len)
 static const char *
 skip_format(const char *p)
 {
-	int stack = 0;
+	unsigned stack = 0;
 
 	while (*p != '\0') {
 		if (*p == '[')
