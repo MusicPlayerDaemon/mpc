@@ -116,6 +116,14 @@ START_TEST(test_default)
 }
 END_TEST
 
+START_TEST(test_escape)
+{
+	struct mpd_song *song = construct_default_song();
+	assert_format(song, "\\a\\b\\t\\n\\v\\f\\r\\[\\]", "\a\b\t\n\v\f\r[]");
+	mpd_song_free(song);
+}
+END_TEST
+
 static Suite *
 create_suite(void)
 {
@@ -126,6 +134,7 @@ create_suite(void)
 	tcase_add_test(tc_core, test_group);
 	tcase_add_test(tc_core, test_fallback);
 	tcase_add_test(tc_core, test_default);
+	tcase_add_test(tc_core, test_escape);
 	suite_add_tcase(s, tc_core);
 	return s;
 }
