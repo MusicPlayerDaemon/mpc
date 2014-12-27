@@ -1,4 +1,5 @@
 0.27 (not yet released)
+* fix --enable-debug and --enable-werror
 
 0.26 (2014/06/03)
 * fix segfault when adding absolute paths
