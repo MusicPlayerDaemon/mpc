@@ -157,8 +157,7 @@ format_song(const struct mpd_song *song,
 		}
 
 		/* take care of escape sequences */
-		bool hit_escape = false;
-		while (p[0] == '\\') {
+		if (p[0] == '\\') {
 			char ltemp;
 			switch (p[1]) {
 			case 'a':
@@ -205,11 +204,8 @@ format_song(const struct mpd_song *song,
 
 			ret = string_append(ret, &ltemp, 1);
 			p += 2;
-			hit_escape = true;
-		}
-
-		if (hit_escape)
 			continue;
+		}
 
 		/* pass-through non-escaped portions of the format string */
 		if (p[0] != '#' && p[0] != '%') {
