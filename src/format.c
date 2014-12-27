@@ -122,31 +122,20 @@ format_song(const struct mpd_song *song,
 				ret = NULL;
 			} else
 				p = skip_format(p);
-
-			continue;
-		}
-
-		if (p[0] == '&') {
+		} else if (p[0] == '&') {
 			++p;
 			if (!found)
 				p = skip_format(p);
 			else
 				found = false;
-
-			continue;
-		}
-
-		if (p[0] == '[') {
+		} else if (p[0] == '[') {
 			char *t = format_song(song, p + 1, &p);
 			if (t != NULL) {
 				ret = string_append(ret, t, strlen(t));
 				free(t);
 				found = true;
 			}
-			continue;
-		}
-
-		if (p[0] == ']') {
+		} else if (p[0] == ']') {
 			if (last != NULL)
 				*last = p + 1;
 			if (!found) {
@@ -154,10 +143,8 @@ format_song(const struct mpd_song *song,
 				ret = NULL;
 			}
 			return ret;
-		}
-
-		/* take care of escape sequences */
-		if (p[0] == '\\') {
+		} else if (p[0] == '\\') {
+			/* take care of escape sequences */
 			char ltemp;
 			switch (p[1]) {
 			case 'a':
@@ -204,58 +191,50 @@ format_song(const struct mpd_song *song,
 
 			ret = string_append(ret, &ltemp, 1);
 			p += 2;
-			continue;
-		}
-
-		/* pass-through non-escaped portions of the format string */
-		if (p[0] != '#' && p[0] != '%') {
+		} else if (p[0] != '#' && p[0] != '%') {
+			/* pass-through non-escaped portions of the format string */
 			ret = string_append(ret, p, 1);
 			++p;
-			continue;
-		}
-
-		/* let the escape character escape itself */
-		if (p[0] == '#' && p[1] != '\0') {
+		} else if (p[0] == '#' && p[1] != '\0') {
+			/* let the escape character escape itself */
 			ret = string_append(ret, p + 1, 1);
 			p += 2;
-			continue;
-		}
+		} else {
+			/* find the extent of this format specifier
+			   (stop at \0, ' ', or esc) */
+			const char *end = p + 1;
+			while (*end >= 'a' && *end <= 'z')
+				++end;
 
-		/* advance past the esc character */
+			const size_t length = end - p + 1;
 
-		/* find the extent of this format specifier (stop at \0, ' ', or esc) */
-		const char *end = p + 1;
-		while (*end >= 'a' && *end <= 'z')
-			++end;
+			if (*end != '%') {
+				ret = string_append(ret, p, length - 1);
+				p += length - 1;
+				continue;
+			}
 
-		const size_t length = end - p + 1;
+			char name[32];
+			if (length > (int)sizeof(name)) {
+				ret = string_append(ret, p, length);
+				p += length;
+				continue;
+			}
 
-		if (*end != '%') {
-			ret = string_append(ret, p, length - 1);
-			p += length - 1;
-			continue;
-		}
+			memcpy(name, p + 1, length - 2);
+			name[length - 2] = 0;
 
-		char name[32];
-		if (length > (int)sizeof(name)) {
-			ret = string_append(ret, p, length);
+			const char *temp = song_value(song, name);
+			if (temp != NULL) {
+				if (*temp != 0)
+					found = true;
+				ret = string_append(ret, temp, strlen(temp));
+			} else
+				ret = string_append(ret, p, length);
+
+			/* advance past the specifier */
 			p += length;
-			continue;
 		}
-
-		memcpy(name, p + 1, length - 2);
-		name[length - 2] = 0;
-
-		const char *temp = song_value(song, name);
-		if (temp != NULL) {
-			if (*temp != 0)
-				found = true;
-			ret = string_append(ret, temp, strlen(temp));
-		} else
-			ret = string_append(ret, p, length);
-
-		/* advance past the specifier */
-		p += length;
 	}
 
 	if (last != NULL)
