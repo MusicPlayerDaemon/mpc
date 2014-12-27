@@ -120,6 +120,7 @@ START_TEST(test_escape)
 {
 	struct mpd_song *song = construct_default_song();
 	assert_format(song, "\\a\\b\\t\\n\\v\\f\\r\\[\\]", "\a\b\t\n\v\f\r[]");
+	assert_format(song, "###%#[#]#|#&", "#%[]|&");
 	mpd_song_free(song);
 }
 END_TEST
