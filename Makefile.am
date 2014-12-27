@@ -35,6 +35,16 @@ endif
 src_mpc_CPPFLAGS = $(AM_CPPFLAGS) $(ICONV_CFLAGS) $(LIBMPDCLIENT_CFLAGS)
 src_mpc_LDADD = $(ICONV_LIBS) $(LIBMPDCLIENT_LIBS)
 
+if ENABLE_TEST
+C_TESTS =
+
+TESTS = $(C_TESTS)
+
+noinst_PROGRAMS = \
+	$(C_TESTS)
+
+endif
+
 # sparse is a semantic parser
 # URL: git://www.kernel.org/pub/scm/devel/sparse/sparse.git
 SPARSE = sparse

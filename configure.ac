@@ -168,6 +168,17 @@ if test "x$enable_debug" = xno; then
 	AX_APPEND_LINK_FLAGS([-Wl,--gc-sections])
 fi
 
+AC_ARG_ENABLE(test,
+	AS_HELP_STRING([--enable-test],
+		[build the test programs (default: disabled)]),,
+	enable_test=no)
+
+if test "x$enable_test" = xyes; then
+	AM_PATH_CHECK(,, [AC_MSG_WARN([check not found])])
+fi
+
+AM_CONDITIONAL(ENABLE_TEST, test "x$enable_test" = xyes)
+
 
 dnl
 
