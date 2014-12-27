@@ -36,12 +36,25 @@ src_mpc_CPPFLAGS = $(AM_CPPFLAGS) $(ICONV_CFLAGS) $(LIBMPDCLIENT_CFLAGS)
 src_mpc_LDADD = $(ICONV_LIBS) $(LIBMPDCLIENT_LIBS)
 
 if ENABLE_TEST
-C_TESTS =
+C_TESTS = \
+	test/test_format
 
 TESTS = $(C_TESTS)
 
 noinst_PROGRAMS = \
 	$(C_TESTS)
+
+test_test_format_SOURCES = \
+	src/format.c \
+	test/test_format.c
+test_test_format_CFLAGS = $(AM_CFLAGS) $(CHECK_CFLAGS)
+test_test_format_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/src $(ICONV_CFLAGS) $(LIBMPDCLIENT_CFLAGS)
+test_test_format_LDADD = $(ICONV_LIBS) $(LIBMPDCLIENT_LIBS) $(CHECK_LIBS) -lrt -lm
+test_test_format_LDFLAGS = -pthread
+
+if HAVE_ICONV
+test_test_format_SOURCES += src/charset.c src/charset.h
+endif
 
 endif
 
