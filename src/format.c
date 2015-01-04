@@ -117,27 +117,35 @@ format_song2(const struct mpd_song *song,
 
 	/* we won't mess up format, we promise... */
 	for (p = format; *p != '\0';) {
-		if (p[0] == '|') {
+		switch (p[0]) {
+		case '|':
 			++p;
 			if (!found) {
 				free(ret);
 				ret = NULL;
 			} else
 				p = skip_format(p);
-		} else if (p[0] == '&') {
+			break;
+
+		case '&':
 			++p;
 			if (!found)
 				p = skip_format(p);
 			else
 				found = false;
-		} else if (p[0] == '[') {
+			break;
+
+		case '[': {
 			char *t = format_song2(song, p + 1, &p);
 			if (t != NULL) {
 				ret = string_append(ret, t, strlen(t));
 				free(t);
 				found = true;
 			}
-		} else if (p[0] == ']') {
+		}
+			break;
+
+		case ']':
 			if (last != NULL)
 				*last = p + 1;
 			if (!found) {
@@ -145,7 +153,8 @@ format_song2(const struct mpd_song *song,
 				ret = NULL;
 			}
 			return ret;
-		} else if (p[0] == '\\') {
+
+		case '\\': {
 			/* take care of escape sequences */
 			char ltemp;
 			switch (p[1]) {
@@ -193,7 +202,10 @@ format_song2(const struct mpd_song *song,
 
 			ret = string_append(ret, &ltemp, 1);
 			p += 2;
-		} else if (p[0] == '%') {
+		}
+			break;
+
+		case '%': {
 			/* find the extent of this format specifier
 			   (stop at \0, ' ', or esc) */
 			const char *end = p + 1;
@@ -228,11 +240,20 @@ format_song2(const struct mpd_song *song,
 
 			/* advance past the specifier */
 			p += length;
-		} else if (p[0] == '#' && p[1] != '\0') {
+		}
+			break;
+
+		case '#':
 			/* let the escape character escape itself */
-			ret = string_append(ret, p + 1, 1);
-			p += 2;
-		} else {
+			if (p[1] != '\0') {
+				ret = string_append(ret, p + 1, 1);
+				p += 2;
+				break;
+			}
+
+			/* fall through */
+
+		default:
 			/* pass-through non-escaped portions of the format string */
 			ret = string_append(ret, p, 1);
 			++p;
