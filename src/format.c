@@ -27,6 +27,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+/**
+ * Reallocate the given string and append the source string.
+ */
 gcc_malloc
 static char *
 string_append(char *dest, const char *src, size_t len)
@@ -42,6 +45,10 @@ string_append(char *dest, const char *src, size_t len)
 	return dest;
 }
 
+/**
+ * Skip the format string until the current group is closed by either
+ * '&', '|' or ']' (supports nesting).
+ */
 gcc_pure
 static const char *
 skip_format(const char *p)
@@ -66,6 +73,15 @@ skip_format(const char *p)
 	return p;
 }
 
+/**
+ * Extract an attribute from a song object.
+ *
+ * @param song the song object
+ * @param name the attribute name
+ * @return the attribute value; NULL if the attribute name is invalid;
+ * an empty string if the attribute name is valid, but not present in
+ * the song
+ */
 gcc_malloc
 static const char *
 song_value(const struct mpd_song *song, const char *name)
