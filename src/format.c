@@ -213,11 +213,8 @@ format_song2(const struct mpd_song *song,
 				break;
 
 			case '[':
-				ltemp = '[';
-				break;
-
 			case ']':
-				ltemp = ']';
+				ltemp = p[1];
 				break;
 
 			default:
