@@ -27,6 +27,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+gcc_malloc
 static char *
 string_append(char *dest, const char *src, size_t len)
 {
@@ -41,6 +42,7 @@ string_append(char *dest, const char *src, size_t len)
 	return dest;
 }
 
+gcc_pure
 static const char *
 skip_format(const char *p)
 {
@@ -64,6 +66,7 @@ skip_format(const char *p)
 	return p;
 }
 
+gcc_malloc
 static const char *
 song_value(const struct mpd_song *song, const char *name)
 {

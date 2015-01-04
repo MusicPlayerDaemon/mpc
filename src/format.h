@@ -21,8 +21,11 @@
 #ifndef MPC_FORMAT_H
 #define MPC_FORMAT_H
 
+#include "Compiler.h"
+
 struct mpd_song;
 
+gcc_malloc
 char *
 format_song(const struct mpd_song *song,
 	    const char *format, const char **last);
