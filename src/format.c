@@ -216,14 +216,14 @@ format_song2(const struct mpd_song *song,
 
 			if (*end != '%') {
 				ret = string_append(ret, p, length - 1);
-				p += length - 1;
+				p = end;
 				continue;
 			}
 
 			char name[32];
 			if (length > (int)sizeof(name)) {
 				ret = string_append(ret, p, length);
-				p += length;
+				p = end + 1;
 				continue;
 			}
 
@@ -239,7 +239,7 @@ format_song2(const struct mpd_song *song,
 				ret = string_append(ret, p, length);
 
 			/* advance past the specifier */
-			p += length;
+			p = end + 1;
 		}
 			break;
 
