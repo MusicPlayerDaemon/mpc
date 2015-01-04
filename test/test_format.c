@@ -53,7 +53,7 @@ static void
 assert_format(const struct mpd_song *song, const char *format,
 	      const char *expected)
 {
-	char *p = format_song(song, format, NULL);
+	char *p = format_song(song, format);
 	if (expected == NULL)
 		ck_assert_ptr_eq(p, NULL);
 	else

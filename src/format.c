@@ -107,10 +107,9 @@ song_value(const struct mpd_song *song, const char *name)
 	return value;
 }
 
-/* this is a little ugly... */
-char *
-format_song(const struct mpd_song *song,
-	    const char *format, const char **last)
+static char *
+format_song2(const struct mpd_song *song,
+	     const char *format, const char **last)
 {
 	char *ret = NULL;
 	const char *p;
@@ -132,7 +131,7 @@ format_song(const struct mpd_song *song,
 			else
 				found = false;
 		} else if (p[0] == '[') {
-			char *t = format_song(song, p + 1, &p);
+			char *t = format_song2(song, p + 1, &p);
 			if (t != NULL) {
 				ret = string_append(ret, t, strlen(t));
 				free(t);
@@ -243,4 +242,10 @@ format_song(const struct mpd_song *song,
 	if (last != NULL)
 		*last = p;
 	return ret;
+}
+
+char *
+format_song(const struct mpd_song *song, const char *format)
+{
+	return format_song2(song, format, NULL);
 }

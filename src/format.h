@@ -28,6 +28,6 @@ struct mpd_song;
 gcc_malloc
 char *
 format_song(const struct mpd_song *song,
-	    const char *format, const char **last);
+	    const char *format);
 
 #endif
