@@ -82,7 +82,7 @@ skip_format(const char *p)
  * an empty string if the attribute name is valid, but not present in
  * the song
  */
-gcc_malloc
+gcc_pure
 static const char *
 song_value(const struct mpd_song *song, const char *name)
 {
