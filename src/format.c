@@ -95,14 +95,14 @@ song_value(const struct mpd_song *song, const char *name)
 		unsigned duration = mpd_song_get_duration(song);
 
 		if (duration > 0) {
-			snprintf(buffer, sizeof(buffer), "%d:%02d",
+			snprintf(buffer, sizeof(buffer), "%u:%02u",
 				 duration / 60, duration % 60);
 			value = buffer;
 		} else
 			value = NULL;
 	} else if (strcmp(name, "position") == 0) {
 		unsigned pos = mpd_song_get_pos(song);
-		snprintf(buffer, sizeof(buffer), "%d", pos+1);
+		snprintf(buffer, sizeof(buffer), "%u", pos+1);
 		value = buffer;
 	} else if (strcmp(name, "id") == 0) {
 		snprintf(buffer, sizeof(buffer), "%u", mpd_song_get_id(song));
