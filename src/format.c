@@ -193,15 +193,7 @@ format_song2(const struct mpd_song *song,
 
 			ret = string_append(ret, &ltemp, 1);
 			p += 2;
-		} else if (p[0] != '#' && p[0] != '%') {
-			/* pass-through non-escaped portions of the format string */
-			ret = string_append(ret, p, 1);
-			++p;
-		} else if (p[0] == '#' && p[1] != '\0') {
-			/* let the escape character escape itself */
-			ret = string_append(ret, p + 1, 1);
-			p += 2;
-		} else {
+		} else if (p[0] == '%') {
 			/* find the extent of this format specifier
 			   (stop at \0, ' ', or esc) */
 			const char *end = p + 1;
@@ -236,6 +228,14 @@ format_song2(const struct mpd_song *song,
 
 			/* advance past the specifier */
 			p += length;
+		} else if (p[0] == '#' && p[1] != '\0') {
+			/* let the escape character escape itself */
+			ret = string_append(ret, p + 1, 1);
+			p += 2;
+		} else {
+			/* pass-through non-escaped portions of the format string */
+			ret = string_append(ret, p, 1);
+			++p;
 		}
 	}
 
