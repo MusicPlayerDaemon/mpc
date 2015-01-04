@@ -131,7 +131,6 @@ format_song2(const struct mpd_song *song,
 	const char *p;
 	bool found = false;
 
-	/* we won't mess up format, we promise... */
 	for (p = format; *p != '\0';) {
 		switch (p[0]) {
 		case '|':
