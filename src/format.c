@@ -121,17 +121,27 @@ format_song2(const struct mpd_song *song,
 		case '|':
 			++p;
 			if (!found) {
+				/* nothing found yet: try the next
+				   section */
 				free(ret);
 				ret = NULL;
 			} else
+				/* already found a value: skip the
+				   next section */
 				p = skip_format(p);
 			break;
 
 		case '&':
 			++p;
 			if (!found)
+				/* nothing found yet, so skip this
+				   section */
 				p = skip_format(p);
 			else
+				/* we found something yet, but it will
+				   only be used if the next section
+				   also found something, so reset the
+				   flag */
 				found = false;
 			break;
 
@@ -195,6 +205,8 @@ format_song2(const struct mpd_song *song,
 				break;
 
 			default:
+				/* unknown escape: copy the
+				   backslash */
 				ltemp = p[0];
 				--p;
 				break;
@@ -237,6 +249,8 @@ format_song2(const struct mpd_song *song,
 					found = true;
 				value_length = strlen(value);
 			} else {
+				/* unknown variable: copy verbatim
+				   from format string */
 				value = p;
 				value_length = length;
 			}
