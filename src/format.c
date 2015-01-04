@@ -230,13 +230,18 @@ format_song2(const struct mpd_song *song,
 			memcpy(name, p + 1, length - 2);
 			name[length - 2] = 0;
 
-			const char *temp = song_value(song, name);
-			if (temp != NULL) {
-				if (*temp != 0)
+			const char *value = song_value(song, name);
+			size_t value_length;
+			if (value != NULL) {
+				if (*value != 0)
 					found = true;
-				ret = string_append(ret, temp, strlen(temp));
-			} else
-				ret = string_append(ret, p, length);
+				value_length = strlen(value);
+			} else {
+				value = p;
+				value_length = length;
+			}
+
+			ret = string_append(ret, value, value_length);
 
 			/* advance past the specifier */
 			p = end + 1;
