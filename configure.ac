@@ -174,7 +174,7 @@ AC_ARG_ENABLE(test,
 	enable_test=no)
 
 if test "x$enable_test" = xyes; then
-	AM_PATH_CHECK(,, [AC_MSG_WARN([check not found])])
+	AM_PATH_CHECK(,, [AC_MSG_ERROR([check not found])])
 fi
 
 AM_CONDITIONAL(ENABLE_TEST, test "x$enable_test" = xyes)
