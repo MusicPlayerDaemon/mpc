@@ -16,6 +16,7 @@ src_mpc_SOURCES = \
 	src/status.c src/status.h \
 	src/args.c src/args.h \
 	src/format.c src/format.h \
+	src/song_format.c src/song_format.h \
 	src/util.c src/util.h \
 	src/command.c src/command.h \
 	src/queue.c src/queue.h \
@@ -46,6 +47,7 @@ noinst_PROGRAMS = \
 
 test_test_format_SOURCES = \
 	src/format.c \
+	src/song_format.c \
 	test/test_format.c
 test_test_format_CFLAGS = $(AM_CFLAGS) $(CHECK_CFLAGS)
 test_test_format_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/src $(ICONV_CFLAGS) $(LIBMPDCLIENT_CFLAGS)

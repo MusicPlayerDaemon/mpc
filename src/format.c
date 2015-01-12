@@ -19,10 +19,8 @@
  */
 
 #include "format.h"
-#include "charset.h"
 
-#include <mpd/client.h>
-
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -73,59 +71,9 @@ skip_format(const char *p)
 	return p;
 }
 
-/**
- * Extract an attribute from a song object.
- *
- * @param song the song object
- * @param name the attribute name
- * @return the attribute value; NULL if the attribute name is invalid;
- * an empty string if the attribute name is valid, but not present in
- * the song
- */
-gcc_pure
-static const char *
-song_value(const struct mpd_song *song, const char *name)
-{
-	static char buffer[10];
-	const char *value;
-
-	if (strcmp(name, "file") == 0)
-		value = mpd_song_get_uri(song);
-	else if (strcmp(name, "time") == 0) {
-		unsigned duration = mpd_song_get_duration(song);
-
-		if (duration > 0) {
-			snprintf(buffer, sizeof(buffer), "%u:%02u",
-				 duration / 60, duration % 60);
-			value = buffer;
-		} else
-			value = NULL;
-	} else if (strcmp(name, "position") == 0) {
-		unsigned pos = mpd_song_get_pos(song);
-		snprintf(buffer, sizeof(buffer), "%u", pos+1);
-		value = buffer;
-	} else if (strcmp(name, "id") == 0) {
-		snprintf(buffer, sizeof(buffer), "%u", mpd_song_get_id(song));
-		value = buffer;
-	} else {
-		enum mpd_tag_type tag_type = mpd_tag_name_iparse(name);
-		if (tag_type == MPD_TAG_UNKNOWN)
-			return NULL;
-
-		value = mpd_song_get_tag(song, tag_type, 0);
-	}
-
-	if (value != NULL)
-		value = charset_from_utf8(value);
-	else
-		value = "";
-
-	return value;
-}
-
 static char *
-format_song2(const struct mpd_song *song,
-	     const char *format, const char **last)
+format_object2(const char *format, const char **last, const void *object,
+	       const char *(*getter)(const void *object, const char *name))
 {
 	char *ret = NULL;
 	const char *p;
@@ -161,7 +109,7 @@ format_song2(const struct mpd_song *song,
 			break;
 
 		case '[': {
-			char *t = format_song2(song, p + 1, &p);
+			char *t = format_object2(p + 1, &p, object, getter);
 			if (t != NULL) {
 				ret = string_append(ret, t, strlen(t));
 				free(t);
@@ -254,7 +202,7 @@ format_song2(const struct mpd_song *song,
 			memcpy(name, p + 1, length - 2);
 			name[length - 2] = 0;
 
-			const char *value = song_value(song, name);
+			const char *value = getter(object, name);
 			size_t value_length;
 			if (value != NULL) {
 				if (*value != 0)
@@ -297,7 +245,8 @@ format_song2(const struct mpd_song *song,
 }
 
 char *
-format_song(const struct mpd_song *song, const char *format)
+format_object(const char *format, const void *object,
+	      const char *(*getter)(const void *object, const char *name))
 {
-	return format_song2(song, format, NULL);
+	return format_object2(format, NULL, object, getter);
 }

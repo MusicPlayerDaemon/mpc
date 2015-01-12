@@ -1,4 +1,4 @@
-#include "format.h"
+#include "song_format.h"
 
 #include <mpd/client.h>
 

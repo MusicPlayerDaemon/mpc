@@ -19,7 +19,7 @@
  */
 
 #include "util.h"
-#include "format.h"
+#include "song_format.h"
 #include "charset.h"
 #include "list.h"
 #include "options.h"
