@@ -25,6 +25,10 @@
 
 struct mpd_song;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * Pretty-print an object into a string using the given format
  * specification.
@@ -39,5 +43,9 @@ gcc_malloc
 char *
 format_object(const char *format, const void *object,
 	      const char *(*getter)(const void *object, const char *name));
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
