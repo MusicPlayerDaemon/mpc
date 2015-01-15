@@ -42,7 +42,7 @@ C_TESTS = \
 
 TESTS = $(C_TESTS)
 
-noinst_PROGRAMS = \
+check_PROGRAMS = \
 	$(C_TESTS)
 
 test_test_format_SOURCES = \
