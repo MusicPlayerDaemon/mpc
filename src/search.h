@@ -51,6 +51,9 @@ int
 cmd_search(int argc, char **argv, struct mpd_connection *conn);
 
 int
+cmd_searchadd(int argc, char **argv, struct mpd_connection *conn);
+
+int
 cmd_find(int argc, char **argv, struct mpd_connection *conn);
 
 int

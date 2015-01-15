@@ -98,6 +98,7 @@ static struct command {
 	{"single",      0,   1,   0,    cmd_single,      "<on|off>", "Toggle single mode, or specify state"},
 	{"consume",     0,   1,   0,    cmd_consume,     "<on|off>", "Toggle consume mode, or specify state"},
 	{"search",      2,   -1,  0,    cmd_search,      "<type> <query>", "Search for a song"},
+	{"searchadd",   2,   -1,  0,    cmd_searchadd,   "<type> <query>", "Search songs and add them to the current playlist"},
 	{"find",        2,   -1,  0,    cmd_find,        "<type> <query>", "Find a song (exact match)"},
 	{"findadd", 2, -1, 0, cmd_findadd, "<type> <query>",
 	 "Find songs and add them to the current playlist"},

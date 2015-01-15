@@ -145,10 +145,31 @@ static int do_search ( int argc, char ** argv, struct mpd_connection *conn, int 
 	return 0;
 }
 
+static int
+do_searchadd(int argc, char **argv, struct mpd_connection *conn, bool exact)
+{
+	mpd_search_add_db_songs(conn, exact);
+	if (!add_constraints(argc, argv, conn))
+		return -1;
+
+	if (!mpd_search_commit(conn))
+		printErrorAndExit(conn);
+
+	my_finishCommand(conn);
+	return 0;
+}
+
 int
 cmd_search(int argc, char **argv, struct mpd_connection *conn)
 {
 	return do_search(argc, argv, conn, 0);
+}
+
+
+int
+cmd_searchadd(int argc, char **argv, struct mpd_connection *conn)
+{
+	return do_searchadd(argc, argv, conn, false);
 }
 
 int
@@ -160,13 +181,5 @@ cmd_find(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_findadd(int argc, char **argv, struct mpd_connection *conn)
 {
-	mpd_search_add_db_songs(conn, true);
-	if (!add_constraints(argc, argv, conn))
-		return -1;
-
-	if (!mpd_search_commit(conn))
-		printErrorAndExit(conn);
-
-	my_finishCommand(conn);
-	return 0;
+	return do_searchadd(argc, argv, conn, true);
 }
