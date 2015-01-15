@@ -129,7 +129,8 @@ add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 	return true;
 }
 
-static int do_search ( int argc, char ** argv, struct mpd_connection *conn, int exact )
+static int
+do_search(int argc, char ** argv, struct mpd_connection *conn, bool exact)
 {
 	mpd_search_db_songs(conn, exact);
 	if (!add_constraints(argc, argv, conn))
@@ -162,7 +163,7 @@ do_searchadd(int argc, char **argv, struct mpd_connection *conn, bool exact)
 int
 cmd_search(int argc, char **argv, struct mpd_connection *conn)
 {
-	return do_search(argc, argv, conn, 0);
+	return do_search(argc, argv, conn, false);
 }
 
 
@@ -175,7 +176,7 @@ cmd_searchadd(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_find(int argc, char **argv, struct mpd_connection *conn)
 {
-	return do_search(argc, argv, conn, 1);
+	return do_search(argc, argv, conn, true);
 }
 
 int
