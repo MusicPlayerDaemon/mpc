@@ -338,6 +338,46 @@ int cmd_play ( int argc, char ** argv, struct mpd_connection *conn )
 	return 1;
 }
 
+static int
+find_songname_id(struct mpd_connection *conn, const char *s)
+{
+	int res = -1;
+
+	bool ok = mpd_search_queue_songs(conn, false);
+	if (!ok) return -1;
+
+	const char *pattern = charset_to_utf8(s);
+	ok = mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT, pattern);
+	if (!ok) return -1;
+
+	ok = mpd_search_commit(conn);
+	if (!ok) return -1;
+
+	struct mpd_song *song = mpd_recv_song(conn);
+	if (song != NULL) {
+		res = mpd_song_get_id(song);
+
+		mpd_song_free(song);
+	}
+
+	mpd_response_finish(conn);
+
+	return res;
+}
+
+int
+cmd_searchplay(gcc_unused int argc, char **argv, struct mpd_connection *conn)
+{
+	int id = find_songname_id(conn, argv[0]);
+	if (id != -1)
+		mpd_run_play_id(conn, id);
+	else
+		DIE("error: playlist contains no song with that name: %s\n",
+		    argv[0]);
+
+	return 1;
+}
+
 int
 cmd_seek(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
 {

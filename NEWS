@@ -1,6 +1,7 @@
 0.27 (not yet released)
 * fix --enable-debug and --enable-werror
 * add unit tests
+* new command: "searchplay" searches and plays songs from the current playlist
 
 0.26 (2014/06/03)
 * fix segfault when adding absolute paths
