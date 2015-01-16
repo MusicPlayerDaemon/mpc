@@ -44,7 +44,7 @@ typedef struct _List {
  */
 List *makeList(void);
 
-int insertInListWithoutKey(List * list,void * data);
+void insertInListWithoutKey(List * list,void * data);
 
 /* frees memory malloc'd for list and its nodes
  *  _list_ -> List to be free'd

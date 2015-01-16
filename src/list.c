@@ -35,7 +35,7 @@ List *makeList(void) {
 	return list;
 }
 
-int insertInListWithoutKey(List * list, void * data) {
+void insertInListWithoutKey(List * list, void * data) {
 	ListNode * node;
 
 	assert(list!=NULL);
@@ -60,8 +60,6 @@ int insertInListWithoutKey(List * list, void * data) {
 	list->lastNode = node;
 
 	list->numberOfNodes++;
-	
-	return 1;
 }
 
 void freeList(void * list) {
