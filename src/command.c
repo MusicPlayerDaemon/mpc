@@ -339,16 +339,12 @@ find_songname_id(struct mpd_connection *conn, const char *s)
 {
 	int res = -1;
 
-	bool ok = mpd_search_queue_songs(conn, false);
-	if (!ok) return -1;
+	mpd_search_queue_songs(conn, false);
 
 	const char *pattern = charset_to_utf8(s);
-	ok = mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
+	mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
 					       pattern);
-	if (!ok) return -1;
-
-	ok = mpd_search_commit(conn);
-	if (!ok) return -1;
+	mpd_search_commit(conn);
 
 	struct mpd_song *song = mpd_recv_song(conn);
 	if (song != NULL) {
@@ -357,7 +353,7 @@ find_songname_id(struct mpd_connection *conn, const char *s)
 		mpd_song_free(song);
 	}
 
-	mpd_response_finish(conn);
+	my_finishCommand(conn);
 
 	return res;
 }
