@@ -112,8 +112,7 @@ cmd_current(gcc_unused int argc, gcc_unused char **argv,
 			mpd_song_free(song);
 		}
 
-		if (!mpd_response_finish(conn))
-			printErrorAndExit(conn);
+		my_finishCommand(conn);
 	}
 
 	mpd_status_free(status);
@@ -173,8 +172,9 @@ cmd_outputs(gcc_unused int argc, gcc_unused char **argv,
 
 		mpd_output_free(output);
 	}
-	mpd_response_finish(conn);
-	return( 0 );
+
+	my_finishCommand(conn);
+	return 0;
 }
 
 static unsigned
@@ -203,7 +203,7 @@ match_outputs(struct mpd_connection *conn,
 		mpd_output_free(output);
 	}
 
-	mpd_response_finish(conn);
+	my_finishCommand(conn);
 
 	for (char **n = names; n != names_end; ++n) {
 		fprintf(stderr, "%s: no such output\n", *n);
@@ -519,7 +519,8 @@ cmd_move(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 	--from;
 	--to;
 
-	mpd_run_move(conn, from, to);
+	if (!mpd_run_move(conn, from, to))
+		printErrorAndExit(conn);
 	return 0;
 }
 
@@ -595,8 +596,7 @@ cmd_update(int argc, char **argv, struct mpd_connection *conn)
 		id = next_id;
 	}
 
-	if (!mpd_response_finish(conn))
-		printErrorAndExit(conn);
+	my_finishCommand(conn);
 
 	while (options.wait) {
 		/* idle until an update finishes */

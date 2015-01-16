@@ -108,9 +108,8 @@ cmd_crop(gcc_unused int argc, gcc_unused char **argv,
 
 		mpd_status_free(status);
 
-		if (!mpd_command_list_end(conn) || !mpd_response_finish(conn))
-			printErrorAndExit(conn);
-
+		mpd_command_list_end(conn);
+		my_finishCommand(conn);
 		return 0;
 	} else {
 		mpd_status_free(status);
@@ -190,9 +189,8 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 	mpd_status_free(status);
 	free(songsToDel);
 
-	if (!mpd_command_list_end(conn) || !mpd_response_finish(conn))
-		printErrorAndExit(conn);
-
+	mpd_command_list_end(conn);
+	my_finishCommand(conn);
 	return 0;
 }
 

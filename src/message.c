@@ -47,9 +47,7 @@ cmd_channels(gcc_unused int argc, gcc_unused char **argv,
 		mpd_return_pair(connection, pair);
 	}
 
-	if (!mpd_response_finish(connection))
-		printErrorAndExit(connection);
-
+	my_finishCommand(connection);
 	return 0;
 }
 
@@ -80,9 +78,7 @@ cmd_waitmessage(gcc_unused int argc, char **argv,
 		mpd_message_free(message);
 	}
 
-	if (!mpd_response_finish(connection))
-		printErrorAndExit(connection);
-
+	my_finishCommand(connection);
 	return 0;
 }
 
@@ -105,8 +101,7 @@ cmd_subscribe(gcc_unused int argc, char **argv,
 			mpd_message_free(message);
 		}
 
-		if (!mpd_response_finish(connection))
-			printErrorAndExit(connection);
+		my_finishCommand(connection);
 	}
 }
 

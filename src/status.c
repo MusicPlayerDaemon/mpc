@@ -120,7 +120,6 @@ print_status(struct mpd_connection *conn)
 
 	mpd_status_free(status);
 
-	if (!mpd_response_finish(conn))
-		printErrorAndExit(conn);
+	my_finishCommand(conn);
 }
 
