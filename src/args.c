@@ -172,7 +172,7 @@ parse_songnum(const char *str, int *ret)
 	char *endptr;
 	int song = strtol(str, &endptr, 10);
 
-	if (str == endptr || (*endptr != ')' && *endptr != '\0') || song < 0)
+	if (str == endptr || (*endptr != ')' && *endptr != '\0') || song < 1)
 		return false;
 
 	*ret = song;
