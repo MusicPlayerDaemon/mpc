@@ -315,11 +315,9 @@ cmd_play(int argc, char **argv, struct mpd_connection *conn)
 {
 	assert(argc < 2);
 
-	int song;
+	int song = -1;
 
-	if (0 == argc)
-		song = -1;
-	else {
+	if (argc > 0) {
 		if (!parse_songnum(argv[argc - 1], &song))
 			DIE("error parsing song numbers from: %s\n",
 			    argv[argc - 1]);
