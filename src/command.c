@@ -315,10 +315,9 @@ cmd_play(int argc, char **argv, struct mpd_connection *conn)
 {
 	assert(argc < 2);
 
-	int song = -1;
-
 	if (argc > 0) {
 		const char *string = argv[0];
+		int song;
 		if (!parse_songnum(string, &song))
 			DIE("error parsing song numbers from: %s\n", string);
 
@@ -330,11 +329,9 @@ cmd_play(int argc, char **argv, struct mpd_connection *conn)
 		mpd_status_free(status);
 		if(song >= i)
 			DIE("song number greater than playlist length.\n");
-	}
 
-	if (song >= 0)
 		mpd_run_play_pos(conn, song);
-	else
+	} else
 		mpd_run_play(conn);
 
 	return 1;
