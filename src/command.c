@@ -30,6 +30,7 @@
 
 #include <mpd/client.h>
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -312,14 +313,13 @@ cmd_toggle_output(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_play(int argc, char **argv, struct mpd_connection *conn)
 {
+	assert(argc < 2);
+
 	int song;
 
 	if (0 == argc)
 		song = -1;
 	else {
-		for (int i = 0; i < argc - 1; ++i)
-			printf("skipping: %s\n",argv[i]);
-
 		if (!parse_songnum(argv[argc - 1], &song))
 			DIE("error parsing song numbers from: %s\n",
 			    argv[argc - 1]);

@@ -65,7 +65,7 @@ static struct command {
 	{ "current", 0, 0, 0, cmd_current,
 	  "", "Show the currently playing song"},
 	{"del",         0,   -1,  1,    cmd_del,         "<position>", "Remove a song from the current playlist"},
-	{"play",        0,   -1,  2,    cmd_play,        "[<position>]", "Start playing at <position> (default: 1)"},
+	{"play",        0,   1,   2,    cmd_play,        "[<position>]", "Start playing at <position> (default: 1)"},
 	{"next",        0,   0,   0,    cmd_next,        "", "Play the next song in the current playlist"},
 	{"prev",        0,   0,   0,    cmd_prev,        "", "Play the previous song in the current playlist"},
 	{"pause",       0,   0,   0,    cmd_pause,       "", "Pauses the currently playing song"},
