@@ -139,7 +139,8 @@ cmd_cdprev(gcc_unused int argc, gcc_unused char **argv,
 }
 
 int
-cmd_toggle(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
+cmd_toggle(gcc_unused int argc, gcc_unused char **argv,
+	   struct mpd_connection *conn)
 {
 	struct mpd_status *status = getStatus(conn);
 
@@ -152,7 +153,8 @@ cmd_toggle(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *c
 }
 
 int
-cmd_outputs(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
+cmd_outputs(gcc_unused int argc, gcc_unused char **argv,
+	    struct mpd_connection *conn)
 {
 	mpd_send_outputs(conn);
 
@@ -307,11 +309,13 @@ cmd_toggle_output(int argc, char **argv, struct mpd_connection *conn)
 
 #endif
 
-int cmd_play ( int argc, char ** argv, struct mpd_connection *conn )
+int
+cmd_play(int argc, char **argv, struct mpd_connection *conn)
 {
 	int song;
 
-	if(0==argc) song = -1;
+	if (0 == argc)
+		song = -1;
 	else {
 		for (int i = 0; i < argc - 1; ++i)
 			printf("skipping: %s\n",argv[i]);
@@ -347,7 +351,8 @@ find_songname_id(struct mpd_connection *conn, const char *s)
 	if (!ok) return -1;
 
 	const char *pattern = charset_to_utf8(s);
-	ok = mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT, pattern);
+	ok = mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
+					       pattern);
 	if (!ok) return -1;
 
 	ok = mpd_search_commit(conn);
@@ -379,14 +384,15 @@ cmd_searchplay(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
-cmd_seek(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
+cmd_seek(gcc_unused int argc, gcc_unused char **argv,
+	 struct mpd_connection *conn)
 {
 	struct mpd_status *status;
 	char * arg = argv[0];
 
 	int seekchange;
 	int total_secs;
-        int rel = 0;
+	int rel = 0;
 
 	status = getStatus(conn);
 
@@ -394,27 +400,31 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *con
 		DIE("not currently playing\n");
 
 	/* Detect +/- if exists point to the next char */
-        if(*arg == '+') rel = 1;
-        else if(*arg == '-') rel = -1;
+	if (*arg == '+')
+		rel = 1;
+	else if (*arg == '-')
+		rel = -1;
 
-	if(rel != 0) arg++;
+	if (rel != 0)
+		++arg;
 
 	/* If seeking by percent */
-	if( arg[strlen(arg)-1] == '%' ) {
+	if (arg[strlen(arg) - 1] == '%') {
 		/* Remove the % */
-		arg[ strlen(arg) - 1 ] = '\0';
+		arg[strlen(arg) - 1] = '\0';
 
 		/* percent seek, strtod is needed for percent with decimals */
 		char *test;
 		double perc = strtod(arg,&test);
-		if(( *test!='\0' ) || (!rel && (perc<0 || perc>100)) || (rel && perc>abs(100)))
-			DIE("\"%s\" is not an number between 0 and 100\n",arg);
+		if (*test != '\0' || (rel == 0 && (perc < 0 || perc > 100)) ||
+		    (rel && perc > abs(100)))
+			DIE("\"%s\" is not an number between 0 and 100\n", arg);
 
 		seekchange = perc * mpd_status_get_total_time(status) / 100 + 0.5;
 
 	} else { /* If seeking by absolute seek time */
 
-		if( strchr( arg, ':' )) {
+		if (strchr(arg, ':') != NULL) {
 			int hr = 0;
 			int min = 0;
 			int sec = 0;
@@ -423,24 +433,25 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *con
 			char *sec_ptr = strrchr(arg, ':');
 
 			/* Remove ':' and move the pointer one byte up */
-			* sec_ptr = '\0';
+			*sec_ptr = '\0';
 			++sec_ptr;
 
 			/* If hour is in the argument, else just point to the arg */
-			char *min_ptr;
-			if(( min_ptr = strrchr( arg, ':' ))) {
+			char *min_ptr = strrchr(arg, ':');
+			if (min_ptr != NULL) {
 
 				/* Remove ':' and move the pointer one byte up */
-				* min_ptr = '\0';
+				*min_ptr = '\0';
 				++min_ptr;
 
 				/* If the argument still exists, it's the hour  */
-				if( arg != NULL ) {
+				if (arg != NULL) {
 					char *hr_ptr = arg;
 					char *test;
-					hr = strtol( hr_ptr, &test, 10 );
+					hr = strtol(hr_ptr, &test, 10);
 
-					if( *test != '\0' || ( ! rel && hr < 0 ))
+					if (*test != '\0' ||
+					    (rel == 0 && hr < 0))
 						DIE("\"%s\" is not a positive number\n", sec_ptr);
 				}
 			} else {
@@ -449,51 +460,51 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *con
 
 			/* Change the pointers to a integer  */
 			char *test;
-			sec = strtol( sec_ptr, &test, 10 );
+			sec = strtol(sec_ptr, &test, 10);
 
-			if( *test != '\0' || ( ! rel && sec < 0 ))
+			if (*test != '\0' || (rel == 0 && sec < 0))
 				DIE("\"%s\" is not a positive number\n", sec_ptr);
 
 			min = strtol( min_ptr, &test, 10 );
 
-			if( *test != '\0' || ( ! rel && min < 0 ))
+			if( *test != '\0' || (rel == 0 && min < 0 ))
 				DIE("\"%s\" is not a positive number\n", min_ptr);
 
 			/* If mins exist, check secs. If hrs exist, check mins  */
-			if( min && strlen(sec_ptr) != 2 )
+			if (min && strlen(sec_ptr) != 2)
 				DIE("\"%s\" is not two digits\n", sec_ptr);
-			else if( hr && strlen(min_ptr) != 2 )
+			else if (hr && strlen(min_ptr) != 2)
 				DIE("\"%s\" is not two digits\n", min_ptr);
 
 			/* Finally, make sure they're not above 60 if higher unit exists */
-			if( min && sec > 60 )
+			if (min && sec > 60)
 				DIE("\"%s\" is greater than 60\n", sec_ptr);
-			else if( hr && min > 60 )
+			else if (hr && min > 60 )
 				DIE("\"%s\" is greater than 60\n", min_ptr);
 
-			total_secs = ( hr * 3600 ) + ( min * 60 ) + sec;
+			total_secs = (hr * 3600) + (min * 60) + sec;
 
 		} else {
 
 			/* absolute seek (in seconds) */
 			char *test;
-			total_secs = strtol( arg, &test, 10 ); /* get the # of seconds */
+			total_secs = strtol(arg, &test, 10); /* get the # of seconds */
 
-			if( *test != '\0' || ( ! rel && total_secs < 0 ))
+			if (*test != '\0' || (rel == 0 && total_secs < 0))
 				DIE("\"%s\" is not a positive number\n", arg);
 		}
+
 		seekchange = total_secs;
 	}
 
 	/* This detects +/- and is necessary due to the parsing of HH:MM:SS numbers*/
 	int seekto;
-	if(rel == 1) {
+	if (rel == 1)
 		seekto = mpd_status_get_elapsed_time(status) + seekchange;
-	} else if (rel == -1) {
+	else if (rel == -1)
 		seekto = mpd_status_get_elapsed_time(status) - seekchange;
-	} else {
+	else
 		seekto = seekchange;
-	}
 
 	if (seekto > (int)mpd_status_get_total_time(status))
 		DIE("Seek amount would seek past the end of the song\n");
@@ -502,7 +513,6 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *con
 		printErrorAndExit(conn);
 
 	mpd_status_free(status);
-
 	return 1;
 }
 
@@ -510,26 +520,26 @@ int
 cmd_move(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 {
 	int from;
-	if(!parse_int(argv[0], &from) || from<=0)
-		DIE("\"%s\" is not a positive integer\n",argv[0]);
+	if (!parse_int(argv[0], &from) || from <= 0)
+		DIE("\"%s\" is not a positive integer\n", argv[0]);
 
 	int to;
-	if(!parse_int(argv[1], &to) || to<=0)
-		DIE("\"%s\" is not a positive integer\n",argv[1]);
+	if (!parse_int(argv[1], &to) || to <= 0)
+		DIE("\"%s\" is not a positive integer\n", argv[1]);
 
 	/* users type in 1-based numbers, mpd uses 0-based */
-	from--;
-	to--;
+	--from;
+	--to;
 
 	mpd_run_move(conn, from, to);
-
 	return 0;
 }
 
-int cmd_listall ( int argc, char ** argv, struct mpd_connection *conn )
+int
+cmd_listall(int argc, char **argv, struct mpd_connection *conn)
 {
 	const char * listall = "";
-	int i=0;
+	int i = 0;
 
 	if (argc > 0)
 		listall = charset_to_utf8(argv[i]);
@@ -557,7 +567,8 @@ int cmd_listall ( int argc, char ** argv, struct mpd_connection *conn )
 	return 0;
 }
 
-int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
+int
+cmd_update(int argc, char **argv, struct mpd_connection *conn)
 {
 	if (contains_absolute_path(argc, argv) && !path_prepare(conn))
 		printErrorAndExit(conn);
@@ -566,8 +577,9 @@ int cmd_update ( int argc, char ** argv, struct mpd_connection *conn)
 		printErrorAndExit(conn);
 
 	int i = 0;
-	const char * update = "";
-	if(argc > 0) update = charset_to_utf8(argv[i]);
+	const char *update = "";
+	if (argc > 0)
+		update = charset_to_utf8(argv[i]);
 
 	do {
 		char *tmp = strdup(update);
@@ -643,7 +655,8 @@ ls_entity(int argc, char **argv, struct mpd_connection *conn,
 	return 0;
 }
 
-int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
+int
+cmd_ls(int argc, char **argv, struct mpd_connection *conn)
 {
 	for (int i = 0; i < argc; i++)
 		strip_trailing_slash(argv[i]);
@@ -651,12 +664,14 @@ int cmd_ls ( int argc, char ** argv, struct mpd_connection *conn )
 	return ls_entity(argc, argv, conn, MPD_ENTITY_TYPE_UNKNOWN);
 }
 
-int cmd_lsplaylists ( int argc, char ** argv, struct mpd_connection *conn )
+int
+cmd_lsplaylists(int argc, char **argv, struct mpd_connection *conn)
 {
 	return ls_entity(argc, argv, conn, MPD_ENTITY_TYPE_PLAYLIST);
 }
 
-int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
+int
+cmd_load(int argc, char **argv, struct mpd_connection *conn)
 {
 	if (!mpd_command_list_begin(conn, false))
 		printErrorAndExit(conn);
@@ -665,20 +680,21 @@ int cmd_load ( int argc, char ** argv, struct mpd_connection *conn )
 		printf("loading: %s\n",argv[i]);
 		mpd_send_load(conn, charset_to_utf8(argv[i]));
 	}
+
 	mpd_command_list_end(conn);
 	my_finishCommand(conn);
-
 	return 0;
 }
 
-int cmd_list ( int argc, char ** argv, struct mpd_connection *conn )
+int
+cmd_list(int argc, char **argv, struct mpd_connection *conn)
 {
 	enum mpd_tag_type type = get_search_type(argv[0]);
 	if (type == MPD_TAG_UNKNOWN)
 		return -1;
 
-	argc -= 1;
-	argv += 1;
+	--argc;
+	++argv;
 
 	mpd_search_db_tags(conn, type);
 
@@ -695,16 +711,16 @@ int cmd_list ( int argc, char ** argv, struct mpd_connection *conn )
 	}
 
 	my_finishCommand(conn);
-
 	return 0;
 }
 
-int cmd_volume ( int argc, char ** argv, struct mpd_connection *conn )
+int
+cmd_volume(int argc, char **argv, struct mpd_connection *conn)
 {
-        struct int_value_change ch;
+	struct int_value_change ch;
 
-	if(argc==1) {
-                if(!parse_int_value_change(argv[0], &ch))
+	if (argc == 1) {
+		if (!parse_int_value_change(argv[0], &ch))
 			DIE("\"%s\" is not an integer\n", argv[0]);
 	} else {
 		struct mpd_status *status = getStatus(conn);
@@ -716,7 +732,6 @@ int cmd_volume ( int argc, char ** argv, struct mpd_connection *conn )
 			printf("volume: n/a\n");
 
 		mpd_status_free(status);
-
 		return 0;
 	}
 
@@ -751,7 +766,8 @@ int cmd_volume ( int argc, char ** argv, struct mpd_connection *conn )
 }
 
 int
-cmd_pause(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
+cmd_pause(gcc_unused int argc, gcc_unused char **argv,
+	  struct mpd_connection *conn)
 {
 	mpd_send_pause(conn, true);
 	my_finishCommand(conn);
@@ -785,41 +801,45 @@ bool_cmd(int argc, char **argv, struct mpd_connection *conn,
 	return 1;
 }
 
-int cmd_repeat(int argc, char ** argv, struct mpd_connection *conn)
+int
+cmd_repeat(int argc, char **argv, struct mpd_connection *conn)
 {
 	return bool_cmd(argc, argv, conn,
 			mpd_status_get_repeat, mpd_run_repeat);
 }
 
-int cmd_random(int argc, char ** argv, struct mpd_connection *conn)
+int
+cmd_random(int argc, char **argv, struct mpd_connection *conn)
 {
 	return bool_cmd(argc, argv, conn,
 			mpd_status_get_random, mpd_run_random);
 }
 
-int cmd_single(int argc, char ** argv, struct mpd_connection *conn)
+int
+cmd_single(int argc, char **argv, struct mpd_connection *conn)
 {
 	return bool_cmd(argc, argv, conn,
 			mpd_status_get_single, mpd_run_single);
 }
 
-int cmd_consume(int argc, char ** argv, struct mpd_connection *conn)
+int
+cmd_consume(int argc, char **argv, struct mpd_connection *conn)
 {
 	return bool_cmd(argc, argv, conn,
 			mpd_status_get_consume, mpd_run_consume);
 }
 
-int cmd_crossfade ( int argc, char ** argv, struct mpd_connection *conn )
+int
+cmd_crossfade(int argc, char **argv, struct mpd_connection *conn)
 {
-	if(argc==1) {
+	if (argc==1) {
 		int seconds;
-                if(!parse_int(argv[0], &seconds) || seconds<0)
-			DIE("\"%s\" is not 0 or positive integer\n",argv[0]);
+		if (!parse_int(argv[0], &seconds) || seconds < 0)
+			DIE("\"%s\" is not 0 or positive integer\n", argv[0]);
 
 		if (!mpd_run_crossfade(conn, seconds))
 			printErrorAndExit(conn);
-	}
-	else {
+	} else {
 		struct mpd_status *status;
 		status = getStatus(conn);
 
@@ -827,53 +847,58 @@ int cmd_crossfade ( int argc, char ** argv, struct mpd_connection *conn )
 
 		mpd_status_free(status);
 	}
+
 	return 0;
 }
 
-int cmd_mixrampdb ( int argc, char ** argv, struct mpd_connection *conn )
+int
+cmd_mixrampdb(int argc, char **argv, struct mpd_connection *conn)
 {
-	if(argc==1) {
+	if (argc == 1) {
 		float db;
-		if(!parse_float(argv[0], &db))
-			DIE("\"%s\" is not a floating point number\n",argv[0]);
+		if (!parse_float(argv[0], &db))
+			DIE("\"%s\" is not a floating point number\n",
+			    argv[0]);
 
 		mpd_run_mixrampdb(conn, db);
-                my_finishCommand(conn);
-	}
-	else {
+		my_finishCommand(conn);
+	} else {
 		struct mpd_status *status = getStatus(conn);
 
 		printf("mixrampdb: %f\n", mpd_status_get_mixrampdb(status));
 
 		mpd_status_free(status);
 	}
+
 	return 0;
 }
 
-int cmd_mixrampdelay ( int argc, char ** argv, struct mpd_connection *conn )
+int
+cmd_mixrampdelay(int argc, char **argv, struct mpd_connection *conn)
 {
-	if(argc==1) {
+	if (argc == 1) {
 		float seconds;
-		if(!parse_float(argv[0], &seconds))
-			DIE("\"%s\" is not a floating point number\n",argv[0]);
+		if (!parse_float(argv[0], &seconds))
+			DIE("\"%s\" is not a floating point number\n",
+			    argv[0]);
 
 		mpd_run_mixrampdelay(conn, seconds);
 		my_finishCommand(conn);
-	}
-	else {
-		struct mpd_status *status;
-		status = getStatus(conn);
+	} else {
+		struct mpd_status *status = getStatus(conn);
 
 		printf("mixrampdelay: %f\n",
 		       mpd_status_get_mixrampdelay(status));
 
 		mpd_status_free(status);
 	}
+
 	return 0;
 }
 
 int
-cmd_version(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
+cmd_version(gcc_unused int argc, gcc_unused char **argv,
+	    struct mpd_connection *conn)
 {
 	const unsigned *version = mpd_connection_get_server_version(conn);
 
@@ -886,7 +911,8 @@ cmd_version(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *
 	return 0;
 }
 
-static char * DHMS(unsigned long t)
+static char *
+DHMS(unsigned long t)
 {
 	static char buf[32];	/* Ugh */
 
@@ -914,7 +940,8 @@ static char * DHMS(unsigned long t)
 }
 
 int
-cmd_stats(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
+cmd_stats(gcc_unused int argc, gcc_unused char **argv,
+	  struct mpd_connection *conn)
 {
 	struct mpd_stats *stats = mpd_run_stats(conn);
 	if (stats == NULL)
@@ -937,7 +964,8 @@ cmd_stats(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *co
 }
 
 int
-cmd_status(gcc_unused  int argc, gcc_unused char **argv, struct mpd_connection *conn)
+cmd_status(gcc_unused int argc, gcc_unused char **argv,
+	   struct mpd_connection *conn)
 {
 	if (options.verbosity >= V_DEFAULT)
 		print_status(conn);
