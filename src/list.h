@@ -37,8 +37,6 @@ typedef struct _List {
 	ListNode * lastNode;
 	/* number of nodes */
 	long numberOfNodes;
-	/* array for searching when list is sorted */
-	ListNode ** nodesArray;
 } List;
 
 /* allocates memory for a new list and initializes it

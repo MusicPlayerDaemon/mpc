@@ -23,11 +23,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-static void freeListNodesArray(List * list) {
-	free(list->nodesArray);
-	list->nodesArray = NULL;
-}
-
 List *makeList(void) {
 	List * list = malloc(sizeof(List));
 
@@ -36,7 +31,6 @@ List *makeList(void) {
 	list->firstNode = NULL;
 	list->lastNode = NULL;
 	list->numberOfNodes = 0;
-	list->nodesArray = NULL;
 
 	return list;
 }
@@ -49,8 +43,6 @@ int insertInListWithoutKey(List * list, void * data) {
 
 	node = malloc(sizeof(ListNode));
 	assert(node!=NULL);
-	
-	if(list->nodesArray) freeListNodesArray(list);
 
 	if(list->firstNode==NULL) {
 		assert(list->lastNode==NULL);
@@ -80,8 +72,6 @@ void freeList(void * list) {
 	assert(list!=NULL);
 
 	tmpNode = ((List *)list)->firstNode;
-
-	free(((List *)list)->nodesArray);
 
 	while(tmpNode!=NULL) {
 		tmpNode2 = tmpNode->nextNode;
