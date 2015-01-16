@@ -54,7 +54,6 @@ int insertInListWithoutKey(List * list, void * data) {
 		list->lastNode->nextNode = node;
 	}
 
-	node->key = NULL;
 	node->data = data;
 	node->nextNode = NULL;
 
@@ -75,7 +74,6 @@ void freeList(void * list) {
 
 	while(tmpNode!=NULL) {
 		tmpNode2 = tmpNode->nextNode;
-		free(tmpNode->key);
 		free(tmpNode);
 		tmpNode = tmpNode2;
 	}

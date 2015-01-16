@@ -22,8 +22,6 @@
 #define LIST_H
 
 typedef struct _ListNode {
-	/* used to identify node (ie. when using findInList) */
-	char * key;
 	/* data store in node */
 	void * data;
 	/* next node in list */
