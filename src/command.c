@@ -324,13 +324,6 @@ cmd_play(int argc, char **argv, struct mpd_connection *conn)
 
 		song--;
 
-		/* This is necessary, otherwise mpc will output the wrong playlist number */
-		struct mpd_status *status = getStatus(conn);
-		int i = mpd_status_get_queue_length(status);
-		mpd_status_free(status);
-		if(song >= i)
-			DIE("song number greater than playlist length.\n");
-
 		success = mpd_run_play_pos(conn, song);
 	} else
 		success = mpd_run_play(conn);
