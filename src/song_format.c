@@ -28,6 +28,25 @@
 #include <string.h>
 #include <stdlib.h>
 
+static const char *
+format_mtime(char *buffer, size_t buffer_size,
+	     const struct mpd_song *song, const char *format)
+{
+	time_t t = mpd_song_get_last_modified(song);
+	if (t == 0)
+		return NULL;
+
+	struct tm tm;
+#ifdef WIN32
+	tm = *localtime(&t);
+#else
+	localtime_r(&t, &tm);
+#endif
+
+	strftime(buffer, buffer_size, format, &tm);
+	return buffer;
+}
+
 /**
  * Extract an attribute from a song object.
  *
@@ -41,7 +60,7 @@ gcc_pure
 static const char *
 song_value(const struct mpd_song *song, const char *name)
 {
-	static char buffer[10];
+	static char buffer[40];
 	const char *value;
 
 	if (strcmp(name, "file") == 0)
@@ -62,6 +81,10 @@ song_value(const struct mpd_song *song, const char *name)
 	} else if (strcmp(name, "id") == 0) {
 		snprintf(buffer, sizeof(buffer), "%u", mpd_song_get_id(song));
 		value = buffer;
+	} else if (strcmp(name, "mtime") == 0) {
+		value = format_mtime(buffer, sizeof(buffer), song, "%c");
+	} else if (strcmp(name, "mdate") == 0) {
+		value = format_mtime(buffer, sizeof(buffer), song, "%x");
 	} else {
 		enum mpd_tag_type tag_type = mpd_tag_name_iparse(name);
 		if (tag_type == MPD_TAG_UNKNOWN)

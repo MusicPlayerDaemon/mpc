@@ -47,6 +47,10 @@ Configure the format of song display for status and the playlist.  The metadata 
 .br
 %position%     Playlist track number
 .br
+%mtime%        Date and time of last file modification
+.br
+%mdate%        Date of last file modification
+.br
 
 The [] operator is used to group output such that if no metadata delimiters are found or matched between '[' and ']', then none of the characters between '[' and ']' are output.  '&' and '|' are logical operators for and and or.  '#' is used to escape characters.  Some useful examples for format are: "%file%" and "[[%artist% - ]%title%]|[%file%]".
 This command also takes the following defined escape sequences:
