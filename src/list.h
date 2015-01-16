@@ -28,8 +28,6 @@ typedef struct _ListNode {
 	void * data;
 	/* next node in list */
 	struct _ListNode * nextNode;
-	/* previous node in list */
-	struct _ListNode * prevNode;
 } ListNode;
 
 typedef struct _List {

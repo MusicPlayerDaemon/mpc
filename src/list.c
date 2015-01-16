@@ -65,7 +65,6 @@ int insertInListWithoutKey(List * list, void * data) {
 	node->key = NULL;
 	node->data = data;
 	node->nextNode = NULL;
-	node->prevNode = list->lastNode;
 
 	list->lastNode = node;
 
