@@ -34,7 +34,7 @@
 int
 stdinToArgArray(char ***array)
 {
-	List *list = makeList(NULL);
+	List *list = makeList();
 	char buffer[4096];
 
 	while (fgets(buffer, sizeof(buffer), stdin)) {

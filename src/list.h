@@ -21,14 +21,6 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include <stdlib.h>
-
-/* used to make a list where free() will be used to free data in list */
-#define DEFAULT_FREE_DATA_FUNC	free
-
-/* typedef for function to free data stored in the list nodes */
-typedef void ListFreeDataFunc(void *);
-
 typedef struct _ListNode {
 	/* used to identify node (ie. when using findInList) */
 	char * key;
@@ -45,8 +37,6 @@ typedef struct _List {
 	ListNode * firstNode;
 	/* last node in list */
 	ListNode * lastNode;
-	/* function used to free data stored in nodes of the list */
-	ListFreeDataFunc * freeDataFunc;
 	/* number of nodes */
 	long numberOfNodes;
 	/* array for searching when list is sorted */
@@ -58,7 +48,7 @@ typedef struct _List {
  *                    DEFAULT_FREE_DATAFUNC to use free()
  * returns pointer to new list if successful, NULL otherwise
  */
-List * makeList(ListFreeDataFunc * freeDataFunc);
+List *makeList(void);
 
 int insertInListWithoutKey(List * list,void * data);
 

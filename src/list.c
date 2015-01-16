@@ -28,14 +28,13 @@ static void freeListNodesArray(List * list) {
 	list->nodesArray = NULL;
 }
 
-List * makeList(ListFreeDataFunc * freeDataFunc) {
+List *makeList(void) {
 	List * list = malloc(sizeof(List));
 
 	assert(list!=NULL);
 
 	list->firstNode = NULL;
 	list->lastNode = NULL;
-	list->freeDataFunc = freeDataFunc;
 	list->numberOfNodes = 0;
 	list->nodesArray = NULL;
 
@@ -88,9 +87,6 @@ void freeList(void * list) {
 	while(tmpNode!=NULL) {
 		tmpNode2 = tmpNode->nextNode;
 		free(tmpNode->key);
-		if(((List *)list)->freeDataFunc) {
-			((List *)list)->freeDataFunc(tmpNode->data);
-		}
 		free(tmpNode);
 		tmpNode = tmpNode2;
 	}
