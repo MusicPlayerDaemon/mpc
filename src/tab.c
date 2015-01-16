@@ -110,13 +110,20 @@ cmd_tab(gcc_unused int argc, char ** argv, struct mpd_connection *conn)
 
 	tab_send_list(prefix, conn);
 
-	struct mpd_song *song;
-	while ((song = mpd_recv_song(conn)) != NULL) {
-		const char *path = mpd_song_get_uri(song);
-		if (memcmp(path, prefix, prefix_length) == 0)
-			printf("%s\n", charset_from_utf8(path));
+	struct mpd_entity *entity;
+	while ((entity = mpd_recv_entity(conn)) != NULL) {
+		const char entitytype = mpd_entity_get_type(entity);
+		if (entitytype == MPD_ENTITY_TYPE_DIRECTORY) {
+			const char *path = mpd_directory_get_path(mpd_entity_get_directory(entity));
+			if (memcmp(path, prefix, prefix_length) == 0)
+				printf("%s/\n", charset_from_utf8(path));
+		} else if (entitytype == MPD_ENTITY_TYPE_SONG) {
+			const char *path = mpd_song_get_uri(mpd_entity_get_song(entity));
+			if (memcmp(path, prefix, prefix_length) == 0)
+				printf("%s\n", charset_from_utf8(path));
+		}
 
-		mpd_song_free(song);
+		mpd_entity_free(entity);
 	}
 
 	my_finishCommand(conn);

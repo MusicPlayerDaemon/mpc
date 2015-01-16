@@ -5,6 +5,7 @@
 * fix use-after-free bug
 * new command: "searchadd" works like findadd with non-exact matching
 * improved error handling
+* show directories in command "tab"
 
 0.26 (2014/06/03)
 * fix segfault when adding absolute paths
