@@ -318,9 +318,9 @@ cmd_play(int argc, char **argv, struct mpd_connection *conn)
 	int song = -1;
 
 	if (argc > 0) {
-		if (!parse_songnum(argv[argc - 1], &song))
-			DIE("error parsing song numbers from: %s\n",
-			    argv[argc - 1]);
+		const char *string = argv[0];
+		if (!parse_songnum(string, &song))
+			DIE("error parsing song numbers from: %s\n", string);
 
 		song--;
 
