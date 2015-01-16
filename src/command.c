@@ -362,12 +362,12 @@ int
 cmd_searchplay(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 {
 	int id = find_songname_id(conn, argv[0]);
-	if (id != -1)
-		mpd_run_play_id(conn, id);
-	else
+	if (id < 0)
 		DIE("error: playlist contains no song with that name: %s\n",
 		    argv[0]);
 
+	if (!mpd_run_play_id(conn, id))
+		printErrorAndExit(conn);
 	return 1;
 }
 
