@@ -60,39 +60,11 @@ typedef struct _List {
  */
 List * makeList(ListFreeDataFunc * freeDataFunc);
 
-/* inserts a node into _list_ with _key_ and _data_
- *  _list_ -> list the data will be inserted in
- *  _key_ -> identifier for node/data to be inserted into list
- *  _data_ -> data to be inserted in list
- * returns 1 if successful, 0 otherwise
- */ 
-int insertInList(List * list,char * key,void * data);
-
 int insertInListWithoutKey(List * list,void * data);
-
-/* deletes the first node in the list with the key _key_
- *  _list_ -> list the node will be deleted from
- *  _key_ -> key used to identify node to delete
- *  returns 1 if node is found and deleted, 0 otherwise
- */
-int deleteFromList(List * list,char * key);
-
-void deleteNodeFromList(List * list,ListNode * node);
-
-/* finds data in a list based on key
- *  _list_ -> list to search for _key_ in
- * _key_ -> which node is being searched for
- * _data_ -> a pointer to where data will be placed, 
- *	_data_ memory should not by allocated or freed
- * returns 1 if successful, 0 otherwise
- */
-int findInList(List * list, char * key, void ** data);
 
 /* frees memory malloc'd for list and its nodes
  *  _list_ -> List to be free'd
  */
 void freeList(void * list);
-
-void clearList(List * list);
 
 #endif
