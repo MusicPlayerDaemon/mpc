@@ -6,6 +6,7 @@
 * new command: "searchadd" works like findadd with non-exact matching
 * improved error handling
 * show directories in command "tab"
+* bash completion: escape '&'
 
 0.26 (2014/06/03)
 * fix segfault when adding absolute paths

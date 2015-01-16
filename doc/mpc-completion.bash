@@ -7,7 +7,7 @@
 # Something like this should (but doesn't) also work:
 # while read -r line; do printf "%q\n" "$line"; done
 __escape_strings_stdin () {
-	sed "s/\([><()\";\`' ]\)/\\\\\\1/g"
+	sed "s/\([&><()\";\`' ]\)/\\\\\\1/g"
 }
 
 # Read everything past the command as a single word
