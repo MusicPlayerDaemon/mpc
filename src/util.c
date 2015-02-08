@@ -42,7 +42,7 @@ printErrorAndExit(struct mpd_connection *conn)
 		   rest is either US-ASCII or locale */
 		message = charset_from_utf8(message);
 
-	fprintf(stderr, "error: %s\n", message);
+	fprintf(stderr, "mpd error: %s\n", message);
 	mpd_connection_free(conn);
 	exit(EXIT_FAILURE);
 }
