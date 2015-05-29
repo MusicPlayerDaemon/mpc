@@ -225,11 +225,39 @@ query_queue_length(struct mpd_connection *conn)
 	return length;
 }
 
+#if LIBMPDCLIENT_CHECK_VERSION(2,8,0)
+
+static void
+queue_range(struct mpd_connection *conn, unsigned start, unsigned end,
+	    int next_id)
+{
+	struct mpd_song *song = next_id >= 0
+		? mpd_run_get_queue_song_id(conn, next_id)
+		: mpd_run_current_song(conn);
+	unsigned prio = 0;
+	if (song != NULL) {
+		prio = mpd_song_get_prio(song);
+		mpd_song_free(song);
+	}
+
+	if (prio < 255)
+		++prio;
+
+	if (!mpd_run_prio_range(conn, prio, start, end))
+		printErrorAndExit(conn);
+}
+
+#endif
+
 int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 {
 	struct mpd_status *status = getStatus(conn);
 	const unsigned from = mpd_status_get_queue_length(status);
 	const int cur_pos = mpd_status_get_song_pos(status);
+#if LIBMPDCLIENT_CHECK_VERSION(2,8,0)
+	const int next_id = mpd_status_get_next_song_id(status);
+	const bool random_mode = mpd_status_get_random(status);
+#endif
 	mpd_status_free(status);
 
 	int ret = cmd_add(argc, argv, conn);
@@ -239,6 +267,14 @@ int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 	/* check the new queue length to find out how many songs were
 	   appended  */
 	const unsigned end = query_queue_length(conn);
+
+#if LIBMPDCLIENT_CHECK_VERSION(2,8,0)
+	if (random_mode) {
+		queue_range(conn, from, end, next_id);
+		return 0;
+	}
+#endif
+
 	if (end == from)
 		return 0;
 

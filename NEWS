@@ -9,6 +9,7 @@
 * bash completion: escape '&'
 * add %mtime% and %mdate% to --format
 * recognize command by unambiguous prefix
+* "insert" queues new songs when "random" mode is enabled
 
 0.26 (2014/06/03)
 * fix segfault when adding absolute paths
