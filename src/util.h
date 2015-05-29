@@ -31,8 +31,8 @@ struct mpd_song;
 #define SIMPLE_CMD(funcname, libmpdclient_funcname, ret) \
 int funcname(gcc_unused int argc, gcc_unused char **argv, \
 	     struct mpd_connection *conn) { \
-	libmpdclient_funcname(conn); \
-	my_finishCommand(conn); \
+	if (!libmpdclient_funcname(conn)) \
+		printErrorAndExit(conn); \
 	return ret; \
 }
 
