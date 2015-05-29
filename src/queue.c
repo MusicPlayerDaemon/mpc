@@ -243,5 +243,8 @@ int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 		return 0;
 
 	/* move those songs to right after the current one */
-	return mpd_run_move_range(conn, from, end, cur_pos + 1);
+	if (!mpd_run_move_range(conn, from, end, cur_pos + 1))
+		printErrorAndExit(conn);
+
+	return 0;
 }
