@@ -30,6 +30,7 @@ int cmd_searchplay(int argc, char **argv, struct mpd_connection *conn);
 int cmd_next(int argc, char **argv, struct mpd_connection *conn);
 int cmd_prev(int argc, char **argv, struct mpd_connection *conn);
 int cmd_pause(int argc, char **argv, struct mpd_connection *conn);
+int cmd_pause_if_playing(int argc, char **argv, struct mpd_connection *conn);
 int cmd_stop(int argc, char **argv, struct mpd_connection *conn);
 int cmd_seek(int argc, char **argv, struct mpd_connection *conn);
 int cmd_clearerror(int argc, char **argv, struct mpd_connection *conn);

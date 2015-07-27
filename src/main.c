@@ -69,6 +69,8 @@ static struct command {
 	{"next",        0,   0,   0,    cmd_next,        "", "Play the next song in the current playlist"},
 	{"prev",        0,   0,   0,    cmd_prev,        "", "Play the previous song in the current playlist"},
 	{"pause",       0,   0,   0,    cmd_pause,       "", "Pauses the currently playing song"},
+	{"pause-if-playing",
+	                0,   0,   0,    cmd_pause_if_playing, "", "Pauses the currently playing song; exits with failure if not playing"},
 	{"toggle",      0,   0,   0,    cmd_toggle,      "", "Toggles Play/Pause, plays if stopped"},
 	{"cdprev",      0,   0,   0,    cmd_cdprev,      "", "Compact disk player-like previous command"},
 	{"stop",        0,   0,   0,    cmd_stop,        "", "Stop the currently playing playlists"},
@@ -271,7 +273,7 @@ run(const struct command *command, int argc, char **array)
 	}
 
 	mpd_connection_free(conn);
-	return (ret >= 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+	return (ret >= 0) ? EXIT_SUCCESS : -ret;
 }
 
 int main(int argc, char ** argv)

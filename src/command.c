@@ -763,6 +763,24 @@ cmd_pause(gcc_unused int argc, gcc_unused char **argv,
 	return 1;
 }
 
+int
+cmd_pause_if_playing(gcc_unused int argc, gcc_unused char **argv,
+		     struct mpd_connection *conn)
+{
+	struct mpd_status *status = getStatus(conn);
+	int ret = 1;
+
+	if (mpd_status_get_state(status) != MPD_STATE_PLAY) {
+		ret = -127;
+	} else {
+		cmd_pause(0, NULL, conn);
+	}
+
+	mpd_status_free(status);
+
+	return ret;
+}
+
 static int
 bool_cmd(int argc, char **argv, struct mpd_connection *conn,
 	 bool (*get_mode)(const struct mpd_status *status),
