@@ -541,7 +541,7 @@ cmd_listall(int argc, char **argv, struct mpd_connection *conn)
 			if (!mpd_send_list_all_meta(conn, tmp))
 				printErrorAndExit(conn);
 
-			print_entity_list(conn, MPD_ENTITY_TYPE_UNKNOWN);
+			print_entity_list(conn, MPD_ENTITY_TYPE_SONG);
 		} else {
 			if (!mpd_send_list_all(conn, tmp))
 				printErrorAndExit(conn);
