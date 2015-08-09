@@ -1,5 +1,6 @@
 0.28 (not yet released)
 * let "listall" print songs only
+* format: add escape character to escape sequences
 
 0.27 (2015/05/30)
 * fix --enable-debug and --enable-werror

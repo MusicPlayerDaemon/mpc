@@ -146,6 +146,10 @@ format_object2(const char *format, const char **last, const void *object,
 				ltemp = '\b';
 				break;
 
+			case 'e':
+				ltemp = '\033';
+				break;
+
 			case 't':
 				ltemp = '\t';
 				break;
