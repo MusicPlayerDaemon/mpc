@@ -26,6 +26,8 @@
 #define V_QUIET 0
 #define V_DEFAULT 1
 #define V_VERBOSE 2
+#define F_DEFAULT \
+    "[%name%: &[%artist% - ]%title%]|%name%|[%artist% - ]%title%|%file%"
 
 typedef struct {
 	const char *host;

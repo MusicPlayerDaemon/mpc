@@ -44,7 +44,7 @@ options_t options = {
 	.verbosity = V_DEFAULT,
 	.password = NULL,
 	.port_str = NULL,
-	.format = "[%name%: &[%artist% - ]%title%]|%name%|[%artist% - ]%title%|%file%",
+	.format = NULL,
 };
 
 static const arg_opt_t option_table[] = {
@@ -276,6 +276,13 @@ parse_options(int * argc_p, char ** argv)
 			fprintf(stderr, "Port \"%s\" is not a positive integer\n", options.port_str);
 			exit(EXIT_FAILURE);
 		}
+	}
+
+	if (options.format == NULL) {
+		if ((options.format = getenv("MPC_FORMAT")) == NULL)
+			options.format = F_DEFAULT;
+		else
+			options.custom_format = true;
 	}
 
 	/* Fix argv for command processing, which wants
