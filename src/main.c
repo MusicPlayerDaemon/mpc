@@ -101,7 +101,7 @@ static struct command {
 	{"searchadd",   2,   -1,  0,    cmd_searchadd,   "<type> <query>", "Search songs and add them to the current playlist"},
 	{"find",        2,   -1,  0,    cmd_find,        "<type> <query>", "Find a song (exact match)"},
 	{"findadd",     2,   -1,  0,    cmd_findadd,     "<type> <query>", "Find songs and add them to the current playlist"},
-	{"searchplay",  1,   1,   0,    cmd_searchplay,  "<pattern>", "Find and play a song in the current playlist"},
+	{"searchplay",  1,   -1,  0,    cmd_searchplay,  "<pattern>", "Find and play a song in the current playlist"},
 	{"list",        1,   -1,  0,    cmd_list,        "<type> [<type> <query>]", "Show all tags of <type>"},
 	{"crossfade",   0,   1,   0,    cmd_crossfade,   "[<seconds>]", "Set and display crossfade settings"},
 #if LIBMPDCLIENT_CHECK_VERSION(2,4,0)

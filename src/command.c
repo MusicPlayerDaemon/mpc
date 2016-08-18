@@ -335,15 +335,22 @@ cmd_play(int argc, char **argv, struct mpd_connection *conn)
 }
 
 static int
-find_songname_id(struct mpd_connection *conn, const char *s)
+find_songname_id(struct mpd_connection *conn, int argc, char **argv)
 {
 	int res = -1;
 
 	mpd_search_queue_songs(conn, false);
 
-	const char *pattern = charset_to_utf8(s);
-	mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
-					       pattern);
+	if (argc == 1) {
+		const char *pattern = charset_to_utf8(argv[0]);
+		mpd_search_add_any_tag_constraint(conn, MPD_OPERATOR_DEFAULT,
+						  pattern);
+	} else {
+		int n = add_constraints(argc, argv, conn);
+		if (n < 0)
+			return -2;
+	}
+
 	mpd_search_commit(conn);
 
 	struct mpd_song *song = mpd_recv_song(conn);
@@ -361,10 +368,12 @@ find_songname_id(struct mpd_connection *conn, const char *s)
 int
 cmd_searchplay(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 {
-	int id = find_songname_id(conn, argv[0]);
+	int id = find_songname_id(conn, argc, argv);
+	if (id == -2)
+		/* add_constraints() has failed */
+		return -1;
 	if (id < 0)
-		DIE("error: playlist contains no song with that name: %s\n",
-		    argv[0]);
+		DIE("error: playlist contains no matching song\n");
 
 	if (!mpd_run_play_id(conn, id))
 		printErrorAndExit(conn);

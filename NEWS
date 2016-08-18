@@ -1,5 +1,6 @@
 0.28 (not yet released)
 * let "listall" print songs only
+* "searchplay" supports tags
 * format: add escape character to escape sequences
 * use environment variable "MPC_FORMAT"
 
