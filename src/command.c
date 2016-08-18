@@ -38,10 +38,7 @@
 SIMPLE_CMD(cmd_next, mpd_run_next, 1)
 SIMPLE_CMD(cmd_prev, mpd_run_previous, 1)
 SIMPLE_CMD(cmd_stop, mpd_run_stop, 1)
-
-#if LIBMPDCLIENT_CHECK_VERSION(2,4,0)
 SIMPLE_CMD(cmd_clearerror, mpd_run_clearerror, 1)
-#endif
 
 SIMPLE_ONEARG_CMD(cmd_save, mpd_run_save, 0)
 SIMPLE_ONEARG_CMD(cmd_rm, mpd_run_rm, 0)
@@ -299,16 +296,12 @@ cmd_disable(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 			      mpd_send_enable_output);
 }
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,9,0)
-
 int
 cmd_toggle_output(int argc, char **argv, struct mpd_connection *conn)
 {
 	return enable_disable(argc, argv, conn, mpd_send_toggle_output,
 			      mpd_send_toggle_output);
 }
-
-#endif
 
 int
 cmd_play(int argc, char **argv, struct mpd_connection *conn)
@@ -733,7 +726,6 @@ cmd_volume(int argc, char **argv, struct mpd_connection *conn)
 	}
 
 	if (ch.is_relative) {
-#if LIBMPDCLIENT_CHECK_VERSION(2,9,0)
 		if (mpd_connection_cmp_server_version(conn, 0, 18, 0) >= 0) {
 			/* MPD 0.18 knows the "volume" command for
 			   relative changes */
@@ -741,7 +733,6 @@ cmd_volume(int argc, char **argv, struct mpd_connection *conn)
 				printErrorAndExit(conn);
 			return 1;
 		}
-#endif
 
 		struct mpd_status *status = getStatus(conn);
 		int old_volume = mpd_status_get_volume(status);

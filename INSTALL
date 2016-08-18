@@ -5,7 +5,7 @@ Requirements
 ------------
 
   * a C99 compliant compiler (e.g. gcc)
-  * libmpdclient 2.3
+  * libmpdclient 2.9
 
 
 Download

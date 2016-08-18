@@ -63,7 +63,6 @@ cmd_add(int argc, char **argv, struct mpd_connection *conn)
 		printErrorAndExit(conn);
 
 	if (!mpd_response_finish(conn)) {
-#if LIBMPDCLIENT_CHECK_VERSION(2,4,0)
 		if (mpd_connection_get_error(conn) == MPD_ERROR_SERVER) {
 			/* check which of the arguments has failed */
 			unsigned location =
@@ -79,7 +78,6 @@ cmd_add(int argc, char **argv, struct mpd_connection *conn)
 				exit(EXIT_FAILURE);
 			}
 		}
-#endif
 
 		printErrorAndExit(conn);
 	}
@@ -225,8 +223,6 @@ query_queue_length(struct mpd_connection *conn)
 	return length;
 }
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,8,0)
-
 static void
 queue_range(struct mpd_connection *conn, unsigned start, unsigned end,
 	    int next_id)
@@ -247,17 +243,13 @@ queue_range(struct mpd_connection *conn, unsigned start, unsigned end,
 		printErrorAndExit(conn);
 }
 
-#endif
-
 int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 {
 	struct mpd_status *status = getStatus(conn);
 	const unsigned from = mpd_status_get_queue_length(status);
 	const int cur_pos = mpd_status_get_song_pos(status);
-#if LIBMPDCLIENT_CHECK_VERSION(2,8,0)
 	const int next_id = mpd_status_get_next_song_id(status);
 	const bool random_mode = mpd_status_get_random(status);
-#endif
 	mpd_status_free(status);
 
 	int ret = cmd_add(argc, argv, conn);
@@ -268,12 +260,10 @@ int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 	   appended  */
 	const unsigned end = query_queue_length(conn);
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,8,0)
 	if (random_mode) {
 		queue_range(conn, from, end, next_id);
 		return 0;
 	}
-#endif
 
 	if (end == from)
 		return 0;

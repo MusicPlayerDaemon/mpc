@@ -77,9 +77,7 @@ static struct command {
 	{"outputs",     0,   0,   0,    cmd_outputs,     "", "Show the current outputs"},
 	{"enable",      1,   -1,  0,    cmd_enable,      "[only] <output # or name> [...]", "Enable output(s)"},
 	{"disable",     1,   -1,  0,    cmd_disable,     "[only] <output # or name> [...]", "Disable output(s)"},
-#if LIBMPDCLIENT_CHECK_VERSION(2,9,0)
 	{"toggleoutput", 1, -1,   0,    cmd_toggle_output, "<output # or name> [...]", "Toggle output(s)"},
-#endif
 	{"shuffle",     0,   0,   0,    cmd_shuffle,     "", "Shuffle the current playlist"},
 	{"move",        2,   2,   0,    cmd_move,        "<from> <to>", "Move song in playlist"},
         /* mv is an alias for move */
@@ -104,9 +102,7 @@ static struct command {
 	{"searchplay",  1,   -1,  0,    cmd_searchplay,  "<pattern>", "Find and play a song in the current playlist"},
 	{"list",        1,   -1,  0,    cmd_list,        "<type> [<type> <query>]", "Show all tags of <type>"},
 	{"crossfade",   0,   1,   0,    cmd_crossfade,   "[<seconds>]", "Set and display crossfade settings"},
-#if LIBMPDCLIENT_CHECK_VERSION(2,4,0)
 	{"clearerror",  0,   0,   0,    cmd_clearerror,  "", "Clear the current error"},
-#endif
 	{"mixrampdb",   0,   1,   0,    cmd_mixrampdb,   "[<dB>]", "Set and display mixrampdb settings"},
 	{"mixrampdelay",0,   1,   0,    cmd_mixrampdelay,"[<seconds>]", "Set and display mixrampdelay settings"},
 	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scan music directory for updates"},
@@ -126,7 +122,6 @@ static struct command {
 	{ "replaygain", 0, -1, 0, cmd_replaygain, "[off|track|album]",
 	  "Set or display the replay gain mode" },
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,5,0)
 	{ "channels", 0, 0, 0, cmd_channels, "",
 	  "List the channels that other clients have subscribed to." },
 	{ "sendmessage", 2, 2, 0, cmd_sendmessage, "<channel> <message>",
@@ -135,7 +130,6 @@ static struct command {
 	  "Wait for at least one message on the specified channel." },
 	{ "subscribe", 1, 1, 0, cmd_subscribe, "<channel>",
 	  "Subscribe to the specified channel and continuously receive messages." },
-#endif /* libmpdclient 2.5 */
 
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */
 	{ .command = NULL }

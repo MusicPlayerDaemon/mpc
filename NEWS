@@ -3,6 +3,7 @@
 * "searchplay" supports tags
 * format: add escape character to escape sequences
 * use environment variable "MPC_FORMAT"
+* require libmpdclient 2.9 or newer
 
 0.27 (2015/05/30)
 * fix --enable-debug and --enable-werror

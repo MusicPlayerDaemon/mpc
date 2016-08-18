@@ -24,14 +24,9 @@
 #include "Compiler.h"
 
 #include <mpd/client.h>
-
-#if LIBMPDCLIENT_CHECK_VERSION(2,5,0) && !LIBMPDCLIENT_CHECK_VERSION(2,5,1)
 #include <mpd/message.h>
-#endif
 
 #include <stdio.h>
-
-#if LIBMPDCLIENT_CHECK_VERSION(2,5,0)
 
 int
 cmd_channels(gcc_unused int argc, gcc_unused char **argv,
@@ -104,5 +99,3 @@ cmd_subscribe(gcc_unused int argc, char **argv,
 		my_finishCommand(connection);
 	}
 }
-
-#endif /* libmpdclient 2.5 */

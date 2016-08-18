@@ -28,9 +28,7 @@ struct mpd_connection;
 enum {
 	SEARCH_TAG_ANY = MPD_TAG_COUNT + 1,
 	SEARCH_TAG_URI = MPD_TAG_COUNT + 2,
-#if LIBMPDCLIENT_CHECK_VERSION(2,9,0)
 	SEARCH_TAG_BASE,
-#endif
 };
 
 struct constraint {
