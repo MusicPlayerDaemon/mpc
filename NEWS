@@ -1,4 +1,4 @@
-0.28 (not yet released)
+0.28 (2016/08/18)
 * let "listall" print songs only
 * "searchplay" supports tags
 * add command "pause-if-playing"
