@@ -1,0 +1,4 @@
+option('iconv', type: 'combo',
+  choices: ['true', 'false', 'auto'],
+  value: 'auto',
+  description: 'Enable iconv() support')

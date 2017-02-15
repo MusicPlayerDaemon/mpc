@@ -12,18 +12,16 @@ You need:
 
 - a C99 compliant compiler (e.g. gcc)
 - libmpdclient 2.9
+- `Meson 0.37 <http://mesonbuild.com/>`__ and `Ninja <https://ninja-build.org/>`__
 
-Run ``./configure`` (or ``./autogen.sh`` if you cloned from git)::
+Run ``meson``:
 
- ./configure
-
-The configure option ``--help`` lists all available compile-time
-options.
+ meson . output
 
 Compile and install::
 
- make
- make install
+ ninja -C output
+ ninja -C output install
 
 
 Using mpc

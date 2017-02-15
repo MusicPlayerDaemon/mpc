@@ -1,5 +1,6 @@
 0.29 (not yet released)
 * fix build failure with gcc 7.0 and clang 4.0
+* build with Meson instead of autotools
 
 0.28 (2016/08/18)
 * let "listall" print songs only
