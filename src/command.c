@@ -618,7 +618,7 @@ cmd_update(int argc, char **argv, struct mpd_connection *conn)
 		/* is our last queued update finished now? */
 
 		if (current_id == 0 || current_id > id ||
-		    (id > 1 << 30 && id < 1000)) /* wraparound */
+		    (id > (1 << 30) && id < 1000)) /* wraparound */
 			break;
 	}
 
