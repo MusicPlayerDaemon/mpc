@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 AUTOMAKE_OPTIONS = foreign 1.11 dist-xz subdir-objects
 
 man_MANS = doc/mpc.1
-doc_DATA = AUTHORS COPYING NEWS README \
+doc_DATA = AUTHORS COPYING NEWS README.rst \
 	doc/mpd-m3u-handler.sh doc/mpd-pls-handler.sh doc/mppledit \
 	doc/mpc-completion.bash
 EXTRA_DIST = $(man_MANS) $(doc_DATA)
