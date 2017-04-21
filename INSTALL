@@ -41,36 +41,8 @@ Install (Optional)
 $ su -c "make install"
 
 
-Run
----
-
-As default, mpc connects to localhost:6600, but otherwise can be specified by
-changing the MPD_HOST and MPD_PORT environment variables. This is mostly done
-by:
-
-$ export MPD_HOST=<host/ip>
-$ export MPD_PORT=1337
-
-If a password is need for accessing mpd:
-
-$ export MPD_HOST=password@<host/ip>
-
-Commands
---------
-
-For more information about which commands do what, refer either to the help (mpc
--h) or for more detailed information refer to the manual page at man 1 mpc.
-
-
 Bash-completion
 ---------------
 
 If you want to be able to tab-complete the commands for mpc, you can copy the
 contents of mpc-bashrc to your own ~/.bashrc .
-
-
-Using mpc
----------
-
-To use mpc, you should run MPD on a machine. You can download MPD at 
-http://www.musicpd.org.

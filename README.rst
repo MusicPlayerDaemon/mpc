@@ -9,3 +9,9 @@ For more information about MPD and other clients visit http://www.musicpd.org/
 
 mpc is released under the GPLv2. For the full license text, please see the
 `COPYING <COPYING>`__ file for more detailed information.
+
+
+Using mpc
+---------
+
+Read mpc's manual page for usage instructions.
