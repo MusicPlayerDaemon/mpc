@@ -38,3 +38,10 @@ Bash-completion
 
 If you want to be able to tab-complete the commands for mpc, you can copy the
 contents of mpc-bashrc to your own ``~/.bashrc``.
+
+
+Support
+-------
+
+- `Forum <http://forum.musicpd.org/>`__
+- `Bug tracker <https://github.com/MusicPlayerDaemon/mpc/issues>`__
