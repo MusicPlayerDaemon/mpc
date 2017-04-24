@@ -14,7 +14,7 @@ You need:
 - a C99 compliant compiler (e.g. gcc)
 - libmpdclient 2.9
 
-Run "./configure" (or "./autogen.sh" if you cloned from git)::
+Run ``./configure`` (or ``./autogen.sh`` if you cloned from git)::
 
  ./configure
 
