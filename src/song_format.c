@@ -37,7 +37,7 @@ format_mtime(char *buffer, size_t buffer_size,
 		return NULL;
 
 	struct tm tm;
-#ifdef WIN32
+#ifdef _WIN32
 	tm = *localtime(&t);
 #else
 	localtime_r(&t, &tm);
