@@ -5,10 +5,17 @@ import os, sys, shutil, subprocess
 global_options = ['--werror']
 
 flavors = {
-    'debug': {},
+    'debug': {
+        'options': [
+            '-Dtest=true',
+        ],
+    },
 
     'release': {
-        'options': ['--buildtype', 'release'],
+        'options': [
+            '--buildtype', 'release',
+            '-Dtest=true',
+        ],
     },
 
     'mini': {

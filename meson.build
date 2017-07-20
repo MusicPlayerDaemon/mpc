@@ -61,7 +61,6 @@ endforeach
 add_global_arguments(common_cflags, language: 'c')
 
 libmpdclient_dep = dependency('libmpdclient', version: '>= 2.9')
-check_dep = dependency('check', required: false)
 
 inc = include_directories(
   'src',
@@ -110,6 +109,7 @@ install_data('AUTHORS', 'COPYING', 'NEWS', 'README.rst',
   'doc/mpc-completion.bash',
   install_dir : join_paths(get_option('datadir'), 'doc', meson.project_name()))
 
-if check_dep.found()
+if get_option('test')
+  check_dep = dependency('check')
   subdir('test')
 endif
