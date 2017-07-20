@@ -14,6 +14,7 @@ flavors = {
     'release': {
         'options': [
             '--buildtype', 'release',
+            '--unity',
             '-Dtest=true',
         ],
     },
@@ -21,6 +22,7 @@ flavors = {
     'mini': {
         'options': [
             '--buildtype', 'release',
+            '--unity',
             '-Diconv=false',
         ],
     },
@@ -29,6 +31,7 @@ flavors = {
         'options': [
             '--buildtype', 'minsize',
             '--default-library', 'static',
+            '--unity',
         ],
         'env': {
             'CC': 'musl-gcc',
