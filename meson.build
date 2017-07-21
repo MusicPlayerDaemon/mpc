@@ -43,11 +43,16 @@ test_cflags = [
   '-Wwrite-strings',
 ]
 
+test_ldflags = [
+]
+
 if get_option('buildtype') != 'debug'
   test_cflags += [
     '-ffunction-sections',
     '-fdata-sections',
     '-fvisibility=hidden',
+  ]
+  test_ldflags += [
     '-Wl,--gc-sections',
   ]
 endif
@@ -59,6 +64,12 @@ foreach f: test_cflags
 endforeach
 
 add_global_arguments(common_cflags, language: 'c')
+
+foreach f: test_ldflags
+  if cc.has_argument(f)
+    add_global_link_arguments(f, language: 'c')
+  endif
+endforeach
 
 libmpdclient_dep = dependency('libmpdclient', version: '>= 2.9')
 
