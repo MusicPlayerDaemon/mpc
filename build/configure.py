@@ -65,7 +65,7 @@ for name, data in flavors.items():
 
     cmdline = [
         'meson', source_root, build_root,
-    ]
+    ] + global_options
 
     if 'options' in data:
         cmdline.extend(data['options'])
