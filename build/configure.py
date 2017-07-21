@@ -15,6 +15,7 @@ flavors = {
         'options': [
             '--buildtype', 'release',
             '--unity',
+            '-Db_ndebug=true',
             '-Dtest=true',
         ],
     },
@@ -23,6 +24,7 @@ flavors = {
         'options': [
             '--buildtype', 'release',
             '--unity',
+            '-Db_ndebug=true',
             '-Diconv=false',
         ],
     },
@@ -31,6 +33,7 @@ flavors = {
         'options': [
             '--buildtype', 'minsize',
             '--default-library', 'static',
+            '-Db_ndebug=true',
             '--unity',
         ],
         'env': {
