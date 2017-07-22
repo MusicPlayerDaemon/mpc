@@ -77,7 +77,7 @@ inc = include_directories(
   'src',
 
   # for the generated config.h
-  meson.current_build_dir(),
+  '.',
 )
 
 if iconv
