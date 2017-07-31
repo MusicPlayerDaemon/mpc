@@ -1,0 +1,16 @@
+dist: trusty
+language: c
+
+os:
+  - osx
+
+before_install:
+  - test "$TRAVIS_OS_NAME" != "osx" || brew update
+
+install:
+  - test "$TRAVIS_OS_NAME" != "osx" || brew install meson ninja libmpdclient check
+
+script:
+  - OPTIONS="-Dtest=true"
+  - meson . output $OPTIONS
+  - ninja -v -C output test
