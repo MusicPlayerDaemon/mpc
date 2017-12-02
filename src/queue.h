@@ -44,4 +44,7 @@ cmd_playlist(int argc, char **argv, struct mpd_connection *conn);
 int
 cmd_insert(int argc, char **argv, struct mpd_connection *conn);
 
+int
+cmd_prio(int argc, char **argv, struct mpd_connection *conn);
+
 #endif /* COMMAND_H */

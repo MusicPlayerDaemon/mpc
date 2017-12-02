@@ -87,6 +87,9 @@ static const struct command {
 	{"lsplaylists", 0,   -1,  2,    cmd_lsplaylists, "", "List currently available playlists"},
 	{"load",        0,   -1,  1,    cmd_load,        "<file>", "Load <file> into the queue"},
 	{"insert",      0,   -1,  1,    cmd_insert,      "<uri>", "Insert a song to the queue after the current track"},
+
+	{"prio",        2,   -1,  2,    cmd_prio,        "<prio> <position/range> ...", "Change song priorities in the queue"},
+
 	{"save",        1,   1,   0,    cmd_save,        "<file>", "Save a queue as <file>"},
 	{"rm",          1,   1,   0,    cmd_rm,          "<file>", "Remove a playlist"},
 	{"volume",      0,   1,   0,    cmd_volume,      "[+-]<num>", "Set volume to <num> or adjusts by [+-]<num>"},

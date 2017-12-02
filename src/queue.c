@@ -274,3 +274,23 @@ int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 
 	return 0;
 }
+
+
+int
+cmd_prio(int argc, char **argv, struct mpd_connection *conn)
+{
+	int i = 0;
+	const char *prio = argv[i++];
+
+	if (!mpd_command_list_begin(conn, false))
+		printErrorAndExit(conn);
+
+	while (i < argc) {
+		if (!mpd_send_command(conn, "prio", prio, argv[i++], NULL))
+			break;
+	}
+
+	mpd_command_list_end(conn);
+	my_finishCommand(conn);
+	return 0;
+}
