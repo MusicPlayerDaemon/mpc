@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include <sys/param.h>
 
-static struct command {
+static const struct command {
 	const char *command;
 	const int min, max;   /* min/max arguments allowed, -1 = unlimited */
 	int pipe;             /**
@@ -205,12 +205,12 @@ setup_connection(void)
 	return conn;
 }
 
-static struct command *
+static const struct command *
 find_command(const char *name)
 {
 	unsigned n_matches = 0;
 	size_t name_length = strlen(name);
-	struct command *command = NULL;
+	const struct command *command = NULL;
 
 	for (unsigned i = 0; mpc_table[i].command != NULL; ++i) {
 		if (memcmp(name, mpc_table[i].command, name_length) == 0) {
@@ -236,7 +236,7 @@ static bool pipe_array_used = false;
 
 /* check arguments to see if they are valid */
 static char **
-check_args(struct command *command, int * argc, char ** argv)
+check_args(const struct command *command, int * argc, char ** argv)
 {
 	char ** array;
 
@@ -297,7 +297,7 @@ int main(int argc, char ** argv)
 		argc = 2;
 	}
 
-	struct command *command = find_command(command_name);
+	const struct command *command = find_command(command_name);
 	if (command == NULL)
 		return print_help("mpc", argv[1]);
 
