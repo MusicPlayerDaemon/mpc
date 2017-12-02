@@ -81,6 +81,10 @@ song_value(const struct mpd_song *song, const char *name)
 	} else if (strcmp(name, "id") == 0) {
 		snprintf(buffer, sizeof(buffer), "%u", mpd_song_get_id(song));
 		value = buffer;
+	} else if (strcmp(name, "prio") == 0) {
+		snprintf(buffer, sizeof(buffer), "%u",
+			 mpd_song_get_prio(song));
+		value = buffer;
 	} else if (strcmp(name, "mtime") == 0) {
 		value = format_mtime(buffer, sizeof(buffer), song, "%c");
 	} else if (strcmp(name, "mdate") == 0) {

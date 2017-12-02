@@ -1,4 +1,5 @@
 0.29 (not yet released)
+* implement %prio% for --format
 * fix build failure with gcc 7.0 and clang 4.0
 * build with Meson instead of autotools
 
