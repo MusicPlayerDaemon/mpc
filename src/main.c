@@ -49,9 +49,6 @@ static struct command {
 	int pipe;             /**
 	                       * 1: implicit pipe read, `-' optional as argv[2]
 	                       * 2: explicit pipe read, `-' needed as argv[2]
-	                       *
-	                       * multiplied by -1 if used, so that it can signal
-	                       * a free() before the program exits
 	                       */
 	cmdhandler handler;
 	const char *usage;
@@ -231,6 +228,12 @@ find_command(const char *name)
 		: /* ambiguous or nonexistent */ NULL;
 }
 
+/**
+ * Set to true when "argv" contains an allocated list which must be
+ * freed before exiting.
+ */
+static bool pipe_array_used = false;
+
 /* check arguments to see if they are valid */
 static char **
 check_args(struct command *command, int * argc, char ** argv)
@@ -242,7 +245,7 @@ check_args(struct command *command, int * argc, char ** argv)
 	    || (command->pipe == 2 && (3 == *argc &&
 				       0 == strcmp(argv[2],STDIN_SYMBOL)))){
 		*argc = stdinToArgArray(&array);
-		command->pipe *= -1;
+		pipe_array_used = true;
 	} else {
 		*argc -= 2;
 		array = malloc( (*argc * (sizeof(char *))));
@@ -312,7 +315,7 @@ int main(int argc, char ** argv)
 
 	charset_deinit();
 
-	if (command->pipe < 0)
+	if (pipe_array_used)
 		free_pipe_array(argc, argv);
 	free(argv);
 
