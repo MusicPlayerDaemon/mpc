@@ -50,13 +50,6 @@ int cmd_consume(int argc, char **argv, struct mpd_connection *conn);
 int cmd_crossfade(int argc, char **argv, struct mpd_connection *conn);
 int cmd_mixrampdb(int argc, char **argv, struct mpd_connection *conn);
 int cmd_mixrampdelay(int argc, char **argv, struct mpd_connection *conn);
-int cmd_enable( int argc, char **argv, struct mpd_connection *conn);
-int cmd_disable( int argc, char **argv, struct mpd_connection *conn);
-
-int
-cmd_toggle_output(int argc, char **argv, struct mpd_connection *conn);
-
-int cmd_outputs(int argc, char **argv, struct mpd_connection *conn);
 int cmd_update(int argc, char **argv, struct mpd_connection *conn);
 int cmd_version(int argc, char **argv, struct mpd_connection *conn);
 int cmd_stats(int argc, char **argv, struct mpd_connection *conn);

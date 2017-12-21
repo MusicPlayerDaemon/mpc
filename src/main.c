@@ -26,6 +26,7 @@
 #include "status.h"
 #include "command.h"
 #include "queue.h"
+#include "output.h"
 #include "sticker.h"
 #include "tab.h"
 #include "idle.h"
