@@ -78,6 +78,9 @@ static const struct command {
 	{"enable",      1,   -1,  0,    cmd_enable,      "[only] <output # or name> [...]", "Enable output(s)"},
 	{"disable",     1,   -1,  0,    cmd_disable,     "[only] <output # or name> [...]", "Disable output(s)"},
 	{"toggleoutput", 1, -1,   0,    cmd_toggle_output, "<output # or name> [...]", "Toggle output(s)"},
+#if LIBMPDCLIENT_CHECK_VERSION(2,14,0)
+	{"outputset",   2,   2,   0,    cmd_outputset,   "<output # or name> <name>=<value>", "Set output attributes"},
+#endif
 	{"shuffle",     0,   0,   0,    cmd_shuffle,     "", "Shuffle the queue"},
 	{"move",        2,   2,   0,    cmd_move,        "<from> <to>", "Move song in queue"},
         /* mv is an alias for move */

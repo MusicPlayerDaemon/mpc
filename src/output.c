@@ -35,6 +35,59 @@
 #include <string.h>
 #include <stdlib.h>
 
+#if LIBMPDCLIENT_CHECK_VERSION(2,14,0)
+
+/**
+ * Look up an output name and return its index.
+ *
+ * @return the 0-based index or -1 on error
+ */
+gcc_pure
+static int
+output_name_to_index(struct mpd_connection *conn, const char *name)
+{
+	int result = -1;
+
+	mpd_send_outputs(conn);
+
+	struct mpd_output *output;
+	while ((output = mpd_recv_output(conn)) != NULL) {
+		bool found = strcmp(name, mpd_output_get_name(output)) == 0;
+		int id = mpd_output_get_id(output);
+		mpd_output_free(output);
+
+		if (found) {
+			result = id;
+			break;
+		}
+	}
+
+	my_finishCommand(conn);
+	return result;
+}
+
+/**
+ * Convert an output specification (id or name) to an index.
+ *
+ * @return the 0-based index or -1 on error
+ */
+gcc_pure
+static int
+output_spec_to_index(struct mpd_connection *conn, const char *spec)
+{
+	int result;
+	if (parse_int(spec, &result)) {
+		if (result <= 0)
+			return -1;
+
+		/* We decrement by 1 to make it natural to the user. */
+		return result - 1;
+	} else
+		return output_name_to_index(conn, spec);
+}
+
+#endif
+
 int
 cmd_outputs(gcc_unused int argc, gcc_unused char **argv,
 	    struct mpd_connection *conn)
@@ -188,3 +241,31 @@ cmd_toggle_output(int argc, char **argv, struct mpd_connection *conn)
 	return enable_disable(argc, argv, conn, mpd_send_toggle_output,
 			      mpd_send_toggle_output);
 }
+
+#if LIBMPDCLIENT_CHECK_VERSION(2,14,0)
+
+int
+cmd_outputset(gcc_unused int argc, char **argv, struct mpd_connection *conn)
+{
+	const char *const output_spec = argv[0];
+	const char *const attribute = argv[1];
+
+	int output_index = output_spec_to_index(conn, output_spec);
+	if (output_index < 0)
+		DIE("No such output: %s\n", output_spec);
+
+	const char *eq = strchr(attribute, '=');
+	if (eq == NULL || eq == attribute)
+		DIE("Invalid attribute name/value pair: %s\n", attribute);
+
+	char *attribute_name = strndup(attribute, eq - attribute);
+	const char *attribute_value = eq + 1;
+
+	mpd_run_output_set(conn, output_index,
+			   attribute_name, attribute_value);
+	free(attribute_name);
+	my_finishCommand(conn);
+	return 0;
+}
+
+#endif
