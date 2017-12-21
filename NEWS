@@ -2,6 +2,7 @@
 * implement %prio% for --format
 * the default --format falls back to "performer" if there is no "artist"
 * add command "prio"
+* command "outputs" prints attributes
 * fix build failure with gcc 7.0 and clang 4.0
 * build with Meson instead of autotools
 

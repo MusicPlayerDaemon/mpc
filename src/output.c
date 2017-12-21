@@ -106,6 +106,12 @@ cmd_outputs(gcc_unused int argc, gcc_unused char **argv,
 			printf("Output %i (%s) is disabled\n", id, name);
 		}
 
+#if LIBMPDCLIENT_CHECK_VERSION(2,14,0)
+		for (const struct mpd_pair *i = mpd_output_first_attribute(output);
+		     i != NULL; i = mpd_output_next_attribute(output))
+			printf("\t%s=\"%s\"\n", i->name, i->value);
+#endif
+
 		mpd_output_free(output);
 	}
 
