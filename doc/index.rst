@@ -1,0 +1,321 @@
+mpc
+===
+
+
+Description
+-----------
+
+mpc is a client for MPD, the Music Player Daemon.  mpc connects to a MPD and
+controls it according to commands and arguments passed to it.  If no command
+is given, the current status is printed (same as 'mpc status').
+
+
+Synopsis
+--------
+
+ mpc [options] <command> [<arguments>]
+
+
+Options
+-------
+
+.. option:: -f, --format
+
+ Configure the format of song display for status and the queue.  The
+ metadata delimiters are:
+
+ ================== ======================================================
+ Name               Description
+ ================== ======================================================
+ %name%             Unknown (doesn't produce output)
+ %artist%           Artist file tag
+ %album%            Album file tag
+ %albumartist%      Album Artist file tag
+ %comment%          Comment file tag (not enabled by default in mpd.conf's metadata_to_use)
+ %composer%         Composer file tag
+ %date%             Date file tag
+ %disc%             Disc file tag
+ %genre%            Genre file tag
+ %performer%        Performer file tag
+ %title%            Title file tag
+ %track%            Track file tag
+ %time%             Duration of file
+ %file%             Path of file, relative to mpd's `music_directory` variable
+ %position%         Queue track number
+ %id%               Queue track id number
+ %prio%             Priority in the (random) queue.
+ %mtime%            Date and time of last file modification
+ %mdate%            Date of last file modification
+ ================== ======================================================
+
+ The `[]` operator is used to group output such that if no metadata
+ delimiters are found or matched between `[` and `]`, then none of the
+ characters between `[` and `]` are output.  `&` and `|` are logical
+ operators for and and or.  `#` is used to escape characters.  Some
+ useful examples for format are: ":samp:`%file%`" and
+ ":samp:`[[%artist% - ]%title%]|[%file%]`".  This command also takes
+ the following defined escape sequences:
+
+ ======== ===================
+ \\       backslash
+ \\[      left bracket
+ \\]      right bracket
+ \\a      alert
+ \\b      backspace
+ \\e      escape
+ \\t      tab
+ \\n      newline
+ \\v      vertical tab
+ \\f      form-feed
+ \\r      carriage return
+ ======== ===================
+
+.. option:: --wait
+
+ Wait for operation to finish (e.g. database update).
+
+.. option:: -q, --quiet, --no-status
+
+ Prevents the current song status from being printed on completion of
+ some of the commands.
+
+.. option:: --verbose
+
+ Verbose output.
+
+.. option:: --host=HOST
+
+ The host to connect to; if not given, the value of the environment
+ variable :envvar:`MPD_HOST` is checked before defaulting to
+ localhost.  This default can be changed at compile-time.
+
+ To use a password, provide a value of the form
+ ":samp:`password@host`".
+
+ If you specify an absolute path, mpc attempts a connection via Unix
+ Domain Socket.
+
+.. option:: --port=PORT, -p PORT
+
+ The port to connect to; if not given, the value of the environment
+ variable :envvar:`MPD_PORT` is checked before defaulting to
+ :samp:`6600`.  This default can be changed at compile-time.
+
+
+Commands
+--------
+
+Commands can be used from the least unambiguous prefix (e.g insert or
+ins).
+
+:command:`add <file>` - Adds a song from the music database to the
+   queue. Can also read input from pipes. Use ":samp:`mpc add /`" to
+   add all files to the queue.
+
+:command:`insert <file>` - The insert command works similarly to
+   :command:`add` except it adds song(s) after the currently playing
+   one, rather than at the end.  When random mode is enabled, the new
+   song is queued after the current song.
+
+:command:`clear` - Empties the queue.
+
+:command:`crop` - Remove all songs except for the currently playing
+   song.
+
+:command:`current [--wait]` - Show the currently playing song.  With
+   :option:`--wait`, mpc waits until the song changes (or until playback
+   is started/stopped) before it queries the current song from the
+   server.
+
+:command:`crossfade [<seconds>]` - Gets and sets the current amount of
+   crossfading between songs (:samp:`0` disables crossfading).
+
+:command:`mixrampdb [<db>]` - Gets and sets the volume level at which
+   songs with MixRamp tags will be overlapped. This disables the
+   fading of the crossfade command and simply mixes the
+   songs. :samp:`-50.0` will effectively remove any gaps, :samp:`0.0`
+   will mash tracks together. The amount of overlap is limited by the
+   audio_buffer_size MPD configuration parameter.
+
+:command:`mixrampdelay [<seconds>]` - Gets and sets the current amount
+   of extra delay added to the value computed from the MixRamp
+   tags. (A negative value disables overlapping with MixRamp
+   tagqs and restores the previous value of crossfade).
+
+:command:`del <songpos>` - Removes a queue number from the queue. Can
+   also read input from pipes (:samp:`0` deletes the current playing
+   song).
+
+:command:`disable [only] <output # or name> [...]` - Disables the
+   output(s); a list of one or more names or numbers is
+   required. If "only" is the first argument, all other outputs
+   are enabled.
+
+:command:`enable [only] <output # or name> [...]` - Enables the
+   output(s); a list of one or more names or numbers is required. If
+   ":samp:`only`" is the first argument, all other outputs are
+   disabled.
+
+:command:`idle [events]` - Waits until an event occurs.  Prints a list
+   of event names, one per line.  See the MPD protocol documentation
+   for further information.
+
+   If you specify a list of events, only these events are considered.
+
+:command:`idleloop [events]` - Similar to :command:`idle`, but
+   re-enters "idle" state after events have been printed.
+
+   If you specify a list of events, only these events are considered.
+
+:command:`listall [<file>]` - Lists <file> from database.  If no
+   <file> is specified, lists all songs in the database.
+
+:command:`load <file>`: - Loads <file> as queue.
+
+:command:`ls [<directory>]` - Lists all files/folders in
+   <directory>. If no <directory> is specified, lists all files in
+   music directory.
+
+:command:`lsplaylists`: - Lists available playlists.
+
+:command:`mv, move <from> <to>` - Moves song at position <from> to the
+   position <to> in the queue.
+
+:command:`next` - Starts playing next song on queue.
+
+:command:`outputs` - Lists all available outputs
+
+:command:`pause` - Pauses playing.
+
+:command:`play <position>` - Starts playing the song-number
+   specified. If none is specified, plays number 1.
+
+:command:`playlist [<playlist>]` - Lists all songs in <playlist>. If
+   no <playlist> is specified, lists all songs in the current queue.
+
+:command:`prev` - Starts playing previous song.
+
+:command:`random <on|off>` - Toggle random mode if state (:samp:`on`
+   or :samp:`off`) is not specified.
+
+:command:`repeat <on|off>` - Toggle repeat mode if state (:samp:`on`
+   or :samp:`off`) is not specified.
+
+:command:`replaygain [<off|track|album>]` - Sets the replay gain mode.
+   Without arguments, it prints the replay gain mode.
+
+:command:`single <on|off>` - Toggle single mode if state (:samp:`on`
+   or :samp:`off`) is not specified.
+
+:command:`consume <on|off>` - Toggle consume mode if state (:samp:`on`
+   or :samp:`off`) is not specified.
+
+:command:`rm <file>` - Deletes a specific playlist.
+
+:command:`save <file>` - Saves playlist as <file>.
+
+:command:`search <type> <query> [<type> <query>]...` - Searches for
+   substrings in song tags.  Any number of tag type and query
+   combinations can be specified.  Possible tag types are: artist,
+   album, title, track, name, genre, date, composer, performer,
+   comment, disc, filename, or any (to match any tag).
+
+:command:`find <type> <query> [<type> <query>]...` - Same as search,
+   but tag values must match <query>s exactly instead of doing a
+   substring match.
+
+:command:`findadd <type> <query> [<type> <query>]...` - Same as find,
+   but add the result to the current queue instead of printing them.
+
+:command:`searchplay <type> <query> [<type> <query>]...` - Search the
+   queue for a matching song and play it.
+
+:command:`list <type> [<type> <query>]...` - Return a list of all tags
+   of given tag <type>.  Optional search <type>s/<query>s limit
+   results in a way similar to search.
+
+:command:`seek [+\-][<HH:MM:SS>] or <[+\-]<0-100>%>` - Seeks by hour,
+   minute or seconds, hours or minutes can be omitted.  If seeking by
+   percentage, seeks within the current song in the specified manner.
+   If a :samp:`+` or :samp:`-` is used, the seek is done relative to
+   the current song position. Absolute seeking by default.
+
+:command:`shuffle` - Shuffles all songs on the queue.
+
+:command:`stats` - Displays statistics about MPD.
+
+:command:`stop` - Stops playing.
+
+:command:`toggle` - Toggles between play and pause. If stopped starts
+   playing.  Does not support start playing at song number (use play).
+
+:command:`update [\-\-wait] [<path>]` - Scans for updated files in the
+   music directory.  The optional parameter <path> (relative to the
+   music directory) may limit the scope of the update.
+
+   With :option:`--wait`, mpc waits until MPD has finished the update.
+
+:command:`version` - Reports the version of MPD.
+
+:command:`volume [+\-]<num>` - Sets the volume to <num> (0-100).  If
+   :samp:`+` or :samp:`-` is used, then it adjusts the volume relative to
+   the current volume.
+
+:command:`channels` - List the channels that other clients have
+   subscribed to.
+
+:command:`sendmessage <channel> <message>` - Send a message to the
+   specified channel.
+
+:command:`waitmessage <channel>` - Wait for at least one message on
+   the specified channel.
+
+:command:`subscribe <channel>` - Subscribe to the specified channel
+   and continuously receive messages.
+
+
+Environment Variables
+---------------------
+
+All environment variables are overridden by any values specified via
+command line switches.
+
+.. envvar:: MPC_FORMAT
+
+ Specifies the format of song display for status and the queue.
+
+.. envvar:: MPD_HOST
+
+ Specifies the hostname of the mpd server.  This can be a hostname, IP
+ address or an absolute path.  If it is an absolute path, mpc will use
+ Unix Domain Sockets instead of TCP/IP.
+
+ If the server requires a password, it can be specified using
+ password@host in the MPD_HOST variable.
+
+.. envvar:: MPD_PORT
+
+ Specifies the port the MPD server is listening on.
+
+
+Bugs
+----
+
+Report bugs on http://bugs.musicpd.org/
+
+Since MPD uses UTF-8, mpc needs to convert characters to the charset
+used by the local system.  If you get character conversion errors when
+you're running mpc you probably need to set up your locale.  This is
+done by setting any of the LC_CTYPE, LANG or LC_ALL environment
+variables (LC_CTYPE only affects character handling).
+
+See also
+--------
+
+:manpage:`mpd(1)`
+
+
+Author
+------
+
+See http://git.musicpd.org/cgit/master/mpc.git/plain/AUTHORS

@@ -113,8 +113,6 @@ executable('mpc',
   install: true
 )
 
-install_man('doc/mpc.1')
-
 install_data('AUTHORS', 'COPYING', 'NEWS', 'README.rst',
   install_dir : join_paths(get_option('datadir'), 'doc', meson.project_name()))
 
@@ -127,3 +125,5 @@ if get_option('test')
   check_dep = dependency('check')
   subdir('test')
 endif
+
+subdir('doc')
