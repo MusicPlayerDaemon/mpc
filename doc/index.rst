@@ -108,27 +108,20 @@ Commands
 Commands can be used from the least unambiguous prefix (e.g insert or
 ins).
 
-:command:`add <file>` - Adds a song from the music database to the
-   queue. Can also read input from pipes. Use ":samp:`mpc add /`" to
-   add all files to the queue.
 
-:command:`insert <file>` - The insert command works similarly to
-   :command:`add` except it adds song(s) after the currently playing
-   one, rather than at the end.  When random mode is enabled, the new
-   song is queued after the current song.
+Player Commands
+^^^^^^^^^^^^^^^
 
-:command:`clear` - Empties the queue.
+:command:`consume <on|off>` - Toggle consume mode if state (:samp:`on`
+   or :samp:`off`) is not specified.
 
-:command:`crop` - Remove all songs except for the currently playing
-   song.
+:command:`crossfade [<seconds>]` - Gets and sets the current amount of
+   crossfading between songs (:samp:`0` disables crossfading).
 
 :command:`current [--wait]` - Show the currently playing song.  With
    :option:`--wait`, mpc waits until the song changes (or until playback
    is started/stopped) before it queries the current song from the
    server.
-
-:command:`crossfade [<seconds>]` - Gets and sets the current amount of
-   crossfading between songs (:samp:`0` disables crossfading).
 
 :command:`mixrampdb [<db>]` - Gets and sets the volume level at which
    songs with MixRamp tags will be overlapped. This disables the
@@ -142,56 +135,12 @@ ins).
    tags. (A negative value disables overlapping with MixRamp
    tagqs and restores the previous value of crossfade).
 
-:command:`del <songpos>` - Removes a queue number from the queue. Can
-   also read input from pipes (:samp:`0` deletes the current playing
-   song).
-
-:command:`disable [only] <output # or name> [...]` - Disables the
-   output(s); a list of one or more names or numbers is
-   required. If "only" is the first argument, all other outputs
-   are enabled.
-
-:command:`enable [only] <output # or name> [...]` - Enables the
-   output(s); a list of one or more names or numbers is required. If
-   ":samp:`only`" is the first argument, all other outputs are
-   disabled.
-
-:command:`idle [events]` - Waits until an event occurs.  Prints a list
-   of event names, one per line.  See the MPD protocol documentation
-   for further information.
-
-   If you specify a list of events, only these events are considered.
-
-:command:`idleloop [events]` - Similar to :command:`idle`, but
-   re-enters "idle" state after events have been printed.
-
-   If you specify a list of events, only these events are considered.
-
-:command:`listall [<file>]` - Lists <file> from database.  If no
-   <file> is specified, lists all songs in the database.
-
-:command:`load <file>`: - Loads <file> as queue.
-
-:command:`ls [<directory>]` - Lists all files/folders in
-   <directory>. If no <directory> is specified, lists all files in
-   music directory.
-
-:command:`lsplaylists`: - Lists available playlists.
-
-:command:`mv, move <from> <to>` - Moves song at position <from> to the
-   position <to> in the queue.
-
 :command:`next` - Starts playing next song on queue.
-
-:command:`outputs` - Lists all available outputs
 
 :command:`pause` - Pauses playing.
 
 :command:`play <position>` - Starts playing the song-number
    specified. If none is specified, plays number 1.
-
-:command:`playlist [<playlist>]` - Lists all songs in <playlist>. If
-   no <playlist> is specified, lists all songs in the current queue.
 
 :command:`prev` - Starts playing previous song.
 
@@ -207,12 +156,72 @@ ins).
 :command:`single <on|off>` - Toggle single mode if state (:samp:`on`
    or :samp:`off`) is not specified.
 
-:command:`consume <on|off>` - Toggle consume mode if state (:samp:`on`
-   or :samp:`off`) is not specified.
+:command:`seek [+\-][<HH:MM:SS>] or <[+\-]<0-100>%>` - Seeks by hour,
+   minute or seconds, hours or minutes can be omitted.  If seeking by
+   percentage, seeks within the current song in the specified manner.
+   If a :samp:`+` or :samp:`-` is used, the seek is done relative to
+   the current song position. Absolute seeking by default.
+
+:command:`stop` - Stops playing.
+
+:command:`toggle` - Toggles between play and pause. If stopped starts
+   playing.  Does not support start playing at song number (use play).
+
+
+Queue Commands
+^^^^^^^^^^^^^^
+
+:command:`add <file>` - Adds a song from the music database to the
+   queue. Can also read input from pipes. Use ":samp:`mpc add /`" to
+   add all files to the queue.
+
+:command:`insert <file>` - The insert command works similarly to
+   :command:`add` except it adds song(s) after the currently playing
+   one, rather than at the end.  When random mode is enabled, the new
+   song is queued after the current song.
+
+:command:`clear` - Empties the queue.
+
+:command:`crop` - Remove all songs except for the currently playing
+   song.
+
+:command:`del <songpos>` - Removes a queue number from the queue. Can
+   also read input from pipes (:samp:`0` deletes the current playing
+   song).
+
+:command:`mv, move <from> <to>` - Moves song at position <from> to the
+   position <to> in the queue.
+
+:command:`searchplay <type> <query> [<type> <query>]...` - Search the
+   queue for a matching song and play it.
+
+:command:`shuffle` - Shuffles all songs on the queue.
+
+
+Playlist Commands
+^^^^^^^^^^^^^^^^^
+
+:command:`load <file>`: - Loads <file> as queue.
+
+:command:`lsplaylists`: - Lists available playlists.
+
+:command:`playlist [<playlist>]` - Lists all songs in <playlist>. If
+   no <playlist> is specified, lists all songs in the current queue.
 
 :command:`rm <file>` - Deletes a specific playlist.
 
 :command:`save <file>` - Saves playlist as <file>.
+
+
+Database Commands
+^^^^^^^^^^^^^^^^^
+
+:command:`listall [<file>]` - Lists <file> from database.  If no
+   <file> is specified, lists all songs in the database.
+
+:command:`ls [<directory>]` - Lists all files/folders in
+   <directory>. If no <directory> is specified, lists all files in
+   music directory.
 
 :command:`search <type> <query> [<type> <query>]...` - Searches for
    substrings in song tags.  Any number of tag type and query
@@ -227,27 +236,11 @@ ins).
 :command:`findadd <type> <query> [<type> <query>]...` - Same as find,
    but add the result to the current queue instead of printing them.
 
-:command:`searchplay <type> <query> [<type> <query>]...` - Search the
-   queue for a matching song and play it.
-
 :command:`list <type> [<type> <query>]...` - Return a list of all tags
    of given tag <type>.  Optional search <type>s/<query>s limit
    results in a way similar to search.
 
-:command:`seek [+\-][<HH:MM:SS>] or <[+\-]<0-100>%>` - Seeks by hour,
-   minute or seconds, hours or minutes can be omitted.  If seeking by
-   percentage, seeks within the current song in the specified manner.
-   If a :samp:`+` or :samp:`-` is used, the seek is done relative to
-   the current song position. Absolute seeking by default.
-
-:command:`shuffle` - Shuffles all songs on the queue.
-
 :command:`stats` - Displays statistics about MPD.
-
-:command:`stop` - Stops playing.
-
-:command:`toggle` - Toggles between play and pause. If stopped starts
-   playing.  Does not support start playing at song number (use play).
 
 :command:`update [\-\-wait] [<path>]` - Scans for updated files in the
    music directory.  The optional parameter <path> (relative to the
@@ -255,11 +248,29 @@ ins).
 
    With :option:`--wait`, mpc waits until MPD has finished the update.
 
-:command:`version` - Reports the version of MPD.
+
+Output Commands
+^^^^^^^^^^^^^^^
 
 :command:`volume [+\-]<num>` - Sets the volume to <num> (0-100).  If
    :samp:`+` or :samp:`-` is used, then it adjusts the volume relative to
    the current volume.
+
+:command:`outputs` - Lists all available outputs
+
+:command:`disable [only] <output # or name> [...]` - Disables the
+   output(s); a list of one or more names or numbers is
+   required. If "only" is the first argument, all other outputs
+   are enabled.
+
+:command:`enable [only] <output # or name> [...]` - Enables the
+   output(s); a list of one or more names or numbers is required. If
+   ":samp:`only`" is the first argument, all other outputs are
+   disabled.
+
+
+Client-to-client Commands
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 :command:`channels` - List the channels that other clients have
    subscribed to.
@@ -272,6 +283,23 @@ ins).
 
 :command:`subscribe <channel>` - Subscribe to the specified channel
    and continuously receive messages.
+
+
+Other Commands
+^^^^^^^^^^^^^^
+
+:command:`idle [events]` - Waits until an event occurs.  Prints a list
+   of event names, one per line.  See the MPD protocol documentation
+   for further information.
+
+   If you specify a list of events, only these events are considered.
+
+:command:`idleloop [events]` - Similar to :command:`idle`, but
+   re-enters "idle" state after events have been printed.
+
+   If you specify a list of events, only these events are considered.
+
+:command:`version` - Reports the version of MPD.
 
 
 Environment Variables
