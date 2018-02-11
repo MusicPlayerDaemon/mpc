@@ -301,7 +301,7 @@ command line switches.
 Bugs
 ----
 
-Report bugs on http://bugs.musicpd.org/
+Report bugs on https://github.com/MusicPlayerDaemon/mpc/issues
 
 Since MPD uses UTF-8, mpc needs to convert characters to the charset
 used by the local system.  If you get character conversion errors when
@@ -318,4 +318,4 @@ See also
 Author
 ------
 
-See http://git.musicpd.org/cgit/master/mpc.git/plain/AUTHORS
+See https://raw.githubusercontent.com/MusicPlayerDaemon/mpc/master/AUTHORS
