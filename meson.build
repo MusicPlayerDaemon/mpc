@@ -116,9 +116,12 @@ executable('mpc',
 install_man('doc/mpc.1')
 
 install_data('AUTHORS', 'COPYING', 'NEWS', 'README.rst',
-  'doc/mpd-m3u-handler.sh', 'doc/mpd-pls-handler.sh',
-  'doc/mpc-completion.bash',
   install_dir : join_paths(get_option('datadir'), 'doc', meson.project_name()))
+
+install_data(
+  'contrib/mpd-m3u-handler.sh', 'contrib/mpd-pls-handler.sh',
+  'contrib/mpc-completion.bash',
+  install_dir: join_paths(get_option('datadir'), 'doc', meson.project_name(), 'contrib'))
 
 if get_option('test')
   check_dep = dependency('check')
