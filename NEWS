@@ -1,4 +1,4 @@
-0.29 (not yet released)
+0.29 (2018/02/11)
 * implement %prio% for --format
 * the default --format falls back to "performer" if there is no "artist"
 * add command "prio"
