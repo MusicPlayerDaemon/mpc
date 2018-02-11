@@ -14,7 +14,6 @@ flavors = {
     'release': {
         'options': [
             '--buildtype', 'release',
-            '--unity',
             '-Db_ndebug=true',
             '-Db_lto=true',
             '-Dtest=true',
@@ -24,7 +23,6 @@ flavors = {
     'mini': {
         'options': [
             '--buildtype', 'release',
-            '--unity',
             '-Db_ndebug=true',
             '-Db_lto=true',
             '-Diconv=false',
@@ -37,7 +35,6 @@ flavors = {
             '--default-library', 'static',
             '-Db_ndebug=true',
             '-Db_lto=true',
-            '--unity',
         ],
         'env': {
             'CC': 'musl-gcc',
