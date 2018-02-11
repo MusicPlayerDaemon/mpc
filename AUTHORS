@@ -1,5 +1,16 @@
-Max Kellermann <max@duempel.org>
+Music Player Daemon - http://www.musicpd.org
+Copyright 2003-2018 The Music Player Daemon Project
 
-code -> Warren Dukes <warren.dukes@gmail.com>
-code -> Eric Wong (normalperson) <eric@petta-tech.com>
-code -> avuton <avuton@gmail.com>
+The following people have contributed code to mpc:
+
+ Avuton Olrich <avuton@gmail.com>
+ Eric Wong
+ Florian Schlichting <fsfs@debian.org>
+ J. Alexander Treuman <jat@spatialrift.net>
+ Jeffrey Middleton <jefromi@gmail.com>
+ Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+ Max Kellermann <max.kellermann@gmail.com>
+ Michał Nazarewicz <mina86@mina86.com>
+ Richard Molitor <gattschardo@gmail.com>
+ Romain Bignon <romain@peerfuse.org>
+ Warren Dukes <warren.dukes@gmail.com>
