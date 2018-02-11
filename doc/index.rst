@@ -5,9 +5,10 @@ mpc
 Description
 -----------
 
-mpc is a client for MPD, the Music Player Daemon.  mpc connects to a MPD and
-controls it according to commands and arguments passed to it.  If no command
-is given, the current status is printed (same as 'mpc status').
+mpc is a command-line client for the `Music Player Daemon
+<http://www.musicpd.org/>`__ (MPD).  It connects to a MPD and controls
+it according to commands and arguments passed to it.  If no command is
+given, the current status is printed (same as ":samp:`mpc status`").
 
 
 Synopsis
@@ -31,7 +32,7 @@ Options
  %artist%           Artist file tag
  %album%            Album file tag
  %albumartist%      Album Artist file tag
- %comment%          Comment file tag (not enabled by default in mpd.conf's metadata_to_use)
+ %comment%          Comment file tag (not enabled by default in :file:`mpd.conf`'s metadata_to_use)
  %composer%         Composer file tag
  %date%             Date file tag
  %disc%             Disc file tag
@@ -40,7 +41,7 @@ Options
  %title%            Title file tag
  %track%            Track file tag
  %time%             Duration of file
- %file%             Path of file, relative to mpd's `music_directory` variable
+ %file%             Path of file, relative to MPD's `music_directory` variable
  %position%         Queue track number
  %id%               Queue track id number
  %prio%             Priority in the (random) queue.
