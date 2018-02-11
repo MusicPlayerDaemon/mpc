@@ -249,6 +249,27 @@ Database Commands
    With :option:`--wait`, mpc waits until MPD has finished the update.
 
 
+Sticker Commands
+^^^^^^^^^^^^^^^^^
+
+The :command:`sticker` command allows you to get and set song
+stickers.
+
+:command:`sticker <file> set <key> <value>` - Set the value of a song
+   sticker.
+
+:command:`sticker <file> get <key>` - Print the value of a song
+   sticker.
+
+:command:`sticker <file> list` - List all stickers of a song.
+
+:command:`sticker <file> delete <key>` - Delete a song sticker.
+
+:command:`sticker <dir> find <key>` - Search for stickers with the
+   specified name, below the specified directory.
+
+
+
 Output Commands
 ^^^^^^^^^^^^^^^
 
