@@ -274,8 +274,8 @@ run(const struct command *command, int argc, char **array)
 {
 	struct mpd_connection *conn = setup_connection();
 
-	if (mpd_connection_cmp_server_version(conn, 0, 16, 0) < 0)
-		fprintf(stderr, "warning: MPD 0.16 required\n");
+	if (mpd_connection_cmp_server_version(conn, 0, 19, 0) < 0)
+		fprintf(stderr, "warning: MPD 0.19 required\n");
 
 	int ret = command->handler(argc, array, conn);
 	if (ret != 0 && options.verbosity > V_QUIET) {

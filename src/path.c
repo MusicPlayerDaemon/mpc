@@ -35,10 +35,6 @@ path_prepare(struct mpd_connection *conn)
 
 	initialized = true;
 
-	if (mpd_connection_cmp_server_version(conn, 0, 17, 0) < 0)
-		/* the "config" command was added in MPD 0.17.1 */
-		return true;
-
 	if (!mpd_send_command(conn, "config", NULL))
 		return false;
 

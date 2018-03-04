@@ -572,14 +572,6 @@ cmd_volume(int argc, char **argv, struct mpd_connection *conn)
 	}
 
 	if (ch.is_relative) {
-		if (mpd_connection_cmp_server_version(conn, 0, 18, 0) >= 0) {
-			/* MPD 0.18 knows the "volume" command for
-			   relative changes */
-			if (!mpd_run_change_volume(conn, ch.value))
-				printErrorAndExit(conn);
-			return 1;
-		}
-
 		struct mpd_status *status = getStatus(conn);
 		int old_volume = mpd_status_get_volume(status);
 		mpd_status_free(status);
