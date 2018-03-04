@@ -223,17 +223,11 @@ int
 cmd_seek(gcc_unused int argc, gcc_unused char **argv,
 	 struct mpd_connection *conn)
 {
-	struct mpd_status *status;
 	char * arg = argv[0];
 
 	int seekchange;
 	int total_secs;
 	int rel = 0;
-
-	status = getStatus(conn);
-
-	if (mpd_status_get_state(status) == MPD_STATE_STOP)
-		DIE("not currently playing\n");
 
 	/* Detect +/- if exists point to the next char */
 	if (*arg == '+')
@@ -249,6 +243,12 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv,
 		/* Remove the % */
 		arg[strlen(arg) - 1] = '\0';
 
+		struct mpd_status *status;
+		status = getStatus(conn);
+
+		if (mpd_status_get_state(status) == MPD_STATE_STOP)
+			DIE("not currently playing\n");
+
 		/* percent seek, strtod is needed for percent with decimals */
 		char *test;
 		double perc = strtod(arg,&test);
@@ -257,6 +257,8 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv,
 			DIE("\"%s\" is not an number between 0 and 100\n", arg);
 
 		seekchange = perc * mpd_status_get_total_time(status) / 100 + 0.5;
+
+		mpd_status_free(status);
 
 	} else { /* If seeking by absolute seek time */
 
@@ -348,7 +350,6 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv,
 	    !mpd_response_finish(conn))
 		printErrorAndExit(conn);
 
-	mpd_status_free(status);
 	return 1;
 }
 
