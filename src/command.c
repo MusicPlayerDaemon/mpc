@@ -226,7 +226,6 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv,
 	char * arg = argv[0];
 
 	int seekchange;
-	int total_secs;
 	int rel = 0;
 
 	/* Detect +/- if exists point to the next char */
@@ -261,6 +260,8 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv,
 		mpd_status_free(status);
 
 	} else { /* If seeking by absolute seek time */
+
+		int total_secs;
 
 		if (strchr(arg, ':') != NULL) {
 			int hr = 0;
