@@ -333,6 +333,8 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv,
 		seekchange = total_secs;
 	}
 
+	char buffer[32];
+
 	/* This detects +/- and is necessary due to the parsing of HH:MM:SS numbers*/
 	int seekto;
 	if (rel == 1)
@@ -345,7 +347,10 @@ cmd_seek(gcc_unused int argc, gcc_unused char **argv,
 	if (seekto > (int)mpd_status_get_total_time(status))
 		DIE("Seek amount would seek past the end of the song\n");
 
-	if (!mpd_run_seek_id(conn, mpd_status_get_song_id(status), seekto))
+	snprintf(buffer, sizeof(buffer), "%d", seekto);
+
+	if (!mpd_send_command(conn, "seekcur", buffer, NULL) ||
+	    !mpd_response_finish(conn))
 		printErrorAndExit(conn);
 
 	mpd_status_free(status);
