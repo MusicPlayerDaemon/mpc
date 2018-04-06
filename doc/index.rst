@@ -290,6 +290,9 @@ Output Commands
    ":samp:`only`" is the first argument, all other outputs are
    disabled.
 
+:command:`toggleoutput <output # or name> [...]` - Changes the
+   status for the given output(s); a list of one or more names or
+   numbers is required.
 
 Client-to-client Commands
 ^^^^^^^^^^^^^^^^^^^^^^^^^
