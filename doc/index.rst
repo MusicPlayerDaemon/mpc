@@ -35,6 +35,7 @@ Options
  %comment%          Comment file tag (not enabled by default in :file:`mpd.conf`'s metadata_to_use)
  %composer%         Composer file tag
  %date%             Date file tag
+ %originaldate%     Original Date file tag
  %disc%             Disc file tag
  %genre%            Genre file tag
  %performer%        Performer file tag
