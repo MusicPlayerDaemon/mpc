@@ -112,6 +112,7 @@ static const struct command {
 	{"mixrampdb",   0,   1,   0,    cmd_mixrampdb,   "[<dB>]", "Set and display mixrampdb settings"},
 	{"mixrampdelay",0,   1,   0,    cmd_mixrampdelay,"[<seconds>]", "Set and display mixrampdelay settings"},
 	{"update",      0,   -1,  2,    cmd_update,      "[<path>]", "Scan music directory for updates"},
+	{"rescan",      0,   -1,  2,    cmd_rescan,      "[<path>]", "Rescan music directory (including unchanged files)"},
 	{"sticker",     2,   -1,  0,    cmd_sticker,     "<uri> <get|set|list|delete|find> [args..]", "Sticker management"},
 	{"stats",       0,   -1,  0,    cmd_stats,       "", "Display statistics about MPD"},
 	{"version",     0,   0,   0,    cmd_version,     "", "Report version of MPD"},
