@@ -249,6 +249,9 @@ Database Commands
 
    With :option:`--wait`, mpc waits until MPD has finished the update.
 
+:command:`rescan [\-\-wait] [<path>]` - Like update, but also rescans
+   unmodified files.
+
 
 Sticker Commands
 ^^^^^^^^^^^^^^^^^
