@@ -406,8 +406,8 @@ cmd_listall(int argc, char **argv, struct mpd_connection *conn)
 	return 0;
 }
 
-int
-cmd_update(int argc, char **argv, struct mpd_connection *conn)
+static int
+update_db(int argc, char **argv, struct mpd_connection *conn, bool rescan)
 {
 	if (contains_absolute_path(argc, argv) && !path_prepare(conn))
 		printErrorAndExit(conn);
@@ -429,7 +429,11 @@ cmd_update(int argc, char **argv, struct mpd_connection *conn)
 		if (relative_path != NULL)
 			path = relative_path;
 
-		mpd_send_update(conn, path);
+		if (rescan)
+			mpd_send_rescan(conn, path);
+		else
+			mpd_send_update(conn, path);
+
 		free(tmp);
 	} while (++i < argc && (update = charset_to_utf8(argv[i])) != NULL);
 
@@ -471,6 +475,18 @@ cmd_update(int argc, char **argv, struct mpd_connection *conn)
 	}
 
 	return 1;
+}
+
+int
+cmd_update(int argc, char **argv, struct mpd_connection *conn)
+{
+	return update_db(argc, argv, conn, false);
+}
+
+int
+cmd_rescan(int argc, char **argv, struct mpd_connection *conn)
+{
+	return update_db(argc, argv, conn, true);
 }
 
 static int

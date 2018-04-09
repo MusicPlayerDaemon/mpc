@@ -51,6 +51,7 @@ int cmd_crossfade(int argc, char **argv, struct mpd_connection *conn);
 int cmd_mixrampdb(int argc, char **argv, struct mpd_connection *conn);
 int cmd_mixrampdelay(int argc, char **argv, struct mpd_connection *conn);
 int cmd_update(int argc, char **argv, struct mpd_connection *conn);
+int cmd_rescan(int argc, char **argv, struct mpd_connection *conn);
 int cmd_version(int argc, char **argv, struct mpd_connection *conn);
 int cmd_stats(int argc, char **argv, struct mpd_connection *conn);
 int cmd_cdprev(int argc, char **argv, struct mpd_connection *conn);
