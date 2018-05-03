@@ -1,5 +1,5 @@
 project('mpc', 'c',
-  version: '0.30',
+  version: '0.31',
   default_options: [
     'c_std=c99',
   ],
