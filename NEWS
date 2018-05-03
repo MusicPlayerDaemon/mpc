@@ -1,4 +1,4 @@
-0.30 (not yet released)
+0.30 (2018/05/03)
 * add command "rescan"
 * seek: use the "seekcur" command instead of "seekid"
 * require MPD 0.19
