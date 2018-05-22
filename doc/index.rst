@@ -42,7 +42,7 @@ Options
  %title%            Title file tag
  %track%            Track file tag
  %time%             Duration of file
- %file%             Path of file, relative to MPD's `music_directory` variable
+ %file%             Path of file, relative to MPD's ``music_directory`` variable
  %position%         Queue track number
  %id%               Queue track id number
  %prio%             Priority in the (random) queue.
@@ -50,10 +50,10 @@ Options
  %mdate%            Date of last file modification
  ================== ======================================================
 
- The `[]` operator is used to group output such that if no metadata
- delimiters are found or matched between `[` and `]`, then none of the
- characters between `[` and `]` are output.  `&` and `|` are logical
- operators for and and or.  `#` is used to escape characters.  Some
+ The ``[]`` operator is used to group output such that if no metadata
+ delimiters are found or matched between ``[`` and ``]``, then none of the
+ characters between ``[`` and ``]`` are output.  ``&`` and ``|`` are logical
+ operators for and and or.  ``#`` is used to escape characters.  Some
  useful examples for format are: ":samp:`%file%`" and
  ":samp:`[[%artist% - ]%title%]|[%file%]`".  This command also takes
  the following defined escape sequences:
