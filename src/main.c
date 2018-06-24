@@ -81,6 +81,7 @@ static const struct command {
 #if LIBMPDCLIENT_CHECK_VERSION(2,14,0)
 	{"outputset",   2,   2,   0,    cmd_outputset,   "<output # or name> <name>=<value>", "Set output attributes"},
 #endif
+	{ "queued",	0,   0,   0,    cmd_queued,  "", "Show the next queued song"},
 	{"shuffle",     0,   0,   0,    cmd_shuffle,     "", "Shuffle the queue"},
 	{"move",        2,   2,   0,    cmd_move,        "<from> <to>", "Move song in queue"},
         /* mv is an alias for move */
