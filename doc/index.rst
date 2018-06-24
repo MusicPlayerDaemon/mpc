@@ -125,6 +125,8 @@ Player Commands
    is started/stopped) before it queries the current song from the
    server.
 
+:command:`queued` - Show the currently queued (next) song.
+
 :command:`mixrampdb [<db>]` - Gets and sets the volume level at which
    songs with MixRamp tags will be overlapped. This disables the
    fading of the crossfade command and simply mixes the

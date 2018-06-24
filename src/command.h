@@ -25,6 +25,7 @@ struct mpd_connection;
 
 int cmd_status(int argc, char **argv, struct mpd_connection *conn);
 int cmd_current(int argc, char **argv, struct mpd_connection *conn);
+int cmd_queued(int argc, char **argv, struct mpd_connection *conn);
 int cmd_play(int argc, char **argv, struct mpd_connection *conn);
 int cmd_searchplay(int argc, char **argv, struct mpd_connection *conn);
 int cmd_next(int argc, char **argv, struct mpd_connection *conn);

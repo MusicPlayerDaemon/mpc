@@ -117,6 +117,35 @@ cmd_current(gcc_unused int argc, gcc_unused char **argv,
 }
 
 int
+cmd_queued(gcc_unused int argc, gcc_unused char **argv,
+	    struct mpd_connection *conn)
+{
+	if (!mpd_command_list_begin(conn, true) ||
+	    !mpd_send_status(conn) ||
+	    !mpd_command_list_end(conn))
+		printErrorAndExit(conn);
+
+	struct mpd_status *status = mpd_recv_status(conn);
+	if (status == NULL)
+		printErrorAndExit(conn);
+
+	const int next_id = mpd_status_get_next_song_id(status);
+
+	my_finishCommand(conn);
+	mpd_status_free(status);
+
+	struct mpd_song *next=mpd_run_get_queue_song_id(conn, next_id);
+	if (next != NULL) {
+		pretty_print_song(next);
+		printf("\n");
+
+		mpd_song_free(next);
+	}
+
+	return 0;
+}
+
+int
 cmd_cdprev(gcc_unused int argc, gcc_unused char **argv,
 	   struct mpd_connection *conn)
 {
