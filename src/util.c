@@ -136,3 +136,19 @@ print_filenames(struct mpd_connection *conn)
 	if (mpd_connection_get_error(conn) != MPD_ERROR_SUCCESS)
 		printErrorAndExit(conn);
 }
+
+unsigned
+find_digit_width_of_uint(const unsigned number)
+{
+	/* width derivation obtained from https://graphics.stanford.edu/~seander/bithacks.html#IntegerLog10Obvious */
+	unsigned digits =
+		(number < 10U) ? 1U :
+		(number < 100U) ? 2U :
+		(number < 1000U) ? 3U :
+		(number < 10000U) ? 4U :
+		(number < 100000U) ? 5U :
+		(number < 1000000U) ? 6U :
+		23U; /* just a very large placeholder for 64bit uint */
+
+	return digits;
+}
