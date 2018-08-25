@@ -114,4 +114,15 @@ if get_option('test')
   subdir('test')
 endif
 
-subdir('doc')
+with_docs = get_option('docs')
+sphinx = find_program('sphinx-build', required: false)
+
+if with_docs == 'auto' and sphinx.found()
+  subdir('doc')
+elif with_docs == 'true'
+  if not sphinx.found()
+	error('docs enabled but sphinx-build not found')
+  endif
+  subdir('doc')
+endif
+
