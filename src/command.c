@@ -124,7 +124,9 @@ cmd_queued(gcc_unused int argc, gcc_unused char **argv,
 	const int next_id = mpd_status_get_next_song_id(status);
 	mpd_status_free(status);
 
-	struct mpd_song *next=mpd_run_get_queue_song_id(conn, next_id);
+	struct mpd_song *next = next_id >= 0
+		? mpd_run_get_queue_song_id(conn, next_id)
+		: NULL;
 	if (next != NULL) {
 		pretty_print_song(next);
 		printf("\n");
