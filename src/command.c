@@ -564,9 +564,29 @@ cmd_load(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_list(int argc, char **argv, struct mpd_connection *conn)
 {
-	enum mpd_tag_type type = get_search_type(argv[0]);
-	if (type == MPD_TAG_UNKNOWN)
+	const char *name = argv[0];
+	enum mpd_tag_type type = mpd_tag_name_iparse(name);
+	if (type == MPD_TAG_UNKNOWN) {
+		fprintf(stderr, "Unknown tag \"%s\"; supported tags are: ",
+			name);
+
+		bool first = true;
+		for (unsigned i = 0; i < MPD_TAG_COUNT; i++) {
+			name = mpd_tag_name(i);
+			if (name == NULL)
+				continue;
+
+			if (first)
+				first = false;
+			else
+				fputs(", ", stderr);
+			fputs(name, stderr);
+		}
+
+		fputc('\n', stderr);
+
 		return -1;
+	}
 
 	--argc;
 	++argv;
