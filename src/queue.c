@@ -192,9 +192,30 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 	return 0;
 }
 
+static unsigned
+get_playlist_size(struct mpd_connection *conn)
+{
+	unsigned pl_size = 0U;
+	struct mpd_status *status;
+
+	if (!mpd_send_status(conn))
+		printErrorAndExit(conn);
+
+	status = mpd_recv_status(conn);
+	if (status == NULL)
+		printErrorAndExit(conn);
+
+	pl_size = mpd_status_get_queue_length(status);
+
+	mpd_status_free(status);
+	my_finishCommand(conn);
+	return pl_size;
+}
+
 int
 cmd_playlist(int argc, char **argv, struct mpd_connection *conn)
 {
+	unsigned pl_size = get_playlist_size(conn);
 	bool ret = argc > 0
 		? mpd_send_list_playlist_meta(conn, argv[0])
 		: mpd_send_list_queue_meta(conn);
@@ -202,8 +223,15 @@ cmd_playlist(int argc, char **argv, struct mpd_connection *conn)
 	if (ret == false)
 		printErrorAndExit(conn);
 
+	unsigned digits_req = 6U; /* a big enough width for default max_playlist_length */
+	if (0U < pl_size)
+		digits_req = find_digit_width_of_uint(pl_size);
+
+	unsigned counter = 1U;
 	struct mpd_song *song;
 	while ((song = mpd_recv_song(conn)) != NULL) {
+		/* pretty_indent_song_num */
+		printf("[ %*u] ", digits_req, counter++);
 		pretty_print_song(song);
 		mpd_song_free(song);
 		printf("\n");

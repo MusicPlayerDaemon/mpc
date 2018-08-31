@@ -65,4 +65,7 @@ print_entity_list(struct mpd_connection *c, enum mpd_entity_type filter_type);
 void
 print_filenames(struct mpd_connection *conn);
 
+unsigned
+find_digit_width_of_uint(const unsigned number);
+
 #endif /* MPC_UTIL_H */	
