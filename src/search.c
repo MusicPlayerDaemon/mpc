@@ -28,7 +28,18 @@
 #include <string.h>
 #include <strings.h>
 
-enum mpd_tag_type
+enum {
+	SEARCH_TAG_ANY = MPD_TAG_COUNT + 1,
+	SEARCH_TAG_URI = MPD_TAG_COUNT + 2,
+	SEARCH_TAG_BASE,
+};
+
+struct constraint {
+	enum mpd_tag_type type;
+	char *query;
+};
+
+static enum mpd_tag_type
 get_search_type(const char *name)
 {
 	if (strcasecmp(name, "any") == 0)
@@ -60,7 +71,7 @@ get_search_type(const char *name)
 	return MPD_TAG_UNKNOWN;
 }
 
-int
+static int
 get_constraints(int argc, char **argv, struct constraint **constraints)
 {
 	int numconstraints = 0;

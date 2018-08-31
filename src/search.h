@@ -25,23 +25,6 @@
 
 struct mpd_connection;
 
-enum {
-	SEARCH_TAG_ANY = MPD_TAG_COUNT + 1,
-	SEARCH_TAG_URI = MPD_TAG_COUNT + 2,
-	SEARCH_TAG_BASE,
-};
-
-struct constraint {
-	enum mpd_tag_type type;
-	char *query;
-};
-
-enum mpd_tag_type
-get_search_type(const char *name);
-
-int
-get_constraints(int argc, char **argv, struct constraint **constraints);
-
 bool
 add_constraints(int argc, char ** argv, struct mpd_connection *conn);
 
