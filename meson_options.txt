@@ -6,3 +6,7 @@ option('iconv', type: 'combo',
 option('test', type: 'boolean',
   value: false,
   description: 'Enable unit tests')
+
+option('docs', type: 'combo',
+  choices: ['true', 'false', 'auto'], value: 'auto',
+  description: 'Build documentation and manpage with Sphinx')
