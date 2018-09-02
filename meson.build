@@ -115,8 +115,9 @@ if get_option('test')
 endif
 
 with_docs = get_option('docs')
-sphinx = find_program('sphinx-build', required: with_docs == 'true')
-
-if with_docs != 'false' and sphinx.found()
-  subdir('doc')
+if with_docs != 'false'
+  sphinx = find_program('sphinx-build', required: with_docs == 'true')
+  if sphinx.found()
+    subdir('doc')
+  endif
 endif
