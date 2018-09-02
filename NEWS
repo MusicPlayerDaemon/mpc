@@ -1,6 +1,7 @@
 0.31 (not yet released)
 * add command "queued"
 * allow only tag names after "list"
+* make documentation build optional with -Ddocs={true|false|auto}
 
 0.30 (2018/05/03)
 * add command "rescan"
