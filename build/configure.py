@@ -17,7 +17,7 @@ flavors = {
             '-Db_ndebug=true',
             '-Db_lto=true',
             '-Dtest=true',
-            '-Ddocs=false',
+            '-Ddocumentation=false',
         ],
         'env': {
             'LDFLAGS': '-fuse-ld=gold -Wl,--gc-sections,--icf=all',
@@ -30,7 +30,7 @@ flavors = {
             '-Db_ndebug=true',
             '-Db_lto=true',
             '-Diconv=false',
-            '-Ddocs=false',
+            '-Ddocumentation=false',
         ],
         'env': {
             'LDFLAGS': '-fuse-ld=gold -Wl,--gc-sections,--icf=all',
@@ -43,7 +43,7 @@ flavors = {
             '--default-library', 'static',
             '-Db_ndebug=true',
             '-Db_lto=true',
-            '-Ddocs=false',
+            '-Ddocumentation=false',
         ],
         'env': {
             'CC': 'musl-gcc',
@@ -54,14 +54,14 @@ flavors = {
     'win32': {
         'arch': 'i686-w64-mingw32',
         'options': [
-            '-Ddocs=false',
+            '-Ddocumentation=false',
         ]
     },
 
     'win64': {
         'arch': 'x86_64-w64-mingw32',
         'options': [
-            '-Ddocs=false',
+            '-Ddocumentation=false',
         ]
     },
 }

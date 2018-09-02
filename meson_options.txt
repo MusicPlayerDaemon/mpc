@@ -7,6 +7,6 @@ option('test', type: 'boolean',
   value: false,
   description: 'Enable unit tests')
 
-option('docs', type: 'combo',
+option('documentation', type: 'combo',
   choices: ['true', 'false', 'auto'], value: 'auto',
   description: 'Build documentation and manpage with Sphinx')
