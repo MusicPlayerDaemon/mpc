@@ -41,13 +41,13 @@ test_cflags = [
   '-Wstrict-prototypes',
   '-Wcast-qual',
   '-Wwrite-strings',
+  '-fvisibility=hidden',
 ]
 
 if get_option('buildtype') != 'debug'
   test_cflags += [
     '-ffunction-sections',
     '-fdata-sections',
-    '-fvisibility=hidden',
   ]
 endif
 
