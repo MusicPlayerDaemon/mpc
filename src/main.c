@@ -73,6 +73,7 @@ static const struct command {
 	{"cdprev",      0,   0,   0,    cmd_cdprev,      "", "Compact disk player-like previous command"},
 	{"stop",        0,   0,   0,    cmd_stop,        "", "Stop playback"},
 	{"seek",        1,   1,   0,    cmd_seek,        "[+-][HH:MM:SS]|<0-100>%", "Seeks to the specified position"},
+	{"seekthrough", 1,   1,   0,    cmd_seek_through, "[+-][HH:MM:SS]", "Seeks by an amount of time within the song and playlist"},
 	{"clear",       0,   0,   0,    cmd_clear,       "", "Clear the queue"},
 	{"outputs",     0,   0,   0,    cmd_outputs,     "", "Show the current outputs"},
 	{"enable",      1,   -1,  0,    cmd_enable,      "[only] <output # or name> [...]", "Enable output(s)"},

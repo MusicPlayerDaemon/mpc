@@ -166,6 +166,14 @@ Player Commands
    If a :samp:`+` or :samp:`-` is used, the seek is done relative to
    the current song position. Absolute seeking by default.
 
+:command:`seekthrough [+\-][<HH:MM:SS>]` - Seeks by hour,
+   minute or seconds, hours or minutes can be omitted, relatively to
+   the current position. If the duration exceeds the limit of the
+   current song, the seek command procedes to seek through the playlist
+   until the duration is reached.
+   If a :samp:`+` is used, the seek is forward. If a :samp:`-` is
+   used, the seek is backward. Forward seeking by default.
+
 :command:`stop` - Stops playing.
 
 :command:`toggle` - Toggles between play and pause. If stopped starts

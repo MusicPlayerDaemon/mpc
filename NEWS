@@ -1,5 +1,5 @@
 0.31 (not yet released)
-* add command "queued"
+* add commands "queued", "seekthrough"
 * allow only tag names after "list"
 * make documentation build optional with -Ddocumentation={true|false|auto}
 

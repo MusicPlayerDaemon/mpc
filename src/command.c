@@ -241,6 +241,175 @@ cmd_searchplay(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
+cmd_seek_through(gcc_unused int argc, gcc_unused char **argv,
+	 struct mpd_connection *conn)
+{
+	char * arg = argv[0];
+
+	int seekchange;
+	int rel = 0;
+
+	/* Detect +/- if exists point to the next char */
+	if (*arg == '+')
+		rel = 1;
+	else if (*arg == '-')
+		rel = -1;
+
+	if (rel == 0)
+		rel = 1;
+        else
+		++arg;
+
+	int total_secs;
+
+	if (strchr(arg, ':') != NULL) {
+		int hr = 0;
+		int min = 0;
+		int sec = 0;
+
+		/* Take the seconds off the end of arg */
+		char *sec_ptr = strrchr(arg, ':');
+
+		/* Remove ':' and move the pointer one byte up */
+		*sec_ptr = '\0';
+		++sec_ptr;
+
+		/* If hour is in the argument, else just point to the arg */
+		char *min_ptr = strrchr(arg, ':');
+		if (min_ptr != NULL) {
+
+			/* Remove ':' and move the pointer one byte up */
+			*min_ptr = '\0';
+			++min_ptr;
+
+			/* If the argument still exists, it's the hour  */
+			if (arg != NULL) {
+				char *hr_ptr = arg;
+				char *test;
+				hr = strtol(hr_ptr, &test, 10);
+
+				if (*test != '\0' ||
+					(rel == 1 && hr < 0))
+					DIE("\"%s\" is not a positive number\n", sec_ptr);
+			}
+		} else {
+			min_ptr = arg;
+		}
+
+		/* Change the pointers to a integer  */
+		char *test;
+		sec = strtol(sec_ptr, &test, 10);
+
+		if (*test != '\0' || (rel == 1 && sec < 0))
+			DIE("\"%s\" is not a positive number\n", sec_ptr);
+
+		min = strtol( min_ptr, &test, 10 );
+
+		if( *test != '\0' || (rel == 1 && min < 0 ))
+			DIE("\"%s\" is not a positive number\n", min_ptr);
+
+		/* If mins exist, check secs. If hrs exist, check mins  */
+		if (min && strlen(sec_ptr) != 2)
+			DIE("\"%s\" is not two digits\n", sec_ptr);
+		else if (hr && strlen(min_ptr) != 2)
+			DIE("\"%s\" is not two digits\n", min_ptr);
+
+		/* Finally, make sure they're not above 60 if higher unit exists */
+		if (min && sec > 60)
+			DIE("\"%s\" is greater than 60\n", sec_ptr);
+		else if (hr && min > 60 )
+			DIE("\"%s\" is greater than 60\n", min_ptr);
+
+		total_secs = (hr * 3600) + (min * 60) + sec;
+
+	} else {
+
+		/* absolute seek (in seconds) */
+		char *test;
+		total_secs = strtol(arg, &test, 10); /* get the # of seconds */
+
+		if (*test != '\0' || (rel == 1 && total_secs < 0))
+			DIE("\"%s\" is not a positive number\n", arg);
+	}
+
+	seekchange = total_secs;
+
+	int k = 0;
+	bool is_playing = 1;
+	bool is_paused = 1;
+	bool initial_is_paused = 0;
+	while ((is_playing || is_paused) && k++ < 100) {
+		struct mpd_status *status;
+		status = getStatus(conn);
+		int track_duration = mpd_status_get_total_time(status);
+		int track_elapsed = mpd_status_get_elapsed_time(status);
+		is_playing = mpd_status_get_state(status) == MPD_STATE_PLAY;
+		is_paused = mpd_status_get_state(status) == MPD_STATE_PAUSE;
+		int songpos = mpd_status_get_song_pos(status);
+		mpd_status_free(status);
+		if (k == 1)
+			initial_is_paused = is_paused;
+
+		if ((rel >= 0) && (seekchange >= track_duration - track_elapsed)) {
+			seekchange -= track_duration - track_elapsed;
+			if (!mpd_run_next(conn))
+				printErrorAndExit(conn);
+			/* checking if end of playlist has been reached */
+			status = getStatus(conn);
+			track_duration = mpd_status_get_total_time(status);
+			is_playing = mpd_status_get_state(status) == MPD_STATE_PLAY;
+			mpd_status_free(status);
+			if (!is_playing)
+				return -127;
+		}
+
+		if ((rel < 0) && (seekchange > track_elapsed)) {
+			seekchange -= track_elapsed;
+			if (!mpd_run_previous(conn))
+				printErrorAndExit(conn);
+			status = getStatus(conn);
+			if (mpd_status_get_song_pos(status) == songpos) {
+				seekchange = 0;
+				break;
+			}
+			track_duration = mpd_status_get_total_time(status);
+			mpd_status_free(status);
+                        seekchange -= track_duration;
+			if (seekchange < 0) {
+				rel = 1;
+				seekchange = -seekchange;
+			}
+		}
+		if ((rel >= 0) && (seekchange < track_duration - track_elapsed))
+			break;
+		if ((rel < 0) && (seekchange <= track_elapsed))
+			break;
+	}
+        if (initial_is_paused)
+                cmd_pause(0, NULL, conn);
+
+	if (seekchange == 0)
+		return 1;
+
+	char buffer[32];
+
+	/* This detects +/- and is necessary due to the parsing of HH:MM:SS numbers*/
+	if (rel < 0)
+		seekchange = -seekchange;
+
+	if (rel)
+		snprintf(buffer, sizeof(buffer), "%+d", seekchange);
+	else
+		snprintf(buffer, sizeof(buffer), "%d", seekchange);
+
+	if (!mpd_send_command(conn, "seekcur", buffer, NULL) ||
+	    !mpd_response_finish(conn))
+		printErrorAndExit(conn);
+
+	return 1;
+}
+
+int
 cmd_seek(gcc_unused int argc, gcc_unused char **argv,
 	 struct mpd_connection *conn)
 {
