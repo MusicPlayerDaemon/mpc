@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <limits.h>
 
 #define MAX_LONGOPT_LENGTH 32
 
@@ -45,6 +46,7 @@ struct Options options = {
 	.password = NULL,
 	.port_str = NULL,
 	.format = NULL,
+	.range = { .start = 0, .end = UINT_MAX },
 };
 
 static const struct OptionDef option_table[] = {
@@ -56,6 +58,7 @@ static const struct OptionDef option_table[] = {
 	{ 'p', "port", "<port>", "Connect to server port <port>" },
 	{ 'f', "format", "<format>", "Print status with format <format>" },
 	{ 'w', "wait", NULL, "Wait for operation to finish (e.g. database update)" },
+	{ 'r', "range", "[<start>]:[<end>]", "Operate on a range (e.g. when loading a playlist)" },
 };
 
 static const unsigned option_table_size = sizeof(option_table) / sizeof(option_table[0]);
@@ -110,6 +113,37 @@ lookup_short_option(int s)
 }
 
 static void
+ParseRange(struct Range *r, const char *s)
+{
+	char *endptr;
+	r->start = strtoul(s, &endptr, 10);
+	if (endptr == s)
+		r->start = 0;
+
+	s = endptr;
+	if (*s == '\0') {
+		r->end = r->start + 1;
+		return;
+	}
+
+	if (*s != ':') {
+		fprintf(stderr, "Failed to parse range '%s'\n", s);
+		exit(EXIT_FAILURE);
+	}
+
+	++s;
+
+	r->end = strtoul(s, &endptr, 10);
+	if (*endptr != 0) {
+		fprintf(stderr, "Failed to parse range end '%s'\n", s);
+		exit(EXIT_FAILURE);
+	}
+
+	if (endptr == s)
+		r->end = UINT_MAX;
+}
+
+static void
 handle_option(int c, const char *arg)
 {
 	switch (c) {
@@ -137,6 +171,10 @@ handle_option(int c, const char *arg)
 		options.wait = true;
 		break;
 
+	case 'r':
+		ParseRange(&options.range, arg);
+		break;
+
 	default: // Should never be reached, due to lookup_*_option functions
 		fprintf(stderr, "Unknown option %c = %s\n", c, arg);
 		exit(EXIT_FAILURE);
@@ -152,10 +190,10 @@ print_option_help(void)
 		if (option_table[i].argument)
 			printf("--%s=%-*s",
 			       option_table[i].longopt,
-			       20 - (int) strlen(option_table[i].longopt),
+			       25 - (int) strlen(option_table[i].longopt),
 			       option_table[i].argument);
 		else
-			printf("--%-20s ", option_table[i].longopt);
+			printf("--%-25s ", option_table[i].longopt);
 		printf("%s\n", option_table[i].description);
 	}
 }

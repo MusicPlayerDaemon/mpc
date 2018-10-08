@@ -29,12 +29,19 @@
 #define F_DEFAULT \
     "[%name%: &[[%artist%|%performer%] - ]%title%]|%name%|[[%artist%|%performer%] - ]%title%|%file%"
 
+struct Range {
+	unsigned start, end;
+};
+
 struct Options {
 	const char *host;
 	const char *port_str;
 	int port;
 	const char *password;
 	const char *format;
+
+	struct Range range;
+
 	int verbosity; // 0 for quiet, 1 for default, 2 for verbose
 	bool wait;
 
