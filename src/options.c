@@ -20,6 +20,7 @@
 
 #include "options.h"
 #include "config.h"
+#include "Compiler.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -60,6 +61,7 @@ static const arg_opt_t option_table[] = {
 
 static const unsigned option_table_size = sizeof(option_table) / sizeof(option_table[0]);
 
+gcc_noreturn
 static void
 option_error(int error, const char *option, const char *arg)
 {
@@ -84,6 +86,7 @@ option_error(int error, const char *option, const char *arg)
 	exit(EXIT_FAILURE);
 }
 
+gcc_pure
 static const arg_opt_t *
 lookup_long_option(const char *l, size_t len)
 {
@@ -95,6 +98,7 @@ lookup_long_option(const char *l, size_t len)
 	return NULL;
 }
 
+gcc_const
 static const arg_opt_t *
 lookup_short_option(int s)
 {
