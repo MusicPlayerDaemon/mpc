@@ -33,22 +33,21 @@
 #define ERROR_GOT_ARGUMENT      0x03
 #define ERROR_MISSING_ARGUMENT  0x04
 
-typedef struct {
+struct OptionDef {
 	int shortopt;
 	const char *longopt;
 	const char *argument;
 	const char *description;
-} arg_opt_t;
+};
 
-
-options_t options = {
+struct Options options = {
 	.verbosity = V_DEFAULT,
 	.password = NULL,
 	.port_str = NULL,
 	.format = NULL,
 };
 
-static const arg_opt_t option_table[] = {
+static const struct OptionDef option_table[] = {
 	{ 'v', "verbose", NULL, "Give verbose output" },
 	{ 'q', "quiet", NULL, "Suppress status message" },
 	{ 'q', "no-status", NULL, "synonym for --quiet" },
@@ -87,7 +86,7 @@ option_error(int error, const char *option, const char *arg)
 }
 
 gcc_pure
-static const arg_opt_t *
+static const struct OptionDef *
 lookup_long_option(const char *l, size_t len)
 {
 	for (unsigned i = 0; i < option_table_size; ++i) {
@@ -99,7 +98,7 @@ lookup_long_option(const char *l, size_t len)
 }
 
 gcc_const
-static const arg_opt_t *
+static const struct OptionDef *
 lookup_short_option(int s)
 {
 	for (unsigned i = 0; i < option_table_size; ++i) {
@@ -165,7 +164,7 @@ void
 parse_options(int * argc_p, char ** argv)
 {
 	int i;
-	const arg_opt_t *opt = NULL;
+	const struct OptionDef *opt = NULL;
 	char * tmp;
 	int cmdind = 0;
 	int optind = 0;

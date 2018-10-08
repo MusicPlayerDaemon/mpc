@@ -29,7 +29,7 @@
 #define F_DEFAULT \
     "[%name%: &[[%artist%|%performer%] - ]%title%]|%name%|[[%artist%|%performer%] - ]%title%|%file%"
 
-typedef struct {
+struct Options {
 	const char *host;
 	const char *port_str;
 	int port;
@@ -39,12 +39,12 @@ typedef struct {
 	bool wait;
 
 	bool custom_format;
-} options_t;
+};
 
 
 void print_option_help(void);
 void parse_options(int * argc_p, char ** argv);
 
-extern options_t options;
+extern struct Options options;
 
 #endif /* OPTIONS_H */
