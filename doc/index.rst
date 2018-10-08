@@ -28,7 +28,7 @@ Options
  ================== ======================================================
  Name               Description
  ================== ======================================================
- %name%             Unknown (doesn't produce output)
+ %name%             A name for this song.  This is not the song title. The exact meaning of this tag is not well-defined. It is often used by badly configured internet radio stations with broken tags to squeeze both the artist name and the song title in one tag.
  %artist%           Artist file tag
  %album%            Album file tag
  %albumartist%      Album Artist file tag
