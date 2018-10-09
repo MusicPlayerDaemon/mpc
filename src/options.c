@@ -151,9 +151,9 @@ print_option_help(void)
 		printf("  -%c, ", option_table[i].shortopt);
 		if (option_table[i].argument)
 			printf("--%s=%-*s",
-				   option_table[i].longopt,
-				   20 - (int) strlen(option_table[i].longopt),
-				   option_table[i].argument);
+			       option_table[i].longopt,
+			       20 - (int) strlen(option_table[i].longopt),
+			       option_table[i].argument);
 		else
 			printf("--%-20s ", option_table[i].longopt);
 		printf("%s\n", option_table[i].description);
