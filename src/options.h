@@ -21,7 +21,7 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
-#include "stdbool.h"
+#include <stdbool.h>
 
 #define V_QUIET 0
 #define V_DEFAULT 1
