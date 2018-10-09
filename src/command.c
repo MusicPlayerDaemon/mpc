@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <limits.h>
 
 SIMPLE_CMD(cmd_next, mpd_run_next, 1)
 SIMPLE_CMD(cmd_prev, mpd_run_previous, 1)
@@ -717,12 +718,31 @@ cmd_lsplaylists(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_load(int argc, char **argv, struct mpd_connection *conn)
 {
+	const bool range = options.range.start > 0 ||
+		options.range.end < UINT_MAX;
+
+#if !LIBMPDCLIENT_CHECK_VERSION(2,16,0)
+	if (range) {
+		fprintf(stderr, "Loading with range requires libmpdclient 2.16\n");
+		return -1;
+	}
+#endif
+
 	if (!mpd_command_list_begin(conn, false))
 		printErrorAndExit(conn);
 
 	for (int i = 0; i < argc; ++i) {
 		printf("loading: %s\n",argv[i]);
-		mpd_send_load(conn, charset_to_utf8(argv[i]));
+
+		const char *name_utf8 = charset_to_utf8(argv[i]);
+#if LIBMPDCLIENT_CHECK_VERSION(2,16,0)
+		if (range)
+			mpd_send_load_range(conn, name_utf8,
+					    options.range.start,
+					    options.range.end);
+		else
+#endif
+			mpd_send_load(conn, name_utf8);
 	}
 
 	mpd_command_list_end(conn);

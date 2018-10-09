@@ -220,7 +220,9 @@ Queue Commands
 Playlist Commands
 ^^^^^^^^^^^^^^^^^
 
-:command:`load <file>`: - Loads <file> as queue.
+:command:`load <file>` - Loads <file> as queue.  The option
+:option:`--range` may be used to load only a portion of the file
+(requires libmpdclient 2.16).
 
 :command:`lsplaylists`: - Lists available playlists.
 
