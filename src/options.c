@@ -52,7 +52,7 @@ struct Options options = {
 static const struct OptionDef option_table[] = {
 	{ 'v', "verbose", NULL, "Give verbose output" },
 	{ 'q', "quiet", NULL, "Suppress status message" },
-	{ 'q', "no-status", NULL, "synonym for --quiet" },
+	{ 0, "no-status", NULL, "synonym for --quiet" },
 	{ 'h', "host", "<host>", "Connect to server on <host>" },
 	{ 'P', "password", "<password>", "Connect to server using password <password>" },
 	{ 'p', "port", "<port>", "Connect to server port <port>" },
@@ -186,14 +186,20 @@ void
 print_option_help(void)
 {
 	for (unsigned i = 0; i < option_table_size; i++) {
-		printf("  -%c, ", option_table[i].shortopt);
+		int remaining = 28;
+		if (option_table[i].shortopt) {
+			printf("  -%c, ", option_table[i].shortopt);
+			remaining -= 4;
+		} else
+			printf("  ");
+
 		if (option_table[i].argument)
 			printf("--%s=%-*s",
 			       option_table[i].longopt,
-			       25 - (int) strlen(option_table[i].longopt),
+			       remaining - (int) strlen(option_table[i].longopt),
 			       option_table[i].argument);
 		else
-			printf("--%-25s ", option_table[i].longopt);
+			printf("--%-*s ", remaining, option_table[i].longopt);
 		printf("%s\n", option_table[i].description);
 	}
 }
