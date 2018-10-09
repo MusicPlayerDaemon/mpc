@@ -12,6 +12,8 @@ conf = configuration_data()
 conf.set_quoted('PACKAGE', meson.project_name())
 conf.set_quoted('VERSION', meson.project_version())
 
+conf.set('HAVE_STRNDUP', cc.has_function('strndup', prefix: '#define _GNU_SOURCE\n#include <string.h>'))
+
 iconv = get_option('iconv')
 if iconv == 'false'
   iconv = false

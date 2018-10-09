@@ -250,6 +250,20 @@ cmd_toggle_output(int argc, char **argv, struct mpd_connection *conn)
 
 #if LIBMPDCLIENT_CHECK_VERSION(2,14,0)
 
+#ifndef HAVE_STRNDUP
+static char *
+strndup(const char *s, size_t length)
+{
+	char *p = malloc(length + 1);
+	if (p != NULL) {
+		memcpy(p, s, length);
+		p[length] = 0;
+	}
+
+	return p;
+}
+#endif
+
 int
 cmd_outputset(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 {

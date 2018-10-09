@@ -1,6 +1,7 @@
 0.31 (not yet released)
 * add commands "queued", "seekthrough"
 * allow only tag names after "list"
+* fix the Windows build (no strndup())
 * make documentation build optional with -Ddocumentation={true|false|auto}
 
 0.30 (2018/05/03)
