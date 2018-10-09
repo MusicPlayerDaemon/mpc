@@ -1,5 +1,6 @@
 0.31 (not yet released)
 * add commands "queued", "seekthrough", "mount", "unmount"
+* support "search" with filter expression (MPD 0.21)
 * support "load" with range
 * allow only tag names after "list"
 * fix the Windows build (no strndup())

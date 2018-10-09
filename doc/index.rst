@@ -250,6 +250,13 @@ Database Commands
    album, title, track, name, genre, date, composer, performer,
    comment, disc, filename, or any (to match any tag).
 
+:command:`search <expression>` - Searches with a filter expression,
+e.g. ``mpc search '((artist == "Kraftwerk") AND (title == "Metall auf
+Metall"))'``.  Check the `MPD protocol documentation
+<https://www.musicpd.org/doc/protocol/filter_syntax.html>`__ for
+details.  This syntax can be used with :command:`find` andd
+:command:`findadd` as well.  (Requires libmpdclient 2.16 and MPD 0.21)
+
 :command:`find <type> <query> [<type> <query>]...` - Same as search,
    but tag values must match <query>s exactly instead of doing a
    substring match.

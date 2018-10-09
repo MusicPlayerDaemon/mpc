@@ -119,6 +119,15 @@ add_constraint(struct mpd_connection *conn,
 bool
 add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 {
+#if LIBMPDCLIENT_CHECK_VERSION(2,16,0)
+	if (argc == 1 && argv[0][0] == '(') {
+		if (mpd_connection_cmp_server_version(conn, 0, 21, 0) < 0)
+			fprintf(stderr, "warning: MPD 0.21 required for search expressions\n");
+
+		return mpd_search_add_expression(conn, argv[0]);
+	}
+#endif
+
 	struct constraint *constraints;
 
 	if (argc % 2 != 0)
