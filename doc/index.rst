@@ -273,6 +273,16 @@ Database Commands
    unmodified files.
 
 
+Mount Commands
+^^^^^^^^^^^^^^
+
+:command:`mount` - Lists all mounts.
+
+:command:`mount <uri> <storage>` - Create a new mount.
+
+:command:`unmount <uri>` - Remove a mount.
+
+
 Sticker Commands
 ^^^^^^^^^^^^^^^^^
 

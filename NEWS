@@ -1,5 +1,5 @@
 0.31 (not yet released)
-* add commands "queued", "seekthrough"
+* add commands "queued", "seekthrough", "mount", "unmount"
 * support "load" with range
 * allow only tag names after "list"
 * fix the Windows build (no strndup())

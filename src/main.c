@@ -31,6 +31,7 @@
 #include "tab.h"
 #include "idle.h"
 #include "message.h"
+#include "mount.h"
 #include "search.h"
 #include "mpc.h"
 #include "options.h"
@@ -139,6 +140,9 @@ static const struct command {
 	  "Wait for at least one message on the specified channel." },
 	{ "subscribe", 1, 1, 0, cmd_subscribe, "<channel>",
 	  "Subscribe to the specified channel and continuously receive messages." },
+
+	{ "mount", 0, 2, 0, cmd_mount, "[<uri> <storage>]", "List mounts or add a new mount." },
+	{ "unmount", 1, 1, 0, cmd_unmount, "<uri>", "Remove a mount." },
 
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */
 	{ .command = NULL }
