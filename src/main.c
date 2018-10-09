@@ -141,8 +141,10 @@ static const struct command {
 	{ "subscribe", 1, 1, 0, cmd_subscribe, "<channel>",
 	  "Subscribe to the specified channel and continuously receive messages." },
 
+#if LIBMPDCLIENT_CHECK_VERSION(2,16,0)
 	{ "mount", 0, 2, 0, cmd_mount, "[<uri> <storage>]", "List mounts or add a new mount." },
 	{ "unmount", 1, 1, 0, cmd_unmount, "<uri>", "Remove a mount." },
+#endif
 
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */
 	{ .command = NULL }
