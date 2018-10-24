@@ -1,12 +1,9 @@
-option('iconv', type: 'combo',
-  choices: ['true', 'false', 'auto'],
-  value: 'auto',
+option('iconv', type: 'feature',
   description: 'Enable iconv() support')
 
 option('test', type: 'boolean',
   value: false,
   description: 'Enable unit tests')
 
-option('documentation', type: 'combo',
-  choices: ['true', 'false', 'auto'], value: 'auto',
+option('documentation', type: 'feature',
   description: 'Build documentation and manpage with Sphinx')

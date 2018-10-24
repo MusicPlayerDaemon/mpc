@@ -5,6 +5,7 @@
 * allow only tag names after "list"
 * fix the Windows build (no strndup())
 * make documentation build optional with -Ddocumentation={true|false|auto}
+* build: require Meson 0.47
 
 0.30 (2018/05/03)
 * add command "rescan"

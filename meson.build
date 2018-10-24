@@ -1,5 +1,6 @@
 project('mpc', 'c',
   version: '0.31',
+  meson_version: '>= 0.47',
   default_options: [
     'c_std=c99',
   ],
@@ -15,11 +16,11 @@ conf.set_quoted('VERSION', meson.project_version())
 conf.set('HAVE_STRNDUP', cc.has_function('strndup', prefix: '#define _GNU_SOURCE\n#include <string.h>'))
 
 iconv = get_option('iconv')
-if iconv == 'false'
+if iconv.disabled()
   iconv = false
 elif cc.has_function('iconv')
   iconv = true
-elif iconv == 'auto'
+elif iconv.auto()
   iconv = false
 else
   error('iconv() not available')
@@ -118,8 +119,8 @@ if get_option('test')
 endif
 
 with_documentation = get_option('documentation')
-if with_documentation != 'false'
-  sphinx = find_program('sphinx-build', required: with_documentation == 'true')
+if not with_documentation.disabled()
+  sphinx = find_program('sphinx-build', required: with_documentation)
   if sphinx.found()
     subdir('doc')
   endif
