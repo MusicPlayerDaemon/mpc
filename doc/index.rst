@@ -22,8 +22,9 @@ Options
 
 .. option:: -f, --format
 
- Configure the format of song display for status and the queue.  The
- metadata delimiters are:
+ Configure the format used to display songs.
+
+ The metadata delimiters are:
 
  ================== ======================================================
  Name               Description
@@ -72,6 +73,9 @@ Options
  \\r      carriage return
  ======== ===================
 
+ If not given, the value of the environment variable
+ :envvar:`MPC_FORMAT` is used.
+
 .. option:: --wait
 
  Wait for operation to finish (e.g. database update).
@@ -94,21 +98,22 @@ Options
 
 .. option:: --host=HOST
 
- The host to connect to; if not given, the value of the environment
- variable :envvar:`MPD_HOST` is checked before defaulting to
- localhost.  This default can be changed at compile-time.
+ The MPD server to connect to.  This can be a hostname, IPv4/IPv6
+ address, an absolute path (i.e. local socket) or a name starting with
+ ``@`` (i.e. an abstract socket, Linux only).
 
  To use a password, provide a value of the form
  ":samp:`password@host`".
 
- If you specify an absolute path, mpc attempts a connection via Unix
- Domain Socket.
+ If not given, the value of the environment variable
+ :envvar:`MPD_HOST` is used.
 
 .. option:: --port=PORT, -p PORT
 
- The port to connect to; if not given, the value of the environment
- variable :envvar:`MPD_PORT` is checked before defaulting to
- :samp:`6600`.  This default can be changed at compile-time.
+ The TCP port of the MPD server to connect to.
+
+ If not given, the value of the environment variable
+ :envvar:`MPD_PORT` is used.
 
 
 Commands
@@ -375,20 +380,17 @@ command line switches.
 
 .. envvar:: MPC_FORMAT
 
- Specifies the format of song display for status and the queue.
+ Configure the format used to display songs.  See option
+ :option:`--format`.
 
 .. envvar:: MPD_HOST
 
- Specifies the hostname of the mpd server.  This can be a hostname, IP
- address or an absolute path.  If it is an absolute path, mpc will use
- Unix Domain Sockets instead of TCP/IP.
-
- If the server requires a password, it can be specified using
- password@host in the MPD_HOST variable.
+ The MPD server to connect to.  See option :option:`--host`.
 
 .. envvar:: MPD_PORT
 
- Specifies the port the MPD server is listening on.
+ The TCP port of the MPD server to connect to.  See option
+ :option:`--port`.
 
 
 Bugs
