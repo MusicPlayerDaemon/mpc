@@ -20,9 +20,6 @@ flavors = {
             '-Dtest=true',
             '-Ddocumentation=disabled',
         ],
-        'env': {
-            'LDFLAGS': '-fuse-ld=gold -Wl,--gc-sections,--icf=all',
-        },
     },
 
     'mini': {
@@ -33,9 +30,6 @@ flavors = {
             '-Diconv=disabled',
             '-Ddocumentation=disabled',
         ],
-        'env': {
-            'LDFLAGS': '-fuse-ld=gold -Wl,--gc-sections,--icf=all',
-        },
     },
 
     'musl': {
@@ -48,7 +42,6 @@ flavors = {
         ],
         'env': {
             'CC': 'musl-gcc',
-            'LDFLAGS': '-fuse-ld=gold -Wl,--gc-sections,--icf=all',
         },
     },
 

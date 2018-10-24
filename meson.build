@@ -52,6 +52,14 @@ if get_option('buildtype') != 'debug'
     '-ffunction-sections',
     '-fdata-sections',
   ]
+
+  add_global_link_arguments(
+    cc.get_supported_link_arguments(
+      '-Wl,--gc-sections',
+      '-Wl,--icf=all',
+    ),
+    language: 'c'
+  )
 endif
 
 common_cflags += cc.get_supported_arguments(test_cflags)
