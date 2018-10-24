@@ -54,11 +54,7 @@ if get_option('buildtype') != 'debug'
   ]
 endif
 
-foreach f: test_cflags
-  if cc.has_argument(f)
-    common_cflags += [ f ]
-  endif
-endforeach
+common_cflags += cc.get_supported_arguments(test_cflags)
 
 add_global_arguments(common_cflags, language: 'c')
 
