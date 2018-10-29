@@ -181,7 +181,7 @@ Player Commands
 :command:`seekthrough [+\-][<HH:MM:SS>]` - Seeks by hour,
    minute or seconds, hours or minutes can be omitted, relatively to
    the current position. If the duration exceeds the limit of the
-   current song, the seek command procedes to seek through the playlist
+   current song, the seek command proceeds to seek through the playlist
    until the duration is reached.
    If a :samp:`+` is used, the seek is forward. If a :samp:`-` is
    used, the seek is backward. Forward seeking by default.
