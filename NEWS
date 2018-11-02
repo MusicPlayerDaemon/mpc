@@ -1,4 +1,5 @@
 0.32 (not yet released)
+* reduce network transfer for "search"
 
 0.31 (2018/10/24)
 * add commands "queued", "seekthrough", "mount", "unmount"
