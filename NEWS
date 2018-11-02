@@ -1,3 +1,5 @@
+0.32 (not yet released)
+
 0.31 (2018/10/24)
 * add commands "queued", "seekthrough", "mount", "unmount"
 * support "search" with filter expression (MPD 0.21)
