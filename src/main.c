@@ -32,6 +32,7 @@
 #include "idle.h"
 #include "message.h"
 #include "mount.h"
+#include "neighbors.h"
 #include "search.h"
 #include "mpc.h"
 #include "options.h"
@@ -140,6 +141,8 @@ static const struct command {
 	  "Wait for at least one message on the specified channel." },
 	{ "subscribe", 1, 1, 0, cmd_subscribe, "<channel>",
 	  "Subscribe to the specified channel and continuously receive messages." },
+
+	{ "listneighbors", 0, 2, 0, cmd_listneighbors, "", "List neighbors." },
 
 #if LIBMPDCLIENT_CHECK_VERSION(2,16,0)
 	{ "mount", 0, 2, 0, cmd_mount, "[<uri> <storage>]", "List mounts or add a new mount." },
