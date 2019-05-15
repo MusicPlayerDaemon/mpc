@@ -1,6 +1,7 @@
 0.32 (not yet released)
 * add command "listneighbors"
 * reduce network transfer for "search"
+* fall back to "Composer" or "AlbumArtist" tag in the default format
 * support abstract socket in --host option
 
 0.31 (2018/10/24)

@@ -27,7 +27,7 @@
 #define V_DEFAULT 1
 #define V_VERBOSE 2
 #define F_DEFAULT \
-    "[%name%: &[[%artist%|%performer%] - ]%title%]|%name%|[[%artist%|%performer%] - ]%title%|%file%"
+    "[%name%: &[[%artist%|%performer%|%composer%|%albumartist%] - ]%title%]|%name%|[[%artist%|%performer%|%composer%|%albumartist%] - ]%title%|%file%"
 
 struct Range {
 	unsigned start, end;
