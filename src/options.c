@@ -299,7 +299,10 @@ parse_options(int * argc_p, char ** argv)
 
 	/* Parse the password from the host */
 	if (options.host != NULL &&
-	    (tmp = strchr(options.host, '@')) != NULL) {
+	    (tmp = strchr(options.host, '@')) != NULL &&
+	    /* if the host begins with a '@' then it's not an empty
+	       password but an abstract socket */
+	    tmp > options.host) {
 		size_t password_length = tmp - options.host;
 		char *password = malloc(password_length + 1);
 

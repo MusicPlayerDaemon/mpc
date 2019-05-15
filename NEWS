@@ -1,6 +1,7 @@
 0.32 (not yet released)
 * add command "listneighbors"
 * reduce network transfer for "search"
+* support abstract socket in --host option
 
 0.31 (2018/10/24)
 * add commands "queued", "seekthrough", "mount", "unmount"
