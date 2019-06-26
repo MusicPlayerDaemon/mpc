@@ -169,8 +169,7 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 		if ((unsigned)range[1] > plLength)
 			DIE("song number does not exist: %i\n",range[1]);
 
-		for (int j = range[0]; j <= range[1]; j++)
-			songsToDel[j - 1] = true;
+		memset(songsToDel + range[0] - 1, true, range[1] - range[0] + 1);
 	}
 
 	if (!mpd_command_list_begin(conn, false))
