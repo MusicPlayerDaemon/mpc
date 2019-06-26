@@ -122,8 +122,8 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 
 	const unsigned plLength = mpd_status_get_queue_length(status);
 
-	char *songsToDel = malloc(plLength);
-	memset(songsToDel,0,plLength);
+	bool *songsToDel = malloc(plLength);
+	memset(songsToDel, false, plLength);
 
 	for (unsigned i = 0; i < (unsigned)argc; ++i) {
 		char *s;
@@ -170,7 +170,7 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 			DIE("song number does not exist: %i\n",range[1]);
 
 		for (int j = range[0]; j <= range[1]; j++)
-			songsToDel[j - 1] = 1;
+			songsToDel[j - 1] = true;
 	}
 
 	if (!mpd_command_list_begin(conn, false))
