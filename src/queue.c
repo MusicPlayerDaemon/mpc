@@ -279,14 +279,27 @@ int cmd_insert (int argc, char ** argv, struct mpd_connection *conn )
 int
 cmd_prio(int argc, char **argv, struct mpd_connection *conn)
 {
+	char *endptr;
 	int i = 0;
-	const char *prio = argv[i++];
+	const char *s = argv[i++];
+	int prio = strtol(s, &endptr, 10);
+	if (endptr == s || *endptr != 0)
+		DIE("Failed to parse number: %s\n", s);
+	if (prio < 0 || prio > 255)
+		DIE("Priority must be between 0 and 255: %s\n", s);
 
 	if (!mpd_command_list_begin(conn, false))
 		printErrorAndExit(conn);
 
 	while (i < argc) {
-		if (!mpd_send_command(conn, "prio", prio, argv[i++], NULL))
+		s = argv[i++];
+		int position = strtol(s, &endptr, 10);
+		if (endptr == s || *endptr != 0)
+			DIE("Failed to parse number: %s\n", s);
+		if (position < 1)
+			DIE("Invalid song position: %s\n", s);
+
+		if (!mpd_send_prio(conn, prio, position))
 			break;
 	}
 
