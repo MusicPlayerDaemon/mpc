@@ -120,12 +120,12 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 {
 	struct mpd_status *status = getStatus(conn);
 
-	const int plLength = mpd_status_get_queue_length(status);
+	const unsigned plLength = mpd_status_get_queue_length(status);
 
 	char *songsToDel = malloc(plLength);
 	memset(songsToDel,0,plLength);
 
-	for (int i = 0; i < argc; ++i) {
+	for (unsigned i = 0; i < (unsigned)argc; ++i) {
 		char *s;
 		if (argv[i][0]=='#')
 			s = &argv[i][1];
@@ -166,7 +166,7 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 		if (range[1] < range[0])
 			DIE("song range must be from low to high: %i to %i\n",range[0],range[1]);
 
-		if (range[1] > plLength)
+		if ((unsigned)range[1] > plLength)
 			DIE("song number does not exist: %i\n",range[1]);
 
 		for (int j = range[0]; j <= range[1]; j++)
@@ -177,7 +177,7 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 		printErrorAndExit(conn);
 
 	int songsDeleted = 0;
-	for (int i = 0; i < plLength; ++i) {
+	for (unsigned i = 0; i < plLength; ++i) {
 		if (songsToDel[i]) {
 			mpd_send_delete(conn, i - songsDeleted);
 			++songsDeleted;
