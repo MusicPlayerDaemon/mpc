@@ -299,6 +299,10 @@ cmd_prio(int argc, char **argv, struct mpd_connection *conn)
 		if (position < 1)
 			DIE("Invalid song position: %s\n", s);
 
+		/* mpc's song positions are 1-based, but MPD uses
+		   0-based positions */
+		--position;
+
 		if (!mpd_send_prio(conn, prio, position))
 			break;
 	}
