@@ -126,11 +126,7 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 	memset(songsToDel, false, plLength);
 
 	for (unsigned i = 0; i < (unsigned)argc; ++i) {
-		char *s;
-		if (argv[i][0]=='#')
-			s = &argv[i][1];
-		else
-			s = argv[i];
+		const char *const s = argv[i];
 
 		char *t;
 		int range[2];
@@ -149,7 +145,7 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 			range[1] = strtol(t+1, &t2, 10);
 			if(t + 1 == t2 || *t2!='\0')
 				DIE("error parsing range from: %s\n", argv[i]);
-		} else if (*t == ')' || *t=='\0')
+		} else if (*t=='\0')
 			range[1] = range[0];
 		else
 			DIE("error parsing song numbers from: %s\n", argv[i]);
