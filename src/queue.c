@@ -197,13 +197,7 @@ cmd_playlist(int argc, char **argv, struct mpd_connection *conn)
 	if (ret == false)
 		printErrorAndExit(conn);
 
-	struct mpd_song *song;
-	while ((song = mpd_recv_song(conn)) != NULL) {
-		pretty_print_song(song);
-		mpd_song_free(song);
-		printf("\n");
-	}
-
+	print_entity_list(conn, MPD_ENTITY_TYPE_SONG, true);
 	my_finishCommand(conn);
 	return 0;
 }
