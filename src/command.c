@@ -25,6 +25,7 @@
 #include "args.h"
 #include "search.h"
 #include "status.h"
+#include "tags.h"
 #include "path.h"
 #include "Compiler.h"
 
@@ -579,11 +580,29 @@ cmd_listall(int argc, char **argv, struct mpd_connection *conn)
 		strip_trailing_slash(tmp);
 
 		if (options.custom_format) {
+			bool command_list = false;
+
+#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
+			/* ask MPD to omit the tags which are not used
+			   by the `--format` to reduce network
+			   transfer for tag values we're not going to
+			   use anyway (requires MPD 0.21 and
+			   libmpdclient 2.12) */
+			if (mpd_connection_cmp_server_version(conn, 0, 21, 0) >= 0) {
+				if (!mpd_command_list_begin(conn, false) ||
+				    !send_tag_types_for_format(conn, options.format))
+					printErrorAndExit(conn);
+				command_list = true;
+			}
+#endif
+
 			if (!mpd_send_list_all_meta(conn, tmp))
 				printErrorAndExit(conn);
 
-			print_entity_list(conn, MPD_ENTITY_TYPE_SONG,
-					  options.custom_format);
+			if (command_list && !mpd_command_list_end(conn))
+				printErrorAndExit(conn);
+
+			print_entity_list(conn, MPD_ENTITY_TYPE_SONG, true);
 		} else {
 			if (!mpd_send_list_all(conn, tmp))
 				printErrorAndExit(conn);
@@ -689,6 +708,20 @@ ls_entity(int argc, char **argv, struct mpd_connection *conn,
 	int i = 0;
 	if (argc > 0)
 		ls = charset_to_utf8(argv[i]);
+
+#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
+	/* ask MPD to omit the tags which are not used by the
+	   `--format` to reduce network transfer for tag values we're
+	   not going to use anyway (requires MPD 0.21 and libmpdclient
+	   2.12) */
+	if (mpd_connection_cmp_server_version(conn, 0, 21, 0) >= 0) {
+		if (!mpd_command_list_begin(conn, false) ||
+		    !send_tag_types_for_format(conn, options.custom_format ? options.format : NULL) ||
+		    !mpd_command_list_end(conn))
+			printErrorAndExit(conn);
+		my_finishCommand(conn);
+	}
+#endif
 
 	do {
 		if (!mpd_send_list_meta(conn, ls))

@@ -1,6 +1,6 @@
 0.33 (not yet released)
 * fix off-by-one bug in "prio" command
-* reduce network transfer for "playlist"
+* reduce network transfer for "playlist", "ls", "listall"
 
 0.32 (2019/06/11)
 * add command "listneighbors"
