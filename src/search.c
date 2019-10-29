@@ -175,7 +175,7 @@ do_search(int argc, char ** argv, struct mpd_connection *conn, bool exact)
 	if (command_list && !mpd_command_list_end(conn))
 		printErrorAndExit(conn);
 
-	print_entity_list(conn, MPD_ENTITY_TYPE_SONG);
+	print_entity_list(conn, MPD_ENTITY_TYPE_SONG, options.custom_format);
 
 	my_finishCommand(conn);
 

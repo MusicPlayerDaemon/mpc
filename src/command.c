@@ -582,7 +582,8 @@ cmd_listall(int argc, char **argv, struct mpd_connection *conn)
 			if (!mpd_send_list_all_meta(conn, tmp))
 				printErrorAndExit(conn);
 
-			print_entity_list(conn, MPD_ENTITY_TYPE_SONG);
+			print_entity_list(conn, MPD_ENTITY_TYPE_SONG,
+					  options.custom_format);
 		} else {
 			if (!mpd_send_list_all(conn, tmp))
 				printErrorAndExit(conn);
@@ -693,7 +694,7 @@ ls_entity(int argc, char **argv, struct mpd_connection *conn,
 		if (!mpd_send_list_meta(conn, ls))
 			printErrorAndExit(conn);
 
-		print_entity_list(conn, type);
+		print_entity_list(conn, type, options.custom_format);
 		my_finishCommand(conn);
 	} while (++i < argc && (ls = charset_to_utf8(argv[i])) != NULL);
 

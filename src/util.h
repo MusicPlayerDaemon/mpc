@@ -59,8 +59,13 @@ getStatus(struct mpd_connection *conn);
 void
 pretty_print_song(const struct mpd_song *song);
 
+/**
+ * @param pretty pretty-print songs (with the song format) or print
+ * just the URI?
+ */
 void
-print_entity_list(struct mpd_connection *c, enum mpd_entity_type filter_type);
+print_entity_list(struct mpd_connection *c, enum mpd_entity_type filter_type,
+		  bool pretty);
 
 void
 print_filenames(struct mpd_connection *conn);

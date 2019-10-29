@@ -82,7 +82,8 @@ pretty_print_song(const struct mpd_song *song)
 }
 
 void
-print_entity_list(struct mpd_connection *c, enum mpd_entity_type filter_type)
+print_entity_list(struct mpd_connection *c, enum mpd_entity_type filter_type,
+		  bool pretty)
 {
 	struct mpd_entity *entity;
 	while ((entity = mpd_recv_entity(c)) != NULL) {
@@ -106,7 +107,7 @@ print_entity_list(struct mpd_connection *c, enum mpd_entity_type filter_type)
 
 		case MPD_ENTITY_TYPE_SONG:
 			song = mpd_entity_get_song(entity);
-			if (options.custom_format) {
+			if (pretty) {
 				pretty_print_song(song);
 				puts("");
 			} else
