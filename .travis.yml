@@ -1,8 +1,16 @@
-dist: trusty
 language: c
 
-os:
-  - osx
+matrix:
+  include:
+    - os: osx
+      addons:
+        homebrew:
+          packages:
+            - ccache
+            - meson
+            - ninja
+            - libmpdclient
+            - check
 
 cache:
   ccache: true
@@ -17,7 +25,6 @@ before_install:
   - test "$TRAVIS_OS_NAME" != "osx" || export HOMEBREW_NO_ANALYTICS=1
 
 install:
-  - test "$TRAVIS_OS_NAME" != "osx" || brew install ccache meson ninja libmpdclient check
 
 before_script:
   - ccache -s
