@@ -15,7 +15,6 @@ before_cache:
 before_install:
   - test "$TRAVIS_OS_NAME" != "osx" || export PATH="/usr/local/opt/ccache/libexec:$PATH"
   - test "$TRAVIS_OS_NAME" != "osx" || export HOMEBREW_NO_ANALYTICS=1
-  - test "$TRAVIS_OS_NAME" != "osx" || brew update
 
 install:
   - test "$TRAVIS_OS_NAME" != "osx" || brew install ccache meson ninja libmpdclient check
