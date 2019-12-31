@@ -4,13 +4,26 @@ language: c
 os:
   - osx
 
+cache:
+  ccache: true
+  directories:
+    - $HOME/Library/Caches/Homebrew
+
+before_cache:
+  - test "$TRAVIS_OS_NAME" != "osx" || brew cleanup
+
 before_install:
+  - test "$TRAVIS_OS_NAME" != "osx" || export PATH="/usr/local/opt/ccache/libexec:$PATH"
   - test "$TRAVIS_OS_NAME" != "osx" || brew update
 
 install:
-  - test "$TRAVIS_OS_NAME" != "osx" || brew install meson ninja libmpdclient check
+  - test "$TRAVIS_OS_NAME" != "osx" || brew install ccache meson ninja libmpdclient check
+
+before_script:
+  - ccache -s
 
 script:
   - OPTIONS="-Dtest=true"
   - meson . output $OPTIONS
   - ninja -v -C output test
+  - ccache -s
