@@ -34,26 +34,28 @@
 int
 stdinToArgArray(char ***array)
 {
-	struct List *list = makeList();
+	struct List list;
+	makeList(&list);
+
 	char buffer[4096];
 
 	while (fgets(buffer, sizeof(buffer), stdin)) {
 		char *sp;
 		if((sp = strchr(buffer,'\n'))) *sp = '\0';
-		insertInListWithoutKey(list,strdup(buffer));
+		insertInListWithoutKey(&list, strdup(buffer));
 	}
 
-	const unsigned size = list->numberOfNodes;
+	const unsigned size = list.numberOfNodes;
 	*array = malloc((sizeof(char *))*size);
 	unsigned i = 0;
-	struct ListNode *node = list->firstNode;
+	struct ListNode *node = list.firstNode;
 	while(node) {
 		(*array)[i++] = (char *)node->data;
 		node = node->nextNode;
 	}
 	assert(i==size);
 
-	freeList(list);
+	freeList(&list);
 
 	return size;
 }

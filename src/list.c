@@ -23,18 +23,14 @@
 #include <stdlib.h>
 #include <assert.h>
 
-struct List *
-makeList(void)
+void
+makeList(struct List *list)
 {
-	struct List *list = malloc(sizeof(*list));
-
 	assert(list!=NULL);
 
 	list->firstNode = NULL;
 	list->lastNode = NULL;
 	list->numberOfNodes = 0;
-
-	return list;
 }
 
 void
@@ -80,6 +76,4 @@ freeList(struct List *list)
 		free(tmpNode);
 		tmpNode = tmpNode2;
 	}
-
-	free(list);
 }

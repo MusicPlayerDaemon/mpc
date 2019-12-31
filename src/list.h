@@ -37,11 +37,10 @@ struct List {
 	long numberOfNodes;
 };
 
-/* allocates memory for a new list and initializes it
- * returns pointer to new list if successful, NULL otherwise
+/* initializes the list
  */
-struct List *
-makeList(void);
+void
+makeList(struct List *list);
 
 void
 insertInListWithoutKey(struct List *list, void *data);
