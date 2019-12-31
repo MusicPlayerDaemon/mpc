@@ -23,8 +23,10 @@
 #include <stdlib.h>
 #include <assert.h>
 
-List *makeList(void) {
-	List * list = malloc(sizeof(List));
+struct List *
+makeList(void)
+{
+	struct List *list = malloc(sizeof(*list));
 
 	assert(list!=NULL);
 
@@ -35,13 +37,14 @@ List *makeList(void) {
 	return list;
 }
 
-void insertInListWithoutKey(List * list, void * data) {
-	ListNode * node;
+void
+insertInListWithoutKey(struct List *list, void * data) {
+	struct ListNode *node;
 
 	assert(list!=NULL);
 	assert(data!=NULL);
 
-	node = malloc(sizeof(ListNode));
+	node = malloc(sizeof(*node));
 	assert(node!=NULL);
 
 	if(list->firstNode==NULL) {
@@ -62,13 +65,15 @@ void insertInListWithoutKey(List * list, void * data) {
 	list->numberOfNodes++;
 }
 
-void freeList(void * list) {
-	ListNode * tmpNode;
-	ListNode * tmpNode2;
+void
+freeList(struct List *list)
+{
+	struct ListNode * tmpNode;
+	struct ListNode * tmpNode2;
 
 	assert(list!=NULL);
 
-	tmpNode = ((List *)list)->firstNode;
+	tmpNode = list->firstNode;
 
 	while(tmpNode!=NULL) {
 		tmpNode2 = tmpNode->nextNode;

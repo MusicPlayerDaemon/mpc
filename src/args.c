@@ -34,7 +34,7 @@
 int
 stdinToArgArray(char ***array)
 {
-	List *list = makeList();
+	struct List *list = makeList();
 	char buffer[4096];
 
 	while (fgets(buffer, sizeof(buffer), stdin)) {
@@ -46,7 +46,7 @@ stdinToArgArray(char ***array)
 	const unsigned size = list->numberOfNodes;
 	*array = malloc((sizeof(char *))*size);
 	unsigned i = 0;
-	ListNode * node = list->firstNode;
+	struct ListNode *node = list->firstNode;
 	while(node) {
 		(*array)[i++] = (char *)node->data;
 		node = node->nextNode;

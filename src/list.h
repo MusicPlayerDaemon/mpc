@@ -21,32 +21,35 @@
 #ifndef LIST_H
 #define LIST_H
 
-typedef struct _ListNode {
+struct ListNode {
 	/* data store in node */
 	void * data;
 	/* next node in list */
-	struct _ListNode * nextNode;
-} ListNode;
+	struct ListNode *nextNode;
+};
 
-typedef struct _List {
+struct List {
 	/* first node in list */
-	ListNode * firstNode;
+	struct ListNode *firstNode;
 	/* last node in list */
-	ListNode * lastNode;
+	struct ListNode *lastNode;
 	/* number of nodes */
 	long numberOfNodes;
-} List;
+};
 
 /* allocates memory for a new list and initializes it
  * returns pointer to new list if successful, NULL otherwise
  */
-List *makeList(void);
+struct List *
+makeList(void);
 
-void insertInListWithoutKey(List * list,void * data);
+void
+insertInListWithoutKey(struct List *list, void *data);
 
 /* frees memory malloc'd for list and its nodes
  *  _list_ -> List to be free'd
  */
-void freeList(void * list);
+void
+freeList(struct List *list);
 
 #endif
