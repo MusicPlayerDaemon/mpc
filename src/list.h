@@ -32,7 +32,7 @@ struct List {
 	/* first node in list */
 	struct ListNode *firstNode;
 	/* last node in list */
-	struct ListNode *lastNode;
+	struct ListNode **tail;
 	/* number of nodes */
 	long numberOfNodes;
 };

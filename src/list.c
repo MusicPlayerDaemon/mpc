@@ -29,7 +29,7 @@ makeList(struct List *list)
 	assert(list!=NULL);
 
 	list->firstNode = NULL;
-	list->lastNode = NULL;
+	list->tail = &list->firstNode;
 	list->numberOfNodes = 0;
 }
 
@@ -43,20 +43,11 @@ insertInListWithoutKey(struct List *list, void * data) {
 	node = malloc(sizeof(*node));
 	assert(node!=NULL);
 
-	if(list->firstNode==NULL) {
-		assert(list->lastNode==NULL);
-		list->firstNode = node;
-	}
-	else {
-		assert(list->lastNode!=NULL);
-		assert(list->lastNode->nextNode==NULL);
-		list->lastNode->nextNode = node;
-	}
-
 	node->data = data;
 	node->nextNode = NULL;
 
-	list->lastNode = node;
+	*list->tail = node;
+	list->tail = &node->nextNode;
 
 	list->numberOfNodes++;
 }
