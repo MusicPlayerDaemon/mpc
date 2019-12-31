@@ -38,8 +38,6 @@ typedef struct _List {
 } List;
 
 /* allocates memory for a new list and initializes it
- *  _freeDataFunc_ -> pointer to function used to free data, use 
- *                    DEFAULT_FREE_DATAFUNC to use free()
  * returns pointer to new list if successful, NULL otherwise
  */
 List *makeList(void);
