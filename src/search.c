@@ -45,13 +45,13 @@ static enum mpd_tag_type
 get_search_type(const char *name)
 {
 	if (strcasecmp(name, "any") == 0)
-		return SEARCH_TAG_ANY;
+		return (enum mpd_tag_type)SEARCH_TAG_ANY;
 
 	if (strcasecmp(name, "filename") == 0)
-		return SEARCH_TAG_URI;
+		return (enum mpd_tag_type)SEARCH_TAG_URI;
 
 	if (strcasecmp(name, "base") == 0)
-		return SEARCH_TAG_BASE;
+		return (enum mpd_tag_type)SEARCH_TAG_BASE;
 
 	enum mpd_tag_type type = mpd_tag_name_iparse(name);
 	if (type != MPD_TAG_UNKNOWN)
