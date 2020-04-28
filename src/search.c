@@ -77,13 +77,12 @@ static int
 get_constraints(int argc, char **argv, struct constraint **constraints)
 {
 	int numconstraints = 0;
-	int i;
 
 	assert(argc > 0 && argc % 2 == 0);
 
 	*constraints = malloc(sizeof(**constraints) * argc / 2);
 
-	for (i = 0; i < argc; i += 2) {
+	for (int i = 0; i < argc; i += 2) {
 		enum mpd_tag_type type = get_search_type(argv[i]);
 		if (type != MPD_TAG_UNKNOWN) {
 			free(*constraints);
