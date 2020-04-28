@@ -290,7 +290,7 @@ run(const struct command *command, int argc, char **array)
 		fprintf(stderr, "warning: MPD 0.19 required\n");
 
 	int ret = command->handler(argc, array, conn);
-	if (ret != 0 && options.verbosity > V_QUIET) {
+	if (ret > 0 && options.verbosity > V_QUIET) {
 		print_status(conn);
 	}
 

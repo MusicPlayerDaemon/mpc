@@ -1,4 +1,5 @@
 0.34 (not yet released)
+* don't print status after error
 
 0.33 (2019/10/31)
 * fix off-by-one bug in "prio" command
