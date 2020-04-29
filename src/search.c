@@ -84,7 +84,7 @@ get_constraints(int argc, char **argv, struct constraint **constraints)
 
 	for (int i = 0; i < argc; i += 2) {
 		enum mpd_tag_type type = get_search_type(argv[i]);
-		if (type != MPD_TAG_UNKNOWN) {
+		if (type == MPD_TAG_UNKNOWN) {
 			free(*constraints);
 			return -1;
 		}
