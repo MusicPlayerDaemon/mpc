@@ -274,9 +274,12 @@ Database Commands
    ``find``, but add the result to the current queue instead of
    printing them.
 
-:command:`list <type> [<type> <query>]...` - Return a list of all tags
-   of given tag ``type``.  Optional search ``type``/``query`` limit
-   results in a way similar to search.
+:command:`list <type> [<type> <query>]... [group <type>]...` - Return
+   a list of all tags of given tag ``type``.  Optional search
+   ``type``/``query`` limit results in a way similar to search.
+   Results can be grouped by one or more tags.  Example::
+
+     mpc list album group artist
 
 :command:`stats` - Displays statistics about MPD.
 
