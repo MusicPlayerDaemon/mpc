@@ -243,10 +243,10 @@ Database Commands
 ^^^^^^^^^^^^^^^^^
 
 :command:`listall [<file>]` - Lists <file> from database.  If no
-   <file> is specified, lists all songs in the database.
+   ``file`` is specified, lists all songs in the database.
 
 :command:`ls [<directory>]` - Lists all files/folders in
-   <directory>. If no <directory> is specified, lists all files in
+   ``directory``. If no ``directory`` is specified, lists all files in
    music directory.
 
 :command:`search <type> <query> [<type> <query>]...` - Searches for
@@ -266,21 +266,22 @@ Database Commands
   details.  This syntax can be used with :command:`find` andd
   :command:`findadd` as well.  (Requires libmpdclient 2.16 and MPD 0.21)
 
-:command:`find <type> <query> [<type> <query>]...` - Same as search,
-   but tag values must match <query>s exactly instead of doing a
-   substring match.
+:command:`find <type> <query> [<type> <query>]...` - Same as
+   ``search``, but tag values must match ``query`` exactly instead of
+   doing a substring match.
 
-:command:`findadd <type> <query> [<type> <query>]...` - Same as find,
-   but add the result to the current queue instead of printing them.
+:command:`findadd <type> <query> [<type> <query>]...` - Same as
+   ``find``, but add the result to the current queue instead of
+   printing them.
 
 :command:`list <type> [<type> <query>]...` - Return a list of all tags
-   of given tag <type>.  Optional search <type>s/<query>s limit
+   of given tag ``type``.  Optional search ``type``/``query`` limit
    results in a way similar to search.
 
 :command:`stats` - Displays statistics about MPD.
 
 :command:`update [\-\-wait] [<path>]` - Scans for updated files in the
-   music directory.  The optional parameter <path> (relative to the
+   music directory.  The optional parameter ``path`` (relative to the
    music directory) may limit the scope of the update.
 
    With :option:`--wait`, mpc waits until MPD has finished the update.
@@ -331,12 +332,12 @@ Output Commands
 
 :command:`disable [only] <output # or name> [...]` - Disables the
    output(s); a list of one or more names or numbers is
-   required. If "only" is the first argument, all other outputs
+   required. If :samp:`only` is the first argument, all other outputs
    are enabled.
 
 :command:`enable [only] <output # or name> [...]` - Enables the
    output(s); a list of one or more names or numbers is required. If
-   ":samp:`only`" is the first argument, all other outputs are
+   :samp:`only` is the first argument, all other outputs are
    disabled.
 
 :command:`toggleoutput <output # or name> [...]` - Changes the
