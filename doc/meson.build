@@ -1,4 +1,4 @@
-custom_target(
+sphinx_output = custom_target(
   'HTML documentation',
   output: 'html',
   input: ['index.rst', 'conf.py'],
@@ -6,6 +6,18 @@ custom_target(
   build_by_default: true,
   install: true,
   install_dir: join_paths(get_option('datadir'), 'doc', meson.project_name()),
+)
+
+custom_target(
+  'upload',
+  input: sphinx_output,
+  output: 'upload',
+  build_always_stale: true,
+  command: [
+    'rsync', '-vpruz', '--delete', '@INPUT@',
+    'www.musicpd.org:/var/www/mpd/doc/mpc/',
+    '--chmod=a+rX',
+  ],
 )
 
 custom_target(
