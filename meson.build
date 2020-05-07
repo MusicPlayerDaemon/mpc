@@ -81,6 +81,12 @@ else
   iconv_sources = []
 endif
 
+sources = []
+
+if libmpdclient_dep.version().version_compare('>= 2.12')
+  sources += 'src/group.c'
+endif
+
 executable('mpc',
   'src/main.c',
   'src/list.c',
@@ -100,10 +106,10 @@ executable('mpc',
   'src/message.c',
   'src/mount.c',
   'src/neighbors.c',
-  'src/group.c',
   'src/search.c',
   'src/options.c',
   'src/path.c',
+  sources,
   iconv_sources,
   include_directories: inc,
   dependencies: [

@@ -1,6 +1,6 @@
 0.34 (not yet released)
 * don't print status after error
-* support grouping "list" results
+* support grouping "list" results (requires libmpdclient 2.12)
 
 0.33 (2019/10/31)
 * fix off-by-one bug in "prio" command

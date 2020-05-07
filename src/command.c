@@ -815,20 +815,27 @@ cmd_list(int argc, char **argv, struct mpd_connection *conn)
 	--argc;
 	++argv;
 
+#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
 	struct mpc_groups groups;
 	mpc_groups_init(&groups);
 	if (!mpc_groups_collect(&groups, &argc, argv))
 		return -1;
+#endif
 
 	mpd_search_db_tags(conn, type);
 
 	if (argc > 0 && !add_constraints(argc, argv, conn))
 		return -1;
 
-	if (!mpc_groups_send(conn, &groups) ||
-	    !mpd_search_commit(conn))
+#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
+	if (!mpc_groups_send(conn, &groups))
+		printErrorAndExit(conn);
+#endif
+
+	if (!mpd_search_commit(conn))
 		printErrorAndExit(conn);
 
+#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
 	if (groups.n_groups > 0) {
 		struct mpd_pair *pair;
 		while ((pair = mpd_recv_pair(conn)) != NULL) {
@@ -845,12 +852,15 @@ cmd_list(int argc, char **argv, struct mpd_connection *conn)
 			mpd_return_pair(conn, pair);
 		}
 	} else {
+#endif
 		struct mpd_pair *pair;
 		while ((pair = mpd_recv_pair_tag(conn, type)) != NULL) {
 			printf("%s\n", charset_from_utf8(pair->value));
 			mpd_return_pair(conn, pair);
 		}
+#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
 	}
+#endif
 
 	my_finishCommand(conn);
 	return 0;
