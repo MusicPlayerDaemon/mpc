@@ -30,6 +30,7 @@ jobs:
             - ninja
             - libmpdclient
             - check
+          update: true
 
 cache:
   apt: true
