@@ -89,9 +89,9 @@ print_status(struct mpd_connection *conn)
 		       mpd_status_get_update_id(status));
 
 	if (mpd_status_get_volume(status) >= 0)
-		printf("volume:%3i%c   ", mpd_status_get_volume(status), '%');
+		printf("volume: %3i%c   ", mpd_status_get_volume(status), '%');
 	else {
-		printf("volume: n/a   ");
+		printf("volume:  n/a   ");
 	}
 
 	printf("repeat: ");
