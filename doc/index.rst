@@ -149,7 +149,7 @@ Player Commands
 :command:`mixrampdelay [<seconds>]` - Gets and sets the current amount
    of extra delay added to the value computed from the MixRamp
    tags. (A negative value disables overlapping with MixRamp
-   tagqs and restores the previous value of crossfade).
+   tags and restores the previous value of crossfade).
 
 :command:`next` - Starts playing next song on queue.
 
@@ -263,7 +263,7 @@ Database Commands
 
   Check the `MPD protocol documentation
   <https://www.musicpd.org/doc/protocol/filter_syntax.html>`__ for
-  details.  This syntax can be used with :command:`find` andd
+  details.  This syntax can be used with :command:`find` and
   :command:`findadd` as well.  (Requires libmpdclient 2.16 and MPD 0.21)
 
 :command:`find <type> <query> [<type> <query>]...` - Same as
