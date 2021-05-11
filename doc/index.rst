@@ -377,6 +377,28 @@ Other Commands
 
    If you specify a list of events, only these events are considered.
 
+:command:`status [format]` - Without an argument print a three line status
+   output equivalent to "mpc" with no arguments. If a format string is given then
+   the delimiters are processed exactly as how they are for metadata. See the '-f'
+   option in `Options`_
+
+ ================== ======================================================
+ Name               Description
+ ================== ======================================================
+ %totaltime%        The total duration of the song.
+ %currenttime%      The time that the client is currently at.
+ %percenttime%      The percentage of time elapsed for the current song.
+ %songpos%          The position of the current song within the playlist.
+ %length%           The number of songs within the playlist
+ %state%            Either 'playing' or 'paused'
+ %volume%           The current volume spaced out to 4 characters including a
+ percent sign
+ %random%           Current status of random mode. 'on' or 'off'
+ %repeat%           Current status of repeat mode. 'on' or 'off'
+ %single%           Current status of single mode. 'on' or 'off'
+ %consume%          Current status of consume mode. 'on' or 'off'
+ ================== ======================================================
+
 :command:`version` - Reports the version of MPD.
 
 
