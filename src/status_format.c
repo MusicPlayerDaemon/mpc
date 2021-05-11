@@ -93,21 +93,29 @@ status_value(const struct mpd_status *status, const char *name)
 		int vol = mpd_status_get_volume(status);
 		snprintf(buffer, sizeof(buffer), "%3i%c", vol, '%');
 	} else if (strcmp(name, "repeat") == 0) {
-		const char *bin_string = mpd_status_get_repeat(status) ?
-		    "on" : "off";
-		snprintf(buffer, sizeof(buffer), bin_string);
+		if (mpd_status_get_repeat(status)) {
+		    snprintf(buffer, sizeof(buffer), "on");
+		} else {
+		    snprintf(buffer, sizeof(buffer), "off");
+		}
 	} else if (strcmp(name, "random") == 0) {
-		const char *bin_string = mpd_status_get_random(status) ?
-		    "on" : "off";
-		snprintf(buffer, sizeof(buffer), bin_string);
+		if (mpd_status_get_random(status)) {
+		    snprintf(buffer, sizeof(buffer), "on");
+		} else {
+		    snprintf(buffer, sizeof(buffer), "off");
+		}
 	} else if (strcmp(name, "single") == 0) {
-		const char *bin_string = mpd_status_get_single(status) ?
-		    "on" : "off";
-		snprintf(buffer, sizeof(buffer), bin_string);
+		if (mpd_status_get_single(status)) {
+		    snprintf(buffer, sizeof(buffer), "on");
+		} else {
+		    snprintf(buffer, sizeof(buffer), "off");
+		}
 	} else if (strcmp(name, "consume") == 0) {
-		const char *bin_string = mpd_status_get_consume(status) ?
-		    "on" : "off";
-		snprintf(buffer, sizeof(buffer), bin_string);
+		if (mpd_status_get_consume(status)) {
+		    snprintf(buffer, sizeof(buffer), "on");
+		} else {
+		    snprintf(buffer, sizeof(buffer), "off");
+		}
 	}
 	else { return NULL; }
 	return charset_from_utf8(buffer);
