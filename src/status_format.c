@@ -21,6 +21,7 @@
 #include "status_format.h"
 #include "format.h"
 #include "charset.h"
+#include "util.h"
 
 #include <mpd/client.h>
 
