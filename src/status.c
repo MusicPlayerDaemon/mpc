@@ -19,8 +19,9 @@
  */
 
 #include "status.h"
-#include "charset.h"
+#include "status_format.h"
 #include "util.h"
+#include "charset.h"
 #include "mpc.h"
 
 #include <mpd/client.h>
@@ -28,20 +29,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-
-static unsigned
-elapsed_percent(const struct mpd_status *status)
-{
-	unsigned total = mpd_status_get_total_time(status);
-	if (total == 0)
-		return 0;
-
-	unsigned elapsed = mpd_status_get_elapsed_time(status);
-	if (elapsed >= total)
-		return 100;
-
-	return (elapsed * 100) / total;
-}
 
 void
 print_status(struct mpd_connection *conn)
