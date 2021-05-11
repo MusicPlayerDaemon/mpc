@@ -87,35 +87,37 @@ status_value(const struct mpd_status *status, const char *name)
 	} else if (strcmp(name, "percenttime") == 0) {
 		snprintf(buffer, sizeof(buffer), "%u", elapsed_percent(status));
 	} else if (strcmp(name, "state") == 0) {
-		const char *state_string = mpd_status_get_state(status) ==
-		    MPD_STATE_PLAY ? "playing" : "paused";
-		snprintf(buffer, sizeof(buffer), state_string);
+		if (mpd_status_get_state(status) == MPD_STATE_PLAY) {
+			snprintf(buffer, sizeof(buffer), "playing");
+		} else {
+			snprintf(buffer, sizeof(buffer), "paused");
+		}
 	} else if (strcmp(name, "volume") == 0) {
 		int vol = mpd_status_get_volume(status);
 		snprintf(buffer, sizeof(buffer), "%3i%c", vol, '%');
 	} else if (strcmp(name, "repeat") == 0) {
 		if (mpd_status_get_repeat(status)) {
-		    snprintf(buffer, sizeof(buffer), "on");
+			snprintf(buffer, sizeof(buffer), "on");
 		} else {
-		    snprintf(buffer, sizeof(buffer), "off");
+			snprintf(buffer, sizeof(buffer), "off");
 		}
 	} else if (strcmp(name, "random") == 0) {
 		if (mpd_status_get_random(status)) {
-		    snprintf(buffer, sizeof(buffer), "on");
+			snprintf(buffer, sizeof(buffer), "on");
 		} else {
-		    snprintf(buffer, sizeof(buffer), "off");
+			snprintf(buffer, sizeof(buffer), "off");
 		}
 	} else if (strcmp(name, "single") == 0) {
 		if (mpd_status_get_single(status)) {
-		    snprintf(buffer, sizeof(buffer), "on");
+			snprintf(buffer, sizeof(buffer), "on");
 		} else {
-		    snprintf(buffer, sizeof(buffer), "off");
+			snprintf(buffer, sizeof(buffer), "off");
 		}
 	} else if (strcmp(name, "consume") == 0) {
 		if (mpd_status_get_consume(status)) {
-		    snprintf(buffer, sizeof(buffer), "on");
+			snprintf(buffer, sizeof(buffer), "on");
 		} else {
-		    snprintf(buffer, sizeof(buffer), "off");
+			snprintf(buffer, sizeof(buffer), "off");
 		}
 	}
 	else { return NULL; }
