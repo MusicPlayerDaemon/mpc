@@ -32,6 +32,7 @@ jobs:
         - /usr/bin/python3.6 $HOME/.local/bin/pip install --user meson
 
     - os: osx
+      osx_image: xcode11.6
       addons:
         homebrew:
           packages:
@@ -40,7 +41,6 @@ jobs:
             - ninja
             - libmpdclient
             - check
-          update: true
 
 cache:
   apt: true
