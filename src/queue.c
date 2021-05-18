@@ -2,7 +2,7 @@
  * Copyright (C) 2003-2008 Warren Dukes <warren.dukes@gmail.com>,
 				Eric Wong <normalperson@yhbt.net>,
 				Daniel Brown <danb@cs.utexas.edu>
- * Copyright (C) 2008-2020 Max Kellermann <max@duempel.org>
+ * Copyright (C) 2008-2021 Max Kellermann <max@duempel.org>
  * Project homepage: http://musicpd.org
 
  * This program is free software; you can redistribute it and/or modify
