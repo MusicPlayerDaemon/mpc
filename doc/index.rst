@@ -377,7 +377,8 @@ Other Commands
 
    If you specify a list of events, only these events are considered.
 
-:command:`version` - Reports the version of MPD.
+:command:`version` - Reports the version of the protocol spoken, not the real
+   version of the daemon.
 
 
 Environment Variables
