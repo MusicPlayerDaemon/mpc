@@ -93,7 +93,7 @@ _mpc ()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 
 	# If there's no command, either complete options or commands
-	if [ -z "$command" ]; then
+	if [ -z "${command:-}" ]; then
 		case "$cur" in
 			--*) _mpc_long_options ;;
 			-*) COMPREPLY=() ;;
