@@ -1,4 +1,5 @@
 0.34 (not yet released)
+* add commands "albumart", "readpicture"
 * don't print status after error
 * support grouping "list" results (requires libmpdclient 2.12)
 

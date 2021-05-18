@@ -19,6 +19,7 @@
  */
 
 #include "list.h"
+#include "binary.h"
 #include "charset.h"
 #include "password.h"
 #include "util.h"
@@ -147,6 +148,11 @@ static const struct command {
 #if LIBMPDCLIENT_CHECK_VERSION(2,16,0)
 	{ "mount", 0, 2, 0, cmd_mount, "[<uri> <storage>]", "List mounts or add a new mount." },
 	{ "unmount", 1, 1, 0, cmd_unmount, "<uri>", "Remove a mount." },
+#endif
+
+#if LIBMPDCLIENT_CHECK_VERSION(2,17,0)
+	{ "albumart", 1, 1, 0, cmd_albumart, "<uri>", "Download album art for the given song and write to stdout." },
+	{ "readpicture", 1, 1, 0, cmd_readpicture, "<uri>", "Download a picture from the given song and write to stdout." },
 #endif
 
 	/* don't remove this, when mpc_table[i].command is NULL it will terminate the loop */

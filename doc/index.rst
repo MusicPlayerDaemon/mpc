@@ -292,6 +292,15 @@ Database Commands
 :command:`rescan [\-\-wait] [<path>]` - Like update, but also rescans
    unmodified files.
 
+File Commands
+^^^^^^^^^^^^^
+
+:command:`albumart <file>` - Download album art for the given song and
+   write it to stdout.
+
+:command:`readpicture <file>` - Download a picture embedded in the
+   given song and write it to stdout.
+
 
 Mount Commands
 ^^^^^^^^^^^^^^
