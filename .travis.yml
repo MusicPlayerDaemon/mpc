@@ -2,6 +2,16 @@ language: c
 
 jobs:
   include:
+    # Ubuntu Focal (20.04) with GCC 9.3
+    - os: linux
+      dist: focal
+      addons:
+        apt:
+          packages:
+            - meson
+            - libmpdclient-dev
+            - check
+
     # Ubuntu Bionic (18.04) with GCC 7
     - os: linux
       dist: bionic
