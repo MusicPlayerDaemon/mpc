@@ -25,6 +25,7 @@
 #include "args.h"
 #include "search.h"
 #include "status.h"
+#include "status_format.h"
 #include "tags.h"
 #include "path.h"
 #include "group.h"
@@ -1124,11 +1125,16 @@ cmd_stats(gcc_unused int argc, gcc_unused char **argv,
 }
 
 int
-cmd_status(gcc_unused int argc, gcc_unused char **argv,
-	   struct mpd_connection *conn)
+cmd_status(int argc, char **argv, struct mpd_connection *conn)
 {
-	if (options.verbosity >= V_DEFAULT)
-		print_status(conn);
+	if (options.verbosity >= V_DEFAULT) {
+		if (argc == 0) {
+			print_status(conn);
+		} else if (argc == 1) {
+			struct mpd_status *status = getStatus(conn);
+			printf("%s\n", format_status(status, argv[0]));
+		}
+	}
 	return 0;
 }
 
