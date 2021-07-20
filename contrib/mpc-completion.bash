@@ -111,6 +111,7 @@ _mpc ()
 	crossfade)   ;; # don't complete numbers
 	current)     ;; # no arguments
 	del)         ;; # don't complete numbers
+	insert)      _mpc_add ;;
 	load)        _mpc_playlists ;;
 	ls)          _mpc_ls ;;
 	lsplaylists) ;; # no arguments
