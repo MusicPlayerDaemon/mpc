@@ -169,8 +169,9 @@ Player Commands
 :command:`replaygain [<off|track|album>]` - Sets the replay gain mode.
    Without arguments, it prints the replay gain mode.
 
-:command:`single <on|off>` - Toggle single mode if state (:samp:`on`
-   or :samp:`off`) is not specified.
+:command:`single <on|once|off>` - Toggle single mode if state (:samp:`on`,
+   :samp:`once`, or :samp:`off`) is not specified.  :samp:`once` toggles
+   to :samp:`off`.
 
 :command:`seek [+\-][<HH:MM:SS>] or <[+\-]<0-100>%>` - Seeks by hour,
    minute or seconds, hours or minutes can be omitted.  If seeking by
@@ -403,7 +404,7 @@ Other Commands
    %volume%           The current volume spaced out to 4 characters including a percent sign
    %random%           Current status of random mode. 'on' or 'off'
    %repeat%           Current status of repeat mode. 'on' or 'off'
-   %single%           Current status of single mode. 'on' or 'off'
+   %single%           Current status of single mode. 'on', 'once', or 'off'
    %consume%          Current status of consume mode. 'on' or 'off'
    ================== ======================================================
 
