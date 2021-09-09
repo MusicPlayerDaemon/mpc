@@ -92,9 +92,12 @@ print_status(struct mpd_connection *conn)
 	else printf("off   ");
 
 	printf("single: ");
-	if (mpd_status_get_single(status))
+	if (mpd_status_get_single_state(status) == MPD_SINGLE_ON)
 		printf("on    ");
-	else printf("off   ");
+	else if (mpd_status_get_single_state(status) == MPD_SINGLE_ONESHOT)
+		printf("once  ");
+	else if (mpd_status_get_single_state(status) == MPD_SINGLE_OFF)
+		printf("off   ");
 
 	printf("consume: ");
 	if (mpd_status_get_consume(status))

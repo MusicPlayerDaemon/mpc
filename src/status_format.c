@@ -93,10 +93,12 @@ status_value(const struct mpd_status *status, const char *name)
 		    return "off";
 		}
 	} else if (strcmp(name, "single") == 0) {
-		if (mpd_status_get_single(status)) {
-		    return "on";
-		} else {
-		    return "off";
+		if (mpd_status_get_single_state(status) == MPD_SINGLE_ON) {
+			printf("on    ");
+		} else if (mpd_status_get_single_state(status) == MPD_SINGLE_ONESHOT) {
+			printf("once  ");
+		} else if (mpd_status_get_single_state(status) == MPD_SINGLE_OFF) {
+			printf("off   ");
 		}
 	} else if (strcmp(name, "consume") == 0) {
 		if (mpd_status_get_consume(status)) {
