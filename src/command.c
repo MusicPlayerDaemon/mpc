@@ -36,6 +36,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include <stdlib.h>
 #include <limits.h>
 
@@ -979,8 +980,39 @@ cmd_random(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_single(int argc, char **argv, struct mpd_connection *conn)
 {
-	return bool_cmd(argc, argv, conn,
-			mpd_status_get_single, mpd_run_single);
+	enum mpd_single_state mode = MPD_SINGLE_UNKNOWN;
+
+	if (argc == 1) {
+		if (strcasecmp(argv[0], "once") == 0)
+			mode = MPD_SINGLE_ONESHOT;
+		else {
+			int mode_i = get_boolean(argv[0]);
+			if (mode_i < 0)
+				return -1;
+			else if (mode_i)
+				mode = MPD_SINGLE_ON;
+			else
+				mode = MPD_SINGLE_OFF;
+		}
+	} else {
+		struct mpd_status *status;
+		status = getStatus(conn);
+		enum mpd_single_state cur = mpd_status_get_single_state(status);
+
+		if (cur == MPD_SINGLE_ONESHOT || cur == MPD_SINGLE_ON)
+			mode = MPD_SINGLE_OFF;
+		else if (cur == MPD_SINGLE_OFF)
+			mode = MPD_SINGLE_ON;
+
+		mpd_status_free(status);
+	}
+
+	if (mode == MPD_SINGLE_UNKNOWN)
+		return -1;
+	else if (!mpd_run_single_state(conn, mode))
+		printErrorAndExit(conn);
+
+	return 1;
 }
 
 int
