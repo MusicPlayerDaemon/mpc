@@ -980,6 +980,7 @@ cmd_random(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_single(int argc, char **argv, struct mpd_connection *conn)
 {
+#if LIBMPDCLIENT_CHECK_VERSION(2,18,0)
 	enum mpd_single_state mode = MPD_SINGLE_UNKNOWN;
 
 	if (argc == 1) {
@@ -1013,6 +1014,10 @@ cmd_single(int argc, char **argv, struct mpd_connection *conn)
 		printErrorAndExit(conn);
 
 	return 1;
+#else
+	return bool_cmd(argc, argv, conn,
+			mpd_status_get_single, mpd_run_single);
+#endif
 }
 
 int

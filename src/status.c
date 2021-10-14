@@ -92,12 +92,18 @@ print_status(struct mpd_connection *conn)
 	else printf("off   ");
 
 	printf("single: ");
+#if LIBMPDCLIENT_CHECK_VERSION(2,18,0)
 	if (mpd_status_get_single_state(status) == MPD_SINGLE_ON)
 		printf("on    ");
 	else if (mpd_status_get_single_state(status) == MPD_SINGLE_ONESHOT)
 		printf("once  ");
 	else if (mpd_status_get_single_state(status) == MPD_SINGLE_OFF)
 		printf("off   ");
+#else
+	if (mpd_status_get_single(status))
+		printf("on    ");
+	else printf("off   ");
+#endif
 
 	printf("consume: ");
 	if (mpd_status_get_consume(status))
