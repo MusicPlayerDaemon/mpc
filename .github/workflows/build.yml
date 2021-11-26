@@ -1,0 +1,73 @@
+---
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - 'build/**'
+      - 'contrib/**'
+      - 'doc/**'
+    branches:
+      - master
+  pull_request:
+    paths-ignore:
+      - 'build/**'
+      - 'contrib/**'
+      - 'doc/**'
+    branches:
+      - master
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        iconv: [enabled, disabled]
+    steps:
+      - id: checkout
+        uses: actions/checkout@v2
+
+      - id: cache-ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: linux-iconv=${{ matrix.iconv }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt install -y --no-install-recommends \
+            meson \
+            libmpdclient-dev \
+            check
+
+      - name: Meson Build
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: test
+          directory: output
+          setup-options: -Ddocumentation=false -Dtest=true -Diconv=${{ matrix.iconv }}
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - id: checkout
+        uses: actions/checkout@v2
+
+      - id: cache-ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: macos
+
+      - uses: actions/setup-python@v1
+
+      - name: Install dependencies
+        run: |
+          brew install \
+            meson ninja \
+            libmpdclient \
+            check
+
+      - name: Meson Build
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: test
+          directory: output
+          setup-options: -Ddocumentation=false -Dtest=true
