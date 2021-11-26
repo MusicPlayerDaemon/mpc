@@ -43,7 +43,7 @@ jobs:
         with:
           action: test
           directory: output
-          setup-options: -Ddocumentation=false -Dtest=true -Diconv=${{ matrix.iconv }}
+          setup-options: -Ddocumentation=disabled -Dtest=true -Diconv=${{ matrix.iconv }}
 
   build-macos:
     runs-on: macos-latest
@@ -70,4 +70,4 @@ jobs:
         with:
           action: test
           directory: output
-          setup-options: -Ddocumentation=false -Dtest=true
+          setup-options: -Ddocumentation=disabled -Dtest=true
