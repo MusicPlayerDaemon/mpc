@@ -3,6 +3,7 @@ project('mpc', 'c',
   meson_version: '>= 0.47',
   default_options: [
     'c_std=c99',
+    'warning_level=3',
   ],
   license: 'GPLv2+',
 )
@@ -35,12 +36,9 @@ common_cflags = [
 ]
 
 test_cflags = [
-  '-Wall',
-  '-Wextra',
   '-Wno-deprecated-declarations',
   '-Wmissing-prototypes',
   '-Wshadow',
-  '-Wpointer-arith',
   '-Wstrict-prototypes',
   '-Wcast-qual',
   '-Wwrite-strings',
