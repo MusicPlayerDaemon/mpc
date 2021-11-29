@@ -39,9 +39,14 @@ test_cflags = [
   '-fvisibility=hidden',
 
   '-Wcast-qual',
+  '-Wdouble-promotion',
+  '-Wmissing-declarations',
   '-Wmissing-prototypes',
   '-Wshadow',
   '-Wstrict-prototypes',
+  '-Wunused',
+  '-Wstrict-prototypes',
+  '-Wvla',
   '-Wwrite-strings',
 
   '-Wno-deprecated-declarations',

@@ -1063,7 +1063,8 @@ cmd_mixrampdb(int argc, char **argv, struct mpd_connection *conn)
 	} else {
 		struct mpd_status *status = getStatus(conn);
 
-		printf("mixrampdb: %f\n", mpd_status_get_mixrampdb(status));
+		printf("mixrampdb: %f\n",
+		       (double)mpd_status_get_mixrampdb(status));
 
 		mpd_status_free(status);
 	}
@@ -1086,7 +1087,7 @@ cmd_mixrampdelay(int argc, char **argv, struct mpd_connection *conn)
 		struct mpd_status *status = getStatus(conn);
 
 		printf("mixrampdelay: %f\n",
-		       mpd_status_get_mixrampdelay(status));
+		       (double)mpd_status_get_mixrampdelay(status));
 
 		mpd_status_free(status);
 	}
