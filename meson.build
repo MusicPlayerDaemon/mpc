@@ -36,13 +36,15 @@ common_cflags = [
 ]
 
 test_cflags = [
-  '-Wno-deprecated-declarations',
+  '-fvisibility=hidden',
+
+  '-Wcast-qual',
   '-Wmissing-prototypes',
   '-Wshadow',
   '-Wstrict-prototypes',
-  '-Wcast-qual',
   '-Wwrite-strings',
-  '-fvisibility=hidden',
+
+  '-Wno-deprecated-declarations',
 ]
 
 if get_option('buildtype') != 'debug'
