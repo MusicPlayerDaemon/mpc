@@ -69,7 +69,7 @@ endif
 
 common_cflags += cc.get_supported_arguments(test_cflags)
 
-add_global_arguments(common_cflags, language: 'c')
+add_project_arguments(common_cflags, language: 'c')
 
 libmpdclient_dep = dependency('libmpdclient', version: '>= 2.9')
 
