@@ -4,6 +4,10 @@ project('mpc', 'c',
   default_options: [
     'c_std=c99',
     'warning_level=3',
+
+    # If we build libmpdclient, it should be linked statically into
+    # our executable.
+    'libmpdclient:default_library=static',
   ],
   license: 'GPLv2+',
 )
@@ -71,7 +75,8 @@ common_cflags += cc.get_supported_arguments(test_cflags)
 
 add_project_arguments(common_cflags, language: 'c')
 
-libmpdclient_dep = dependency('libmpdclient', version: '>= 2.9')
+libmpdclient_dep = dependency('libmpdclient', version: '>= 2.9',
+                              fallback: ['libmpdclient', 'libmpdclient_dep'])
 
 inc = include_directories(
   'src',

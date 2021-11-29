@@ -3,6 +3,7 @@
 * don't print status after error
 * custom status format
 * support grouping "list" results (requires libmpdclient 2.12)
+* meson: auto-build libmpdclient if not available
 
 0.33 (2019/10/31)
 * fix off-by-one bug in "prio" command
