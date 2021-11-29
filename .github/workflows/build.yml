@@ -85,3 +85,9 @@ jobs:
           directory: output
           setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
           meson-version: 0.56.0
+
+      - name: "Upload mpc.exe"
+        uses: actions/upload-artifact@v2
+        with:
+          name: mpc.exe
+          path: output/mpc.exe
