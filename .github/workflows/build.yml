@@ -71,3 +71,17 @@ jobs:
           action: test
           directory: output
           setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - id: checkout
+        uses: actions/checkout@v2
+
+      - name: Meson Build
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: test
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
+          meson-version: 0.56.0
