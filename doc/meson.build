@@ -8,17 +8,20 @@ sphinx_output = custom_target(
   install_dir: join_paths(get_option('datadir'), 'doc', meson.project_name()),
 )
 
-custom_target(
-  'upload',
-  input: sphinx_output,
-  output: 'upload',
-  build_always_stale: true,
-  command: [
-    'rsync', '-vpruz', '--delete', '@INPUT@',
-    'www.musicpd.org:/var/www/mpd/doc/mpc/',
-    '--chmod=a+rX',
-  ],
-)
+rsync = find_program('rsync', required: false)
+if rsync.found()
+  custom_target(
+    'upload',
+    input: sphinx_output,
+    output: 'upload',
+    build_always_stale: true,
+    command: [
+      rsync, '-vpruz', '--delete', '@INPUT@',
+      'www.musicpd.org:/var/www/mpd/doc/mpc/',
+      '--chmod=a+rX',
+    ],
+  )
+endif
 
 custom_target(
   'Manpage documentation',
