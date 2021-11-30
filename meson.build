@@ -75,7 +75,7 @@ common_cflags += cc.get_supported_arguments(test_cflags)
 
 add_project_arguments(common_cflags, language: 'c')
 
-libmpdclient_dep = dependency('libmpdclient', version: '>= 2.9',
+libmpdclient_dep = dependency('libmpdclient', version: '>= 2.16',
                               fallback: ['libmpdclient', 'libmpdclient_dep'])
 
 inc = include_directories(
@@ -89,12 +89,6 @@ if iconv
   iconv_sources = files('src/charset.c')
 else
   iconv_sources = []
-endif
-
-sources = []
-
-if libmpdclient_dep.version().version_compare('>= 2.12')
-  sources += 'src/group.c'
 endif
 
 executable('mpc',
@@ -121,7 +115,7 @@ executable('mpc',
   'src/search.c',
   'src/options.c',
   'src/path.c',
-  sources,
+  'src/group.c'
   iconv_sources,
   include_directories: inc,
   dependencies: [

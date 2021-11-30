@@ -119,14 +119,12 @@ add_constraint(struct mpd_connection *conn,
 bool
 add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 {
-#if LIBMPDCLIENT_CHECK_VERSION(2,16,0)
 	if (argc == 1 && argv[0][0] == '(') {
 		if (mpd_connection_cmp_server_version(conn, 0, 21, 0) < 0)
 			fprintf(stderr, "warning: MPD 0.21 required for search expressions\n");
 
 		return mpd_search_add_expression(conn, argv[0]);
 	}
-#endif
 
 	struct constraint *constraints;
 
@@ -150,18 +148,15 @@ do_search(int argc, char ** argv, struct mpd_connection *conn, bool exact)
 {
 	bool command_list = false;
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
 	/* ask MPD to omit the tags which are not used by the
 	   `--format` to reduce network transfer for tag values we're
-	   not going to use anyway (requires MPD 0.21 and libmpdclient
-	   2.12) */
+	   not going to use anyway (requires MPD 0.21) */
 	if (mpd_connection_cmp_server_version(conn, 0, 21, 0) >= 0) {
 		if (!mpd_command_list_begin(conn, false) ||
 		    !send_tag_types_for_format(conn, options.custom_format ? options.format : NULL))
 			printErrorAndExit(conn);
 		command_list = true;
 	}
-#endif
 
 	mpd_search_db_songs(conn, exact);
 	if (!add_constraints(argc, argv, conn))

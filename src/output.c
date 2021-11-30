@@ -35,8 +35,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,14,0)
-
 /**
  * Look up an output name and return its index.
  *
@@ -86,8 +84,6 @@ output_spec_to_index(struct mpd_connection *conn, const char *spec)
 		return output_name_to_index(conn, spec);
 }
 
-#endif
-
 int
 cmd_outputs(gcc_unused int argc, gcc_unused char **argv,
 	    struct mpd_connection *conn)
@@ -106,11 +102,9 @@ cmd_outputs(gcc_unused int argc, gcc_unused char **argv,
 			printf("Output %i (%s) is disabled\n", id, name);
 		}
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,14,0)
 		for (const struct mpd_pair *i = mpd_output_first_attribute(output);
 		     i != NULL; i = mpd_output_next_attribute(output))
 			printf("\t%s=\"%s\"\n", i->name, i->value);
-#endif
 
 		mpd_output_free(output);
 	}
@@ -248,8 +242,6 @@ cmd_toggle_output(int argc, char **argv, struct mpd_connection *conn)
 			      mpd_send_toggle_output);
 }
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,14,0)
-
 #ifndef HAVE_STRNDUP
 static char *
 strndup(const char *s, size_t length)
@@ -287,5 +279,3 @@ cmd_outputset(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 	my_finishCommand(conn);
 	return 0;
 }
-
-#endif

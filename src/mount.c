@@ -27,8 +27,6 @@
 
 #include <stdio.h>
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,16,0)
-
 static int
 cmd_list_mounts(struct mpd_connection *connection)
 {
@@ -81,5 +79,3 @@ cmd_unmount(gcc_unused int argc, char **argv,
 
 	return 0;
 }
-
-#endif

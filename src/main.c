@@ -82,9 +82,7 @@ static const struct command {
 	{"enable",      1,   -1,  0,    cmd_enable,      "[only] <output # or name> [...]", "Enable output(s)"},
 	{"disable",     1,   -1,  0,    cmd_disable,     "[only] <output # or name> [...]", "Disable output(s)"},
 	{"toggleoutput", 1, -1,   0,    cmd_toggle_output, "<output # or name> [...]", "Toggle output(s)"},
-#if LIBMPDCLIENT_CHECK_VERSION(2,14,0)
 	{"outputset",   2,   2,   0,    cmd_outputset,   "<output # or name> <name>=<value>", "Set output attributes"},
-#endif
 	{ "queued",	0,   0,   0,    cmd_queued,  "", "Show the next queued song"},
 	{"shuffle",     0,   0,   0,    cmd_shuffle,     "", "Shuffle the queue"},
 	{"move",        2,   2,   0,    cmd_move,        "<from> <to>", "Move song in queue"},
@@ -145,10 +143,8 @@ static const struct command {
 
 	{ "listneighbors", 0, 2, 0, cmd_listneighbors, "", "List neighbors." },
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,16,0)
 	{ "mount", 0, 2, 0, cmd_mount, "[<mount-path> <storage-uri>]", "List mounts or add a new mount." },
 	{ "unmount", 1, 1, 0, cmd_unmount, "<mount-path>", "Remove a mount." },
-#endif
 
 #if LIBMPDCLIENT_CHECK_VERSION(2,17,0)
 	{ "albumart", 1, 1, 0, cmd_albumart, "<uri>", "Download album art for the given song and write to stdout." },

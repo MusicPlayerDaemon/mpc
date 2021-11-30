@@ -26,8 +26,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
-
 static uint64_t tag_bits;
 
 static const char *
@@ -69,5 +67,3 @@ send_tag_types_for_format(struct mpd_connection *c,
 
 	return n == 0 || mpd_send_enable_tag_types(c, types, n);
 }
-
-#endif

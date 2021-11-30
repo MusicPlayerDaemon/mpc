@@ -585,19 +585,16 @@ cmd_listall(int argc, char **argv, struct mpd_connection *conn)
 		if (options.custom_format) {
 			bool command_list = false;
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
 			/* ask MPD to omit the tags which are not used
 			   by the `--format` to reduce network
 			   transfer for tag values we're not going to
-			   use anyway (requires MPD 0.21 and
-			   libmpdclient 2.12) */
+			   use anyway (requires MPD 0.21) */
 			if (mpd_connection_cmp_server_version(conn, 0, 21, 0) >= 0) {
 				if (!mpd_command_list_begin(conn, false) ||
 				    !send_tag_types_for_format(conn, options.format))
 					printErrorAndExit(conn);
 				command_list = true;
 			}
-#endif
 
 			if (!mpd_send_list_all_meta(conn, tmp))
 				printErrorAndExit(conn);
@@ -712,11 +709,9 @@ ls_entity(int argc, char **argv, struct mpd_connection *conn,
 	if (argc > 0)
 		ls = charset_to_utf8(argv[i]);
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
 	/* ask MPD to omit the tags which are not used by the
 	   `--format` to reduce network transfer for tag values we're
-	   not going to use anyway (requires MPD 0.21 and libmpdclient
-	   2.12) */
+	   not going to use anyway (requires MPD 0.21) */
 	if (mpd_connection_cmp_server_version(conn, 0, 21, 0) >= 0) {
 		if (!mpd_command_list_begin(conn, false) ||
 		    !send_tag_types_for_format(conn, options.custom_format ? options.format : NULL) ||
@@ -724,7 +719,6 @@ ls_entity(int argc, char **argv, struct mpd_connection *conn,
 			printErrorAndExit(conn);
 		my_finishCommand(conn);
 	}
-#endif
 
 	do {
 		if (!mpd_send_list_meta(conn, ls))
@@ -758,13 +752,6 @@ cmd_load(int argc, char **argv, struct mpd_connection *conn)
 	const bool range = options.range.start > 0 ||
 		options.range.end < UINT_MAX;
 
-#if !LIBMPDCLIENT_CHECK_VERSION(2,16,0)
-	if (range) {
-		fprintf(stderr, "Loading with range requires libmpdclient 2.16\n");
-		return -1;
-	}
-#endif
-
 	if (!mpd_command_list_begin(conn, false))
 		printErrorAndExit(conn);
 
@@ -772,13 +759,11 @@ cmd_load(int argc, char **argv, struct mpd_connection *conn)
 		printf("loading: %s\n",argv[i]);
 
 		const char *name_utf8 = charset_to_utf8(argv[i]);
-#if LIBMPDCLIENT_CHECK_VERSION(2,16,0)
 		if (range)
 			mpd_send_load_range(conn, name_utf8,
 					    options.range.start,
 					    options.range.end);
 		else
-#endif
 			mpd_send_load(conn, name_utf8);
 	}
 
@@ -817,27 +802,22 @@ cmd_list(int argc, char **argv, struct mpd_connection *conn)
 	--argc;
 	++argv;
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
 	struct mpc_groups groups;
 	mpc_groups_init(&groups);
 	if (!mpc_groups_collect(&groups, &argc, argv))
 		return -1;
-#endif
 
 	mpd_search_db_tags(conn, type);
 
 	if (argc > 0 && !add_constraints(argc, argv, conn))
 		return -1;
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
 	if (!mpc_groups_send(conn, &groups))
 		printErrorAndExit(conn);
-#endif
 
 	if (!mpd_search_commit(conn))
 		printErrorAndExit(conn);
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
 	if (groups.n_groups > 0) {
 		struct mpd_pair *pair;
 		while ((pair = mpd_recv_pair(conn)) != NULL) {
@@ -854,15 +834,12 @@ cmd_list(int argc, char **argv, struct mpd_connection *conn)
 			mpd_return_pair(conn, pair);
 		}
 	} else {
-#endif
 		struct mpd_pair *pair;
 		while ((pair = mpd_recv_pair_tag(conn, type)) != NULL) {
 			printf("%s\n", charset_from_utf8(pair->value));
 			mpd_return_pair(conn, pair);
 		}
-#if LIBMPDCLIENT_CHECK_VERSION(2,12,0)
 	}
-#endif
 
 	my_finishCommand(conn);
 	return 0;
