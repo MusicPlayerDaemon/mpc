@@ -316,6 +316,17 @@ Mount Commands
 
 :command:`unmount <mount-path>` - Remove a mount.
 
+:command:`listneighbors` - Print a list of "neighors"
+   (i.e. automatically detected storages which can be mounted).  This
+   requires `enabling at least one neighbor plugin
+   <https://mpd.readthedocs.io/en/stable/user.html#configuring-neighbor-plugins>`__
+   in :file:`mpd.conf`.  Example::
+
+     $ mpc listneighbors
+     upnp://uuid:01234567-89ab-cdef-0123-456789abcdef/urn:schemas-upnp-org:service:ContentDirectory:1
+     udisks://by-id-dm-name-_dev_sdb3
+     udisks://by-id-ata-FOO-part2
+
 
 Sticker Commands
 ^^^^^^^^^^^^^^^^^
