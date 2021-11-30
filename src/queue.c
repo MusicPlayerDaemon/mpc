@@ -191,17 +191,12 @@ cmd_del(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_playlist(int argc, char **argv, struct mpd_connection *conn)
 {
-	bool command_list = false;
-
 	/* ask MPD to omit the tags which are not used by the
 	   `--format` to reduce network transfer for tag values we're
-	   not going to use anyway (requires MPD 0.21) */
-	if (mpd_connection_cmp_server_version(conn, 0, 21, 0) >= 0) {
-		if (!mpd_command_list_begin(conn, false) ||
-		    !send_tag_types_for_format(conn, options.format))
-			printErrorAndExit(conn);
-		command_list = true;
-	}
+	   not going to use anyway */
+	if (!mpd_command_list_begin(conn, false) ||
+	    !send_tag_types_for_format(conn, options.format))
+		printErrorAndExit(conn);
 
 	bool ret = argc > 0
 		? mpd_send_list_playlist_meta(conn, argv[0])
@@ -210,7 +205,7 @@ cmd_playlist(int argc, char **argv, struct mpd_connection *conn)
 	if (ret == false)
 		printErrorAndExit(conn);
 
-	if (command_list && !mpd_command_list_end(conn))
+	if (!mpd_command_list_end(conn))
 		printErrorAndExit(conn);
 
 	print_entity_list(conn, MPD_ENTITY_TYPE_SONG, true);

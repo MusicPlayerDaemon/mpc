@@ -120,9 +120,6 @@ bool
 add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 {
 	if (argc == 1 && argv[0][0] == '(') {
-		if (mpd_connection_cmp_server_version(conn, 0, 21, 0) < 0)
-			fprintf(stderr, "warning: MPD 0.21 required for search expressions\n");
-
 		return mpd_search_add_expression(conn, argv[0]);
 	}
 
@@ -146,17 +143,12 @@ add_constraints(int argc, char ** argv, struct mpd_connection *conn)
 static int
 do_search(int argc, char ** argv, struct mpd_connection *conn, bool exact)
 {
-	bool command_list = false;
-
 	/* ask MPD to omit the tags which are not used by the
 	   `--format` to reduce network transfer for tag values we're
-	   not going to use anyway (requires MPD 0.21) */
-	if (mpd_connection_cmp_server_version(conn, 0, 21, 0) >= 0) {
-		if (!mpd_command_list_begin(conn, false) ||
-		    !send_tag_types_for_format(conn, options.custom_format ? options.format : NULL))
-			printErrorAndExit(conn);
-		command_list = true;
-	}
+	   not going to use anyway */
+	if (!mpd_command_list_begin(conn, false) ||
+	    !send_tag_types_for_format(conn, options.custom_format ? options.format : NULL))
+		printErrorAndExit(conn);
 
 	mpd_search_db_songs(conn, exact);
 	if (!add_constraints(argc, argv, conn))
@@ -165,7 +157,7 @@ do_search(int argc, char ** argv, struct mpd_connection *conn, bool exact)
 	if (!mpd_search_commit(conn))
 		printErrorAndExit(conn);
 
-	if (command_list && !mpd_command_list_end(conn))
+	if (!mpd_command_list_end(conn))
 		printErrorAndExit(conn);
 
 	print_entity_list(conn, MPD_ENTITY_TYPE_SONG, options.custom_format);

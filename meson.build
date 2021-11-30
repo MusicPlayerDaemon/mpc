@@ -115,7 +115,7 @@ executable('mpc',
   'src/search.c',
   'src/options.c',
   'src/path.c',
-  'src/group.c'
+  'src/group.c',
   iconv_sources,
   include_directories: inc,
   dependencies: [

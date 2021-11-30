@@ -5,6 +5,7 @@
 * support grouping "list" results
 * meson: auto-build libmpdclient if not available
 * require libmpdclient 2.16 or newer
+* require MPD 0.21 or newer
 
 0.33 (2019/10/31)
 * fix off-by-one bug in "prio" command
