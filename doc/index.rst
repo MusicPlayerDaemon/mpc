@@ -308,9 +308,13 @@ Mount Commands
 
 :command:`mount` - Lists all mounts.
 
-:command:`mount <uri> <storage>` - Create a new mount.
+:command:`mount <mount-path> <storage-uri>` - Create a new mount:
+   mounts a storage on the given path.  Example::
 
-:command:`unmount <uri>` - Remove a mount.
+     mpc mount server nfs://10.0.0.5/mp3
+     mpc mount stick udisks://by-id-ata-FOO-part2
+
+:command:`unmount <mount-path>` - Remove a mount.
 
 
 Sticker Commands

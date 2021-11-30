@@ -146,8 +146,8 @@ static const struct command {
 	{ "listneighbors", 0, 2, 0, cmd_listneighbors, "", "List neighbors." },
 
 #if LIBMPDCLIENT_CHECK_VERSION(2,16,0)
-	{ "mount", 0, 2, 0, cmd_mount, "[<uri> <storage>]", "List mounts or add a new mount." },
-	{ "unmount", 1, 1, 0, cmd_unmount, "<uri>", "Remove a mount." },
+	{ "mount", 0, 2, 0, cmd_mount, "[<mount-path> <storage-uri>]", "List mounts or add a new mount." },
+	{ "unmount", 1, 1, 0, cmd_unmount, "<mount-path>", "Remove a mount." },
 #endif
 
 #if LIBMPDCLIENT_CHECK_VERSION(2,17,0)
