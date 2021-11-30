@@ -1,4 +1,4 @@
-0.34 (not yet released)
+0.34 (2021/11/30)
 * add commands "albumart", "readpicture"
 * don't print status after error
 * custom status format
