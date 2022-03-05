@@ -1173,3 +1173,56 @@ cmd_replaygain(int argc, char **argv, struct mpd_connection *connection)
 
 	return 0;
 }
+
+int
+cmd_partitionlist(gcc_unused int argc, gcc_unused char **argv, struct mpd_connection *conn)
+{
+	if (!mpd_send_listpartitions(conn)) {
+		printErrorAndExit(conn);
+	}
+
+	struct mpd_partition *part;
+	while ((part = mpd_recv_partition(conn)) != NULL) {
+		printf("%s\n", mpd_partition_get_name(part));
+		mpd_partition_free(part);
+	}
+
+	my_finishCommand(conn);
+	return 0;
+}
+
+int cmd_partitionmake(int argc, char **argv, struct mpd_connection *conn)
+{
+	if (!mpd_command_list_begin(conn, false)) {
+		printErrorAndExit(conn);
+	}
+
+	for (int i = 0; i < argc; ++i) {
+		if (!mpd_send_newpartition(conn, argv[i])) {
+			printErrorAndExit(conn);
+		}
+	}
+
+	if (!mpd_command_list_end(conn) || !mpd_response_finish(conn)) {
+		printErrorAndExit(conn);
+	}
+	return 0;
+}
+
+int
+cmd_partitiondelete(int argc, char **argv, struct mpd_connection *conn) {
+	if (!mpd_command_list_begin(conn, false)) {
+		printErrorAndExit(conn);
+	}
+
+	for (int i = 0; i < argc; ++i) {
+		if (!mpd_send_delete_partition(conn, argv[i])) {
+			printErrorAndExit(conn);
+		}
+	}
+
+	if (!mpd_command_list_end(conn) || !mpd_response_finish(conn)) {
+		printErrorAndExit(conn);
+	}
+	return 0;
+}

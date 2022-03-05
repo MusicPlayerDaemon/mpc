@@ -59,6 +59,7 @@ static const struct OptionDef option_table[] = {
 	{ 'f', "format", "<format>", "Print status with format <format>" },
 	{ 'w', "wait", NULL, "Wait for operation to finish (e.g. database update)" },
 	{ 'r', "range", "[<start>]:[<end>]", "Operate on a range (e.g. when loading a playlist)" },
+	{ 'a', "partition", "<name>", "Operate on partition <name> instead" },
 };
 
 static const unsigned option_table_size = sizeof(option_table) / sizeof(option_table[0]);
@@ -161,6 +162,9 @@ handle_option(int c, const char *arg)
 		break;
 	case 'p':
 		options.port_str = arg;
+		break;
+	case 'a':
+		options.partition = arg;
 		break;
 	case 'f':
 		options.format = arg;

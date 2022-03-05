@@ -34,4 +34,7 @@ int cmd_outputs(int argc, char **argv, struct mpd_connection *conn);
 int
 cmd_outputset(int argc, char **argv, struct mpd_connection *conn);
 
+int
+cmd_moveoutput(int argc, char **argv, struct mpd_connection *conn);
+
 #endif

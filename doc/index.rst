@@ -115,6 +115,11 @@ Options
  If not given, the value of the environment variable
  :envvar:`MPD_PORT` is used.
 
+.. option:: --partition=PARTITION, -a PARTITION
+
+ The partition of the MPD server to operate on.
+
+ If not given, the default partition is used.
 
 Commands
 --------
@@ -370,6 +375,19 @@ Output Commands
 :command:`toggleoutput <output # or name> [...]` - Changes the
    status for the given output(s); a list of one or more names or
    numbers is required.
+
+:command:`moveoutput <output # or name>` - Moves the given output
+   to the current partition (see --partition).
+
+Partition Commands
+^^^^^^^^^^^^^^^^^^
+
+:command:`partitions` - Lists all available partitions
+
+:command:`makepart <name> [...]` - Creates new partitions
+
+:command:`delpart <name> [...]` - Deletes partitions
+
 
 Client-to-client Commands
 ^^^^^^^^^^^^^^^^^^^^^^^^^

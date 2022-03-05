@@ -77,6 +77,7 @@ static const struct command {
 	{"crossfade",        0,  1, 0, cmd_crossfade,        "[<seconds>]", "Set and display crossfade settings"},
 	{"current",          0,  0, 0, cmd_current,          "", "Show the currently playing song"},
 	{"del",              0, -1, 1, cmd_del,              "<position>", "Remove a song from the queue"},
+	{"delpart",          1, -1, 0, cmd_partitiondelete,  "<name> ...", "Delete partition(s)"},
 	{"disable",          1, -1, 0, cmd_disable,          "[only] <output # or name> [...]", "Disable output(s)"},
 	{"enable",           1, -1, 0, cmd_enable,           "[only] <output # or name> [...]", "Enable output(s)"},
 	{"find",             1, -1, 0, cmd_find,             "<type> <query>", "Find a song (exact match)"},
@@ -92,14 +93,17 @@ static const struct command {
 	{"ls",               0, -1, 2, cmd_ls,               "[<directory>]", "List the contents of <directory>"},
 	{"lsplaylists",      0, -1, 2, cmd_lsplaylists,      "", "List currently available playlists"},
 	{"lstab",            1,  1, 0, cmd_lstab,            "<directory>", NULL},
+	{"makepart",         1, -1, 0, cmd_partitionmake,    "<name> ...", "Create partition(s)"},
 	{"mixrampdb",        0,  1, 0, cmd_mixrampdb,        "[<dB>]", "Set and display mixrampdb settings"},
 	{"mixrampdelay",     0,  1, 0, cmd_mixrampdelay,     "[<seconds>]", "Set and display mixrampdelay settings"},
 	{"mount",            0,  2, 0, cmd_mount,            "[<mount-path> <storage-uri>]", "List mounts or add a new mount." },
 	{"move",             2,  2, 0, cmd_move,             "<from> <to>", "Move song in queue"},
+	{"moveoutput",       1,  1, 0, cmd_moveoutput,       "<output # or name>", "Move output to partition (see -a)"},
 	{"mv",               2,  2, 0, cmd_move,             "<from> <to>", NULL},
 	{"next",             0,  0, 0, cmd_next,             "", "Play the next song in the queue"},
 	{"outputs",          0,  0, 0, cmd_outputs,          "", "Show the current outputs"},
 	{"outputset",        2,  2, 0, cmd_outputset,        "<output # or name> <name>=<value>", "Set output attributes"},
+	{"partitions",       0,  0, 0, cmd_partitionlist,   "", "List partitions"},
 	{"pause",            0,  0, 0, cmd_pause,            "", "Pauses the currently playing song"},
 	{"pause-if-playing", 0,  0, 0, cmd_pause_if_playing, "", "Pauses the currently playing song; exits with failure if not playing"},
 	{"play",             0,  1, 2, cmd_play,             "[<position>]", "Start playing at <position>"},
@@ -277,6 +281,16 @@ run(const struct command *command, int argc, char **array)
 
 	if (mpd_connection_cmp_server_version(conn, 0, 21, 0) < 0)
 		fprintf(stderr, "warning: MPD 0.21 required\n");
+
+	/* If a partition was specified, switch to it, unless we're moving
+	   an output.  Not all outputs are visible in a partition, and
+	   moveoutput needs to look up the one to move, so it has to start
+	   in the default partition. */
+	if (options.partition != NULL && command->handler != cmd_moveoutput) {
+		if (!mpd_run_switch_partition(conn, options.partition)) {
+			printErrorAndExit(conn);
+		}
+	}
 
 	int ret = command->handler(argc, array, conn);
 	if (ret > 0 && options.verbosity > V_QUIET) {

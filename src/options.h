@@ -36,6 +36,7 @@ struct Range {
 struct Options {
 	const char *host;
 	const char *port_str;
+	const char *partition;
 	int port;
 	const char *password;
 	const char *format;

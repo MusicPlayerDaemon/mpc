@@ -279,3 +279,43 @@ cmd_outputset(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 	my_finishCommand(conn);
 	return 0;
 }
+
+int
+cmd_moveoutput(gcc_unused int argc, char **argv, struct mpd_connection *conn)
+{
+	const char *name = argv[0];
+	int index;
+	if (parse_int(name, &index)) {
+		/* We decrement by 1 to make it natural to the user. */
+		index--;
+
+		// Look up the name for the index.
+		if (!mpd_send_outputs(conn)) {
+			printErrorAndExit(conn);
+		}
+
+		struct mpd_output *output;
+		while ((output = mpd_recv_output(conn)) != NULL) {
+			if (mpd_output_get_id(output) == (unsigned)index) {
+				name = mpd_output_get_name(output);
+				my_finishCommand(conn);
+				break;
+			}
+
+			mpd_output_free(output);
+		}
+	}
+
+	/* Switch to the partition in the argument (if any) */
+	if (options.partition != NULL) {
+		if (!mpd_run_switch_partition(conn, options.partition)) {
+			printErrorAndExit(conn);
+		}
+	}
+
+	if (!mpd_run_move_output(conn, name)) {
+		printErrorAndExit(conn);
+	}
+
+	return 0;
+}
