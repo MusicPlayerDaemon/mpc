@@ -12,8 +12,9 @@ __escape_strings_stdin () {
 
 # Read everything past the command as a single word
 # This is used for filenames (they may have spaces)
+# It also removes backslashes which occur during tab completion.
 __get_long_cur () {
-	cur="$(echo "${COMP_LINE#*$command}" | sed 's/^ *//')"
+	cur="$(echo "${COMP_LINE#*$command}" | sed 's/^ *//' | sed 's/\\//g')"  
 }
 
 # Complete boolean choices
