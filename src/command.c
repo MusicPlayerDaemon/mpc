@@ -1140,7 +1140,10 @@ cmd_status(int argc, char **argv, struct mpd_connection *conn)
 			print_status(conn);
 		} else if (argc == 1) {
 			struct mpd_status *status = getStatus(conn);
-			printf("%s\n", format_status(status, argv[0]));
+			char* current_status = format_status(status, argv[0]);
+			if (current_status) {
+				printf("%s\n", format_status(status, argv[0]));
+			}
 		}
 	}
 	return 0;

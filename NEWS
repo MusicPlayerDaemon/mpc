@@ -1,4 +1,5 @@
 0.35 (not yet released)
+* fix null pointer dereference on bad status format
 
 0.34 (2021/11/30)
 * add commands "albumart", "readpicture"
