@@ -63,7 +63,7 @@ jobs:
         with:
           key: macos
 
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v4
 
       - name: Install dependencies
         run: |
