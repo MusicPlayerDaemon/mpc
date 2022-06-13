@@ -41,6 +41,13 @@ jobs:
       - name: Meson Build
         uses: BSFishy/meson-build@v1.0.3
         with:
+          action: build
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true -Diconv=${{ matrix.iconv }}
+
+      - name: Unit Tests
+        uses: BSFishy/meson-build@v1.0.3
+        with:
           action: test
           directory: output
           setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true -Diconv=${{ matrix.iconv }}
@@ -68,6 +75,13 @@ jobs:
       - name: Meson Build
         uses: BSFishy/meson-build@v1.0.3
         with:
+          action: build
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true
+
+      - name: Unit Tests
+        uses: BSFishy/meson-build@v1.0.3
+        with:
           action: test
           directory: output
           setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true
@@ -79,6 +93,14 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Meson Build
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: build
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
+          meson-version: 0.56.0
+
+      - name: Unit Tests
         uses: BSFishy/meson-build@v1.0.3
         with:
           action: test
