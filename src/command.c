@@ -21,6 +21,7 @@
 #include "command.h"
 #include "charset.h"
 #include "options.h"
+#include "strcasecmp.h"
 #include "util.h"
 #include "args.h"
 #include "search.h"
@@ -36,7 +37,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <strings.h>
 #include <stdlib.h>
 #include <limits.h>
 

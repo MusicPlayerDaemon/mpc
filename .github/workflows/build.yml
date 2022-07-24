@@ -113,3 +113,34 @@ jobs:
         with:
           name: mpc.exe
           path: output/mpc.exe
+
+  build-windows-msvc:
+    runs-on: windows-latest
+    steps:
+      - id: checkout
+        uses: actions/checkout@v3
+
+      - name: Add VisualStudio command line tools into path
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Meson Build
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: build
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
+          meson-version: 0.56.0
+
+      - name: Unit Tests
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: test
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
+          meson-version: 0.56.0
+
+      - name: "Upload mpc.exe"
+        uses: actions/upload-artifact@v3
+        with:
+          name: mpc.exe
+          path: output/mpc.exe

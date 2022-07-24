@@ -20,6 +20,7 @@
 
 #include "search.h"
 #include "options.h"
+#include "strcasecmp.h"
 #include "tags.h"
 #include "util.h"
 #include "charset.h"
@@ -28,7 +29,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 
 enum {
 	SEARCH_TAG_ANY = MPD_TAG_COUNT + 1,

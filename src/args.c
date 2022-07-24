@@ -22,14 +22,17 @@
 #include "charset.h"
 #include "list.h"
 #include "options.h"
+#include "strcasecmp.h"
 
 #include <stdio.h>
 #include <string.h>
-#include <strings.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <assert.h>
+
+#ifdef __unix__
 #include <sys/param.h>
+#endif
 
 int
 stdinToArgArray(char ***array)

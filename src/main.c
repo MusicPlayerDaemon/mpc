@@ -43,9 +43,12 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <stdlib.h>
+
+#ifdef __unix__
 #include <sys/param.h>
+#include <unistd.h>
+#endif
 
 static const struct command {
 	const char *command;
