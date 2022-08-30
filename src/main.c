@@ -65,9 +65,7 @@ static const struct command {
 } mpc_table [] = {
 	/* command,     min, max, pipe, handler,         usage, help */
 	{"add",              0, -1, 1, cmd_add,              "<uri>", "Add a song to the queue"},
-#if LIBMPDCLIENT_CHECK_VERSION(2,17,0)
 	{"albumart",         1,  1, 0, cmd_albumart,         "<uri>", "Download album art for the given song and write to stdout." },
-#endif
 	{"cdprev",           0,  0, 0, cmd_cdprev,           "", "Compact disk player-like previous command"},
 	{"channels",         0,  0, 0, cmd_channels,         "", "List the channels that other clients have subscribed to." },
 	{"clear",            0,  0, 0, cmd_clear,            "", "Clear the queue"},
@@ -112,9 +110,7 @@ static const struct command {
 	{"prio",             2, -1, 2, cmd_prio,             "<prio> <position/range> ...", "Change song priorities in the queue"},
 	{"queued",	         0,  0, 0, cmd_queued,           "", "Show the next queued song"},
 	{"random",           0,  1, 0, cmd_random,           "<on|off>", "Toggle random mode, or specify state"},
-#if LIBMPDCLIENT_CHECK_VERSION(2,17,0)
 	{"readpicture",      1, 1, 0,  cmd_readpicture,      "<uri>", "Download a picture from the given song and write to stdout." },
-#endif
 	{"repeat",           0,  1, 0, cmd_repeat,           "<on|off>", "Toggle repeat mode, or specify state"},
 	{"replaygain",       0, -1, 0, cmd_replaygain,       "[off|track|album]", "Set or display the replay gain mode" },
 	{"rescan",           0, -1, 2, cmd_rescan,           "[<path>]", "Rescan music directory (including unchanged files)"},

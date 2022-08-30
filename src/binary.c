@@ -29,8 +29,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#if LIBMPDCLIENT_CHECK_VERSION(2,17,0)
-
 static bool
 send_binary(struct mpd_connection *connection, const char *cmd,
 	    const char *uri_utf8, uint_least32_t offset)
@@ -115,5 +113,3 @@ cmd_readpicture(gcc_unused int argc, char **argv,
 {
 	return cmd_binary("readpicture", charset_to_utf8(argv[0]), connection);
 }
-
-#endif

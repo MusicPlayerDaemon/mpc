@@ -11,7 +11,7 @@ Installing mpc from source
 You need:
 
 - a C99 compliant compiler (e.g. gcc)
-- libmpdclient 2.16
+- libmpdclient 2.18
 - `Meson 0.47 <http://mesonbuild.com/>`__ and `Ninja <https://ninja-build.org/>`__
 
 Run ``meson``:

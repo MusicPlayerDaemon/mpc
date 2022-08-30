@@ -75,7 +75,7 @@ common_cflags += cc.get_supported_arguments(test_cflags)
 
 add_project_arguments(common_cflags, language: 'c')
 
-libmpdclient_dep = dependency('libmpdclient', version: '>= 2.16',
+libmpdclient_dep = dependency('libmpdclient', version: '>= 2.18',
                               fallback: ['libmpdclient', 'libmpdclient_dep'])
 
 inc = include_directories(
