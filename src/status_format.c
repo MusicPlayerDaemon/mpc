@@ -75,8 +75,12 @@ status_value(const struct mpd_status *status, const char *name)
 	} else if (strcmp(name, "state") == 0) {
 		if (mpd_status_get_state(status) == MPD_STATE_PLAY) {
 			return "playing";
-		} else {
+		} else if (mpd_status_get_state(status) == MPD_STATE_PAUSE) {
 			return "paused";
+		} else if (mpd_status_get_state(status) == MPD_STATE_STOP) {
+			return "stopped";
+		} else {
+			return "n/a";
 		}
 	} else if (strcmp(name, "volume") == 0) {
 		sprintf(buffer, "%3i%c", mpd_status_get_volume(status), '%');
