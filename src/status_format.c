@@ -111,34 +111,44 @@ status_value(const struct mpd_status *status, const char *name)
 		    return "off";
 		}
 	} else if (strcmp(name, "kbitrate") == 0) {
-		sprintf(buffer, "%d", mpd_status_get_kbit_rate(status));
+		sprintf(buffer, "%u", mpd_status_get_kbit_rate(status));
 	} else if (strcmp(name, "audioformat") == 0) {
 		const struct mpd_audio_format *af = mpd_status_get_audio_format(status);
-		if (af) {
-			snprintf(buffer, sizeof(buffer), "%uHz/%ubits/%u", af->sample_rate, af->bits, af->channels);
+		if (af != NULL) {
+			if (af->bits == MPD_SAMPLE_FORMAT_FLOAT)
+				snprintf(buffer, sizeof(buffer), "%u:f:%u", af->sample_rate, af->channels);
+			else if (af->bits == MPD_SAMPLE_FORMAT_DSD)
+				snprintf(buffer, sizeof(buffer), "%u:dsd:%u", af->sample_rate, af->channels);
+			else
+				snprintf(buffer, sizeof(buffer), "%u:%u:%u", af->sample_rate, af->bits, af->channels);
 		} else {
-			return "n/a";
+			return NULL;
 		}
-	} else if (strcmp(name, "audiosamplerate") == 0) {
+	} else if (strcmp(name, "samplerate") == 0) {
 		const struct mpd_audio_format *af = mpd_status_get_audio_format(status);
-		if (af) {
+		if (af != NULL) {
 			sprintf(buffer, "%u", af->sample_rate);
 		} else {
-			return "n/a";
+			return NULL;
 		}
-	} else if (strcmp(name, "audiobits") == 0) {
+	} else if (strcmp(name, "bits") == 0) {
 		const struct mpd_audio_format *af = mpd_status_get_audio_format(status);
-		if (af) {
-			sprintf(buffer, "%u", af->bits);
+		if (af != NULL) {
+			if (af->bits == MPD_SAMPLE_FORMAT_FLOAT)
+				strcpy(buffer, "f");
+			else if (af->bits == MPD_SAMPLE_FORMAT_DSD)
+				strcpy(buffer, "dsd");
+			else
+				sprintf(buffer, "%u", af->bits);
 		} else {
-			return "n/a";
+			return NULL;
 		}
-	} else if (strcmp(name, "audiochannels") == 0) {
+	} else if (strcmp(name, "channels") == 0) {
 		const struct mpd_audio_format *af = mpd_status_get_audio_format(status);
-		if (af) {
+		if (af != NULL) {
 			sprintf(buffer, "%u", af->channels);
 		} else {
-			return "n/a";
+			return NULL;
 		}
 	}
 	else { return NULL; }
