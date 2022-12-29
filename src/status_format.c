@@ -80,7 +80,7 @@ status_value(const struct mpd_status *status, const char *name)
 		} else if (mpd_status_get_state(status) == MPD_STATE_STOP) {
 			return "stopped";
 		} else {
-			return "n/a";
+			return NULL;
 		}
 	} else if (strcmp(name, "volume") == 0) {
 		sprintf(buffer, "%3i%c", mpd_status_get_volume(status), '%');
