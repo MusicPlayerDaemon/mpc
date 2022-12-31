@@ -432,7 +432,7 @@ Other Commands
    %percenttime%      The percentage of time elapsed for the current song.
    %songpos%          The position of the current song within the playlist.
    %length%           The number of songs within the playlist
-   %state%            Either 'playing' or 'paused'
+   %state%            Either 'playing', 'paused' or 'stopped'
    %volume%           The current volume spaced out to 4 characters including a percent sign
    %random%           Current status of random mode. 'on' or 'off'
    %repeat%           Current status of repeat mode. 'on' or 'off'
