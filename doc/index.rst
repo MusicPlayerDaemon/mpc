@@ -438,6 +438,12 @@ Other Commands
    %repeat%           Current status of repeat mode. 'on' or 'off'
    %single%           Current status of single mode. 'on', 'once', or 'off'
    %consume%          Current status of consume mode. 'on' or 'off'
+   %kbitrate%         The bit rate in kbps for the current song.
+   %audioformat%      The audio format which MPD is currently playing as 'samplerate:bits:channels'.
+   %samplerate%       The sample rate in Hz extracted from the current MPD audio format.
+   %bits%             The number of significant bits per sample size extracted from the current MPD audio format.
+   %channels%         The number of channels extracted from the current MPD audio format.
+
    ================== ======================================================
 
 :command:`version` - Reports the version of the protocol spoken, not the real
