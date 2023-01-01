@@ -1,6 +1,7 @@
 0.35 (not yet released)
 * fix null pointer dereference on bad status format
 * add "%kbitrate%", "%audioformat%", "%samplerate%", "%bits%" and "%channels%" options to the "status" command
+* the "%state%" option of the "status" command now returns "stopped" when the MPD server is stopped
 
 0.34 (2021/11/30)
 * add commands "albumart", "readpicture"
