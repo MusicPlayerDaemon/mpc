@@ -254,6 +254,10 @@ Database Commands
    ``directory``. If no ``directory`` is specified, lists all files in
    music directory.
 
+:command:`lsdirs [<directory>]` - List subdirectories of
+   ``directory``. If no ``directory`` is specified, lists subdirectories
+   in music directory.
+
 :command:`search <type> <query> [<type> <query>]...` - Searches for
    substrings in song tags.  Any number of tag type and query
    combinations can be specified.  Possible tag types are: artist,

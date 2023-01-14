@@ -90,6 +90,7 @@ static const struct command {
 	{"loadtab",          1,  1, 0, cmd_loadtab,          "<directory>", NULL}, /* loadtab, lstab, and tab used for completion-scripting only */
 	{"ls",               0, -1, 2, cmd_ls,               "[<directory>]", "List the contents of <directory>"},
 	{"lsplaylists",      0, -1, 2, cmd_lsplaylists,      "", "List currently available playlists"},
+	{"lsdirs",           0, -1, 2, cmd_lsdirs,           "[<directory>]", "List subdirectories of <directory>"},
 	{"lstab",            1,  1, 0, cmd_lstab,            "<directory>", NULL},
 	{"makepart",         1, -1, 0, cmd_partitionmake,    "<name> ...", "Create partition(s)"},
 	{"mixrampdb",        0,  1, 0, cmd_mixrampdb,        "[<dB>]", "Set and display mixrampdb settings"},

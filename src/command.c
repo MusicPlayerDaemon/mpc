@@ -740,6 +740,15 @@ cmd_lsplaylists(int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
+cmd_lsdirs(int argc, char **argv, struct mpd_connection *conn)
+{
+	for (int i = 0; i < argc; i++)
+		strip_trailing_slash(argv[i]);
+
+	return ls_entity(argc, argv, conn, MPD_ENTITY_TYPE_DIRECTORY);
+}
+
+int
 cmd_load(int argc, char **argv, struct mpd_connection *conn)
 {
 	const bool range = options.range.start > 0 ||
