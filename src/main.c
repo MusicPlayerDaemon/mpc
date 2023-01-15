@@ -56,6 +56,7 @@ static const struct command {
 	int pipe;             /**
 	                       * 1: implicit pipe read, `-' optional as argv[2]
 	                       * 2: explicit pipe read, `-' needed as argv[2]
+						   * 3: implicit pipe read, `-' optional as argv[3]
 	                       */
 	cmdhandler handler;
 	const char *usage;
@@ -65,6 +66,7 @@ static const struct command {
 } mpc_table [] = {
 	/* command,     min, max, pipe, handler,         usage, help */
 	{"add",              0, -1, 1, cmd_add,              "<uri>", "Add a song to the queue"},
+	{"addplaylist",      2, -1, 3, cmd_addplaylist,      "<file> <uri> ...", "Add a song to the playlist"},
 	{"albumart",         1,  1, 0, cmd_albumart,         "<uri>", "Download album art for the given song and write to stdout." },
 	{"cdprev",           0,  0, 0, cmd_cdprev,           "", "Compact disk player-like previous command"},
 	{"channels",         0,  0, 0, cmd_channels,         "", "List the channels that other clients have subscribed to." },
@@ -76,6 +78,7 @@ static const struct command {
 	{"current",          0,  0, 0, cmd_current,          "", "Show the currently playing song"},
 	{"del",              0, -1, 1, cmd_del,              "<position>", "Remove a song from the queue"},
 	{"delpart",          1, -1, 0, cmd_partitiondelete,  "<name> ...", "Delete partition(s)"},
+	{"delplaylist",      1, -1, 3, cmd_delplaylist,      "<file> <position> ...", "Remove a song from the playlist"},
 	{"disable",          1, -1, 0, cmd_disable,          "[only] <output # or name> [...]", "Disable output(s)"},
 	{"enable",           1, -1, 0, cmd_enable,           "[only] <output # or name> [...]", "Enable output(s)"},
 	{"find",             1, -1, 0, cmd_find,             "<type> <query>", "Find a song (exact match)"},
@@ -255,6 +258,11 @@ check_args(const struct command *command, int * argc, char ** argv)
 				       0 == strcmp(argv[2],STDIN_SYMBOL)))){
 		*argc = stdinToArgArray(&array);
 		pipe_array_used = true;
+
+	} else if (command->pipe == 3 && ((*argc == 3) || ((*argc == 4) && !strcmp(argv[3], STDIN_SYMBOL)))) {
+		*argc = stdinAndPreambleToArgArray(&array, argv[2]);
+		pipe_array_used = true;
+
 	} else {
 		*argc -= 2;
 		array = malloc( (*argc * (sizeof(char *))));

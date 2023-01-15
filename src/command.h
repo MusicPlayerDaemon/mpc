@@ -41,6 +41,8 @@ int cmd_listall(int argc, char **argv, struct mpd_connection *conn);
 int cmd_ls(int argc, char **argv, struct mpd_connection *conn);
 int cmd_lsplaylists(int argc, char **argv, struct mpd_connection *conn);
 int cmd_lsdirs(int argc, char **argv, struct mpd_connection *conn);
+int cmd_addplaylist(int argc, char **argv, struct mpd_connection *conn);
+int cmd_delplaylist(int argc, char **argv, struct mpd_connection *conn);
 int cmd_load(int argc, char **argv, struct mpd_connection *conn);
 int cmd_list(int argc, char **argv, struct mpd_connection *conn);
 int cmd_save(int argc, char **argv, struct mpd_connection *conn);

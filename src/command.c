@@ -749,6 +749,72 @@ cmd_lsdirs(int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
+cmd_addplaylist(int argc, char **argv, struct mpd_connection *conn)
+{
+	const char* playlist = argv[0];
+
+	if (contains_absolute_path_from(argc, argv, 1) && !path_prepare(conn))
+		printErrorAndExit(conn);
+
+	if (!mpd_command_list_begin(conn, false))
+		printErrorAndExit(conn);
+
+	for (int i = 1; i < argc; ++i) {
+		strip_trailing_slash(argv[i]);
+
+		const char *path = argv[i];
+		const char *relative_path = to_relative_path(path);
+		if (relative_path != NULL)
+			path = relative_path;
+
+		if (options.verbosity >= V_VERBOSE)
+			printf("adding: %s\n", path);
+		if (!mpd_send_playlist_add(conn, playlist, charset_to_utf8(path))) {
+			printErrorAndExit(conn);
+		}
+	}
+
+	mpd_command_list_end(conn);
+	my_finishCommand(conn);
+
+	return 0;
+}
+
+int
+cmd_delplaylist(int argc, char **argv, struct mpd_connection *conn)
+{
+	const char* playlist = argv[0];
+
+	if (!mpd_command_list_begin(conn, false))
+		printErrorAndExit(conn);
+
+	unsigned position;
+
+	for (int i = 1; i < argc; ++i) {
+
+		if (!parse_unsigned(argv[i], &position)) {
+			DIE("Failed to parse unsigned number: %s\n", argv[i]);
+		}
+
+		if (options.verbosity >= V_VERBOSE)
+			printf("del: %d\n", position);
+
+		/* mpc's song positions are 1-based, but MPD uses
+		   0-based positions */
+		--position;
+
+		if (!mpd_send_playlist_delete(conn, playlist, position)) {
+			printErrorAndExit(conn);
+		}
+	}
+
+	mpd_command_list_end(conn);
+	my_finishCommand(conn);
+
+	return 0;
+}
+
+int
 cmd_load(int argc, char **argv, struct mpd_connection *conn)
 {
 	const bool range = options.range.start > 0 ||
