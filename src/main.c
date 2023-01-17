@@ -72,6 +72,7 @@ static const struct command {
 	{"channels",         0,  0, 0, cmd_channels,         "", "List the channels that other clients have subscribed to." },
 	{"clear",            0,  0, 0, cmd_clear,            "", "Clear the queue"},
 	{"clearerror",       0,  0, 0, cmd_clearerror,       "", "Clear the current error"},
+	{"clearplaylist",    1,  1, 0, cmd_clearplaylist,    "<file>", "Clear the playlist"},
 	{"consume",          0,  1, 0, cmd_consume,          "<on|off>", "Toggle consume mode, or specify state"},
 	{"crop",             0,  0, 0, cmd_crop,             "", "Remove all but the currently playing song"},
 	{"crossfade",        0,  1, 0, cmd_crossfade,        "[<seconds>]", "Set and display crossfade settings"},

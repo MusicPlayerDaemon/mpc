@@ -850,6 +850,18 @@ cmd_renplaylist(int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
+cmd_clearplaylist(int argc, char **argv, struct mpd_connection *conn)
+{
+	(void)argc; // silence warning about unused argument
+	const char* playlist = argv[0];
+
+	if (!mpd_run_playlist_clear(conn, playlist))
+		printErrorAndExit(conn);
+
+	return 0;
+}
+
+int
 cmd_load(int argc, char **argv, struct mpd_connection *conn)
 {
 	const bool range = options.range.start > 0 ||
