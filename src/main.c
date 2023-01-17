@@ -116,6 +116,7 @@ static const struct command {
 	{"queued",	         0,  0, 0, cmd_queued,           "", "Show the next queued song"},
 	{"random",           0,  1, 0, cmd_random,           "<on|off>", "Toggle random mode, or specify state"},
 	{"readpicture",      1, 1, 0,  cmd_readpicture,      "<uri>", "Download a picture from the given song and write to stdout." },
+	{"renplaylist",      2,  2, 0, cmd_renplaylist,      "<file> <newfile>", "Rename a playlist"},
 	{"repeat",           0,  1, 0, cmd_repeat,           "<on|off>", "Toggle repeat mode, or specify state"},
 	{"replaygain",       0, -1, 0, cmd_replaygain,       "[off|track|album]", "Set or display the replay gain mode" },
 	{"rescan",           0, -1, 2, cmd_rescan,           "[<path>]", "Rescan music directory (including unchanged files)"},

@@ -252,6 +252,8 @@ Playlist Commands
 :command:`moveplaylist <playlist> <from> <to>` - Moves the song at given <from> position 
    to the <to> position in the playlist.
 
+:command:`renplaylist <playlist> <new playlist>` - Rename a playlist.
+
 Database Commands
 ^^^^^^^^^^^^^^^^^
 

@@ -837,6 +837,19 @@ cmd_delplaylist(int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
+cmd_renplaylist(int argc, char **argv, struct mpd_connection *conn)
+{
+	(void)argc; // silence warning about unused argument
+	const char* playlist = argv[0];
+	const char* newplaylist = argv[1];
+
+	if (!mpd_run_rename(conn, playlist, newplaylist))
+		printErrorAndExit(conn);
+
+	return 0;
+}
+
+int
 cmd_load(int argc, char **argv, struct mpd_connection *conn)
 {
 	const bool range = options.range.start > 0 ||
