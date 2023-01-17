@@ -249,6 +249,9 @@ Playlist Commands
 :command:`delplaylist <playlist> <songpos>` - Removes the song at given position from the playlist. Can
    also read input from pipes.
 
+:command:`moveplaylist <playlist> <from> <to>` - Moves the song at given <from> position 
+   to the <to> position in the playlist.
+
 Database Commands
 ^^^^^^^^^^^^^^^^^
 

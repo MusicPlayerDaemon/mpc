@@ -102,6 +102,7 @@ static const struct command {
 	{"move",             2,  2, 0, cmd_move,             "<from> <to>", "Move song in queue"},
 	{"moveoutput",       1,  1, 0, cmd_moveoutput,       "<output # or name>", "Move output to partition (see -a)"},
 	{"mv",               2,  2, 0, cmd_move,             "<from> <to>", NULL},
+	{"moveplaylist",     3,  3, 0, cmd_moveplaylist,     "<file> <from> <to>", "Move song in playlist"},
 	{"next",             0,  0, 0, cmd_next,             "", "Play the next song in the queue"},
 	{"outputs",          0,  0, 0, cmd_outputs,          "", "Show the current outputs"},
 	{"outputset",        2,  2, 0, cmd_outputset,        "<output # or name> <name>=<value>", "Set output attributes"},

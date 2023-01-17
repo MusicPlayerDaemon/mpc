@@ -37,6 +37,7 @@ int cmd_seek(int argc, char **argv, struct mpd_connection *conn);
 int cmd_seek_through(int argc, char **argv, struct mpd_connection *conn);
 int cmd_clearerror(int argc, char **argv, struct mpd_connection *conn);
 int cmd_move(int argc, char **argv, struct mpd_connection *conn);
+int cmd_moveplaylist(int argc, char **argv, struct mpd_connection *conn);
 int cmd_listall(int argc, char **argv, struct mpd_connection *conn);
 int cmd_ls(int argc, char **argv, struct mpd_connection *conn);
 int cmd_lsplaylists(int argc, char **argv, struct mpd_connection *conn);

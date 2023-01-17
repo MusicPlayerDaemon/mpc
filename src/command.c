@@ -570,6 +570,28 @@ cmd_move(gcc_unused int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
+cmd_moveplaylist(gcc_unused int argc, char **argv, struct mpd_connection *conn)
+{
+	const char* playlist = argv[0];
+
+	int from;
+	if (!parse_int(argv[1], &from) || from <= 0)
+		DIE("\"%s\" is not a positive integer\n", argv[1]);
+
+	int to;
+	if (!parse_int(argv[2], &to) || to <= 0)
+		DIE("\"%s\" is not a positive integer\n", argv[2]);
+
+	/* users type in 1-based numbers, mpd uses 0-based */
+	--from;
+	--to;
+
+	if (!mpd_run_playlist_move(conn, playlist, from, to))
+		printErrorAndExit(conn);
+	return 0;
+}
+
+int
 cmd_listall(int argc, char **argv, struct mpd_connection *conn)
 {
 	const char * listall = "";
