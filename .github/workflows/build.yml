@@ -24,7 +24,7 @@ jobs:
         iconv: [enabled, disabled]
     steps:
       - id: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - id: cache-ccache
         uses: hendrikmuhs/ccache-action@v1
@@ -56,7 +56,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - id: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - id: cache-ccache
         uses: hendrikmuhs/ccache-action@v1
@@ -90,7 +90,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - id: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Meson Build
         uses: BSFishy/meson-build@v1.0.3
@@ -118,7 +118,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - id: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Add VisualStudio command line tools into path
         uses: ilammy/msvc-dev-cmd@v1
