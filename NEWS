@@ -5,6 +5,7 @@
 * add commands "lsdirs", "addplaylist", "delplaylist", "moveplaylist", "renplaylist", "clearplaylist"
 * add "playlist" option "--with-prio"
 * bash completion: pass "--" to mpc to allow parameters with dash
+* bash completion: fix filenames with paranetheses
 
 0.34 (2021/11/30)
 * add commands "albumart", "readpicture"
