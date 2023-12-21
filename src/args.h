@@ -33,6 +33,9 @@ struct int_value_change {
 int
 stdinToArgArray(char ***array);
 
+int
+stdinAndPreambleToArgArray(char ***array, char *);
+
 void
 free_pipe_array(unsigned max, char **array);
 
@@ -40,11 +43,21 @@ gcc_pure
 bool
 contains_absolute_path(unsigned argc, char **argv);
 
+gcc_pure
+bool
+contains_absolute_path_from(unsigned argc, char **argv, unsigned from);
+
 void
 strip_trailing_slash(char *s);
 
 int
 get_boolean(const char *arg);
+
+/**
+ * @return true on success
+ */
+bool
+parse_unsigned(const char *s, unsigned *value_r);
 
 /**
  * @return true on success

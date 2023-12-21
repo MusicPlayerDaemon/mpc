@@ -63,6 +63,39 @@ stdinToArgArray(char ***array)
 	return size;
 }
 
+int
+stdinAndPreambleToArgArray(char ***array, char *preamble)
+{
+	struct List list;
+	makeList(&list);
+
+	insertInListWithoutKey(&list, strdup(preamble));
+	/* todo : factorize next statements... */
+
+	char buffer[4096];
+
+	while (fgets(buffer, sizeof(buffer), stdin)) {
+		char *sp;
+		if((sp = strchr(buffer,'\n'))) *sp = '\0';
+		insertInListWithoutKey(&list, strdup(buffer));
+	}
+
+	const unsigned size = list.numberOfNodes;
+	*array = malloc((sizeof(char *))*size);
+	unsigned i = 0;
+	struct ListNode *node = list.firstNode;
+	while(node) {
+		(*array)[i++] = (char *)node->data;
+		node = node->nextNode;
+	}
+	assert(i==size);
+
+	freeList(&list);
+
+	return size;
+}
+
+
 void
 free_pipe_array(unsigned max, char ** array)
 {
@@ -74,6 +107,16 @@ bool
 contains_absolute_path(unsigned argc, char **argv)
 {
 	for (unsigned i = 0; i < argc; ++i)
+		if (argv[i][0] == '/')
+			return true;
+
+	return false;
+}
+
+bool
+contains_absolute_path_from(unsigned argc, char **argv, unsigned from)
+{
+	for (unsigned i = from; i < argc; ++i)
 		if (argv[i][0] == '/')
 			return true;
 
@@ -145,6 +188,19 @@ parse_int(const char *str, int *ret)
 {
 	char *test;
 	int temp = strtol(str, &test, 10);
+
+	if (*test != '\0')
+		return false; /* failure */
+
+	*ret = temp;
+	return true; /* success */
+}
+
+bool
+parse_unsigned(const char *str, unsigned *ret)
+{
+	char *test;
+	unsigned temp = strtoul(str, &test, 10);
 
 	if (*test != '\0')
 		return false; /* failure */

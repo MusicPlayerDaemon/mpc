@@ -56,6 +56,7 @@ static const struct command {
 	int pipe;             /**
 	                       * 1: implicit pipe read, `-' optional as argv[2]
 	                       * 2: explicit pipe read, `-' needed as argv[2]
+						   * 3: implicit pipe read, `-' optional as argv[3]
 	                       */
 	cmdhandler handler;
 	const char *usage;
@@ -65,17 +66,20 @@ static const struct command {
 } mpc_table [] = {
 	/* command,     min, max, pipe, handler,         usage, help */
 	{"add",              0, -1, 1, cmd_add,              "<uri>", "Add a song to the queue"},
+	{"addplaylist",      2, -1, 3, cmd_addplaylist,      "<file> <uri> ...", "Add a song to the playlist"},
 	{"albumart",         1,  1, 0, cmd_albumart,         "<uri>", "Download album art for the given song and write to stdout." },
 	{"cdprev",           0,  0, 0, cmd_cdprev,           "", "Compact disk player-like previous command"},
 	{"channels",         0,  0, 0, cmd_channels,         "", "List the channels that other clients have subscribed to." },
 	{"clear",            0,  0, 0, cmd_clear,            "", "Clear the queue"},
 	{"clearerror",       0,  0, 0, cmd_clearerror,       "", "Clear the current error"},
+	{"clearplaylist",    1,  1, 0, cmd_clearplaylist,    "<file>", "Clear the playlist"},
 	{"consume",          0,  1, 0, cmd_consume,          "<on|off>", "Toggle consume mode, or specify state"},
 	{"crop",             0,  0, 0, cmd_crop,             "", "Remove all but the currently playing song"},
 	{"crossfade",        0,  1, 0, cmd_crossfade,        "[<seconds>]", "Set and display crossfade settings"},
 	{"current",          0,  0, 0, cmd_current,          "", "Show the currently playing song"},
 	{"del",              0, -1, 1, cmd_del,              "<position>", "Remove a song from the queue"},
 	{"delpart",          1, -1, 0, cmd_partitiondelete,  "<name> ...", "Delete partition(s)"},
+	{"delplaylist",      1, -1, 3, cmd_delplaylist,      "<file> <position> ...", "Remove a song from the playlist"},
 	{"disable",          1, -1, 0, cmd_disable,          "[only] <output # or name> [...]", "Disable output(s)"},
 	{"enable",           1, -1, 0, cmd_enable,           "[only] <output # or name> [...]", "Enable output(s)"},
 	{"find",             1, -1, 0, cmd_find,             "<type> <query>", "Find a song (exact match)"},
@@ -99,6 +103,7 @@ static const struct command {
 	{"move",             2,  2, 0, cmd_move,             "<from> <to>", "Move song in queue"},
 	{"moveoutput",       1,  1, 0, cmd_moveoutput,       "<output # or name>", "Move output to partition (see -a)"},
 	{"mv",               2,  2, 0, cmd_move,             "<from> <to>", NULL},
+	{"moveplaylist",     3,  3, 0, cmd_moveplaylist,     "<file> <from> <to>", "Move song in playlist"},
 	{"next",             0,  0, 0, cmd_next,             "", "Play the next song in the queue"},
 	{"outputs",          0,  0, 0, cmd_outputs,          "", "Show the current outputs"},
 	{"outputset",        2,  2, 0, cmd_outputset,        "<output # or name> <name>=<value>", "Set output attributes"},
@@ -112,6 +117,7 @@ static const struct command {
 	{"queued",	         0,  0, 0, cmd_queued,           "", "Show the next queued song"},
 	{"random",           0,  1, 0, cmd_random,           "<on|off>", "Toggle random mode, or specify state"},
 	{"readpicture",      1, 1, 0,  cmd_readpicture,      "<uri>", "Download a picture from the given song and write to stdout." },
+	{"renplaylist",      2,  2, 0, cmd_renplaylist,      "<file> <newfile>", "Rename a playlist"},
 	{"repeat",           0,  1, 0, cmd_repeat,           "<on|off>", "Toggle repeat mode, or specify state"},
 	{"replaygain",       0, -1, 0, cmd_replaygain,       "[off|track|album]", "Set or display the replay gain mode" },
 	{"rescan",           0, -1, 2, cmd_rescan,           "[<path>]", "Rescan music directory (including unchanged files)"},
@@ -255,6 +261,11 @@ check_args(const struct command *command, int * argc, char ** argv)
 				       0 == strcmp(argv[2],STDIN_SYMBOL)))){
 		*argc = stdinToArgArray(&array);
 		pipe_array_used = true;
+
+	} else if (command->pipe == 3 && ((*argc == 3) || ((*argc == 4) && !strcmp(argv[3], STDIN_SYMBOL)))) {
+		*argc = stdinAndPreambleToArgArray(&array, argv[2]);
+		pipe_array_used = true;
+
 	} else {
 		*argc -= 2;
 		array = malloc( (*argc * (sizeof(char *))));

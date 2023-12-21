@@ -243,6 +243,19 @@ Playlist Commands
 
 :command:`save <file>` - Saves playlist as <file>.
 
+:command:`addplaylist <playlist> <file>` - Adds a song from the music database to the
+   playlist. The playlist will be created if it does not exist.
+   Can also read input from pipes.
+
+:command:`delplaylist <playlist> <songpos>` - Removes the song at given position from the playlist. Can
+   also read input from pipes.
+
+:command:`moveplaylist <playlist> <from> <to>` - Moves the song at given <from> position 
+   to the <to> position in the playlist.
+
+:command:`renplaylist <playlist> <new playlist>` - Rename a playlist.
+
+:command:`clearplaylist <playlist>` - Clear the playlist name (i.e. truncate playlist.m3u).
 
 Database Commands
 ^^^^^^^^^^^^^^^^^

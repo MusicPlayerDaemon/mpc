@@ -2,7 +2,7 @@
 * fix null pointer dereference on bad status format
 * add "%kbitrate%", "%audioformat%", "%samplerate%", "%bits%" and "%channels%" options to the "status" command
 * the "%state%" option of the "status" command now returns "stopped" when the MPD server is stopped
-* add command "lsdirs"
+* add commands "lsdirs", "addplaylist", "delplaylist", "moveplaylist", "renplaylist", "clearplaylist"
 
 0.34 (2021/11/30)
 * add commands "albumart", "readpicture"
