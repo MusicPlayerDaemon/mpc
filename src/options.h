@@ -30,6 +30,8 @@ struct Options {
 	bool wait;
 
 	bool custom_format;
+
+	bool with_prio;
 };
 
 

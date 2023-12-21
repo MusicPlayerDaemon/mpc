@@ -19,6 +19,7 @@
 
 enum ShortOption {
 	OPTION_NONE,
+	OPTION_WITH_PRIO,
 };
 
 struct OptionDef {
@@ -47,6 +48,7 @@ static const struct OptionDef option_table[] = {
 	{ 'w', "wait", NULL, "Wait for operation to finish (e.g. database update)" },
 	{ 'r', "range", "[<start>]:[<end>]", "Operate on a range (e.g. when loading a playlist)" },
 	{ 'a', "partition", "<name>", "Operate on partition <name> instead" },
+	{ OPTION_WITH_PRIO, "with-prio", NULL, "Show only songs that have a non-zero priority" },
 };
 
 static const unsigned option_table_size = sizeof(option_table) / sizeof(option_table[0]);
@@ -164,6 +166,10 @@ handle_option(int c, const char *arg)
 
 	case 'r':
 		ParseRange(&options.range, arg);
+		break;
+
+	case OPTION_WITH_PRIO:
+		options.with_prio = true;
 		break;
 
 	default: // Should never be reached, due to lookup_*_option functions

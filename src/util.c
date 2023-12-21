@@ -90,11 +90,13 @@ print_entity_list(struct mpd_connection *c, enum mpd_entity_type filter_type,
 
 		case MPD_ENTITY_TYPE_SONG:
 			song = mpd_entity_get_song(entity);
-			if (pretty) {
-				pretty_print_song(song);
-				puts("");
-			} else
-				printf("%s\n", charset_from_utf8(mpd_song_get_uri(song)));
+			if (!options.with_prio || mpd_song_get_prio(song) > 0) {
+				if (pretty) {
+					pretty_print_song(song);
+					puts("");
+				} else
+					printf("%s\n", charset_from_utf8(mpd_song_get_uri(song)));
+			}
 			break;
 
 		case MPD_ENTITY_TYPE_PLAYLIST:

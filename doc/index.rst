@@ -91,6 +91,10 @@ Options
  (i.e. excluding).  START and END may be omitted, making the range
  open to that end.  Indexes start with zero.
 
+.. option:: --with-prio
+
+ Show only songs that have a non-zero priority.
+
 .. option:: -q, --quiet, --no-status
 
  Prevents the current song status from being printed on completion of
