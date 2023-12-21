@@ -14,7 +14,10 @@ given, the current status is printed (same as ":samp:`mpc status`").
 Synopsis
 --------
 
- mpc [options] <command> [<arguments>]
+ mpc [options] <command> [--] [<arguments>]
+
+After ``--``, all parameters are considered to be arguments, not
+options, even if they start with a dash.
 
 
 Options

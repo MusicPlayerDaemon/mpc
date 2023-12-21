@@ -152,7 +152,7 @@ static const struct command {
 static void
 print_usage(FILE *outfp, const char *progname)
 {
-	fprintf(outfp,"Usage: %s [options] <command> [<arguments>]\n"
+	fprintf(outfp,"Usage: %s [options] <command> [--] [<arguments>]\n"
 		"mpc version: "VERSION"\n",progname);
 }
 
