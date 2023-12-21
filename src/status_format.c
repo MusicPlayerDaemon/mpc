@@ -2,6 +2,7 @@
 // Copyright The Music Player Daemon Project
 
 #include "status_format.h"
+#include "audio_format.h"
 #include "format.h"
 #include "charset.h"
 #include "util.h"
@@ -98,12 +99,7 @@ status_value(const struct mpd_status *status, const char *name)
 	} else if (strcmp(name, "audioformat") == 0) {
 		const struct mpd_audio_format *af = mpd_status_get_audio_format(status);
 		if (af != NULL) {
-			if (af->bits == MPD_SAMPLE_FORMAT_FLOAT)
-				snprintf(buffer, sizeof(buffer), "%u:f:%u", af->sample_rate, af->channels);
-			else if (af->bits == MPD_SAMPLE_FORMAT_DSD)
-				snprintf(buffer, sizeof(buffer), "%u:dsd:%u", af->sample_rate, af->channels);
-			else
-				snprintf(buffer, sizeof(buffer), "%u:%u:%u", af->sample_rate, af->bits, af->channels);
+			format_audio_format(buffer, sizeof(buffer), af);
 		} else {
 			return NULL;
 		}
