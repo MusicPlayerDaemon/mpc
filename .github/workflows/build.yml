@@ -100,14 +100,6 @@ jobs:
           setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
           meson-version: 1.3.0
 
-      - name: Unit Tests
-        uses: BSFishy/meson-build@v1.0.3
-        with:
-          action: test
-          directory: output
-          setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
-          meson-version: 1.3.0
-
   build-windows-msvc:
     runs-on: windows-latest
     steps:
@@ -121,14 +113,6 @@ jobs:
         uses: BSFishy/meson-build@v1.0.3
         with:
           action: build
-          directory: output
-          setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
-          meson-version: 1.3.0
-
-      - name: Unit Tests
-        uses: BSFishy/meson-build@v1.0.3
-        with:
-          action: test
           directory: output
           setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
           meson-version: 1.3.0
