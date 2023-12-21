@@ -6,6 +6,7 @@
 * add "playlist" option "--with-prio"
 * bash completion: pass "--" to mpc to allow parameters with dash
 * bash completion: fix filenames with paranetheses
+* bash completion: override $MPC_FORMAT
 
 0.34 (2021/11/30)
 * add commands "albumart", "readpicture"

@@ -60,9 +60,9 @@ _mpc_ls () {
 	local IFS=$'\n'
 	__get_long_cur
 	if [ -z "$cur" ]; then
-		COMPREPLY=($(mpc ls | sed 's@$@/@' | __escape_strings_stdin))
+		COMPREPLY=($(mpc ls -f %file% | sed 's@$@/@' | __escape_strings_stdin))
 	else
-		COMPREPLY=($(mpc ls -- "$cur" 2> /dev/null | __escape_strings_stdin))
+		COMPREPLY=($(mpc ls -f %file% -- "$cur" 2> /dev/null | __escape_strings_stdin))
 		if [ ${#COMPREPLY[*]} -eq 0 ]; then
 			COMPREPLY=($(mpc lstab -- "$cur" | __escape_strings_stdin))
 		fi
