@@ -56,7 +56,7 @@ _mpc_add () {
 
 # Complete the ls command (directories)
 _mpc_ls () {
-	local success IFS=$'\n'
+	local IFS=$'\n'
 	__get_long_cur
 	if [ -z "$cur" ]; then
 		COMPREPLY=($(mpc ls | sed 's@$@/@' | __escape_strings_stdin))
