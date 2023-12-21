@@ -1,3 +1,5 @@
+0.36 (not yet released)
+
 0.35 (2023/12/21)
 * fix null pointer dereference on bad status format
 * add "%kbitrate%", "%audioformat%", "%samplerate%", "%bits%" and "%channels%" options to the "status" command

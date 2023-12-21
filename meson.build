@@ -1,5 +1,5 @@
 project('mpc', 'c',
-  version: '0.35',
+  version: '0.36',
   meson_version: '>= 0.47',
   default_options: [
     'c_std=c99',
