@@ -17,6 +17,10 @@
 #define ERROR_GOT_ARGUMENT      0x03
 #define ERROR_MISSING_ARGUMENT  0x04
 
+enum ShortOption {
+	OPTION_NONE,
+};
+
 struct OptionDef {
 	int shortopt;
 	const char *longopt;
@@ -174,7 +178,7 @@ print_option_help(void)
 {
 	for (unsigned i = 0; i < option_table_size; i++) {
 		int remaining = 28;
-		if (option_table[i].shortopt) {
+		if (option_table[i].shortopt > 0x20) {
 			printf("  -%c, ", option_table[i].shortopt);
 			remaining -= 4;
 		} else
