@@ -52,6 +52,7 @@ Options
  %prio%             Priority in the (random) queue.
  %mtime%            Date and time of last file modification
  %mdate%            Date of last file modification
+ %audioformat%      The audio format of the song.
  ================== ======================================================
 
  The ``[]`` operator is used to group output such that if no metadata

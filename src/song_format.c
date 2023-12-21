@@ -2,6 +2,7 @@
 // Copyright The Music Player Daemon Project
 
 #include "song_format.h"
+#include "audio_format.h"
 #include "format.h"
 #include "charset.h"
 
@@ -72,6 +73,13 @@ song_value(const struct mpd_song *song, const char *name)
 		value = format_mtime(buffer, sizeof(buffer), song, "%c");
 	} else if (strcmp(name, "mdate") == 0) {
 		value = format_mtime(buffer, sizeof(buffer), song, "%x");
+	} else if (strcmp(name, "audioformat") == 0) {
+		const struct mpd_audio_format *audio_format = mpd_song_get_audio_format(song);
+		if (audio_format == NULL)
+			return NULL;
+
+		format_audio_format(buffer, sizeof(buffer), audio_format);
+		value = buffer;
 	} else {
 		enum mpd_tag_type tag_type = mpd_tag_name_iparse(name);
 		if (tag_type == MPD_TAG_UNKNOWN)
