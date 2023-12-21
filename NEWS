@@ -4,6 +4,7 @@
 * the "%state%" option of the "status" command now returns "stopped" when the MPD server is stopped
 * add commands "lsdirs", "addplaylist", "delplaylist", "moveplaylist", "renplaylist", "clearplaylist"
 * add "playlist" option "--with-prio"
+* bash completion: pass "--" to mpc to allow parameters with dash
 
 0.34 (2021/11/30)
 * add commands "albumart", "readpicture"
