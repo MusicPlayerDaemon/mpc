@@ -83,9 +83,18 @@ print_status(struct mpd_connection *conn)
 		printf("off   ");
 
 	printf("consume: ");
+#if LIBMPDCLIENT_CHECK_VERSION(2,21,0)
+	if (mpd_status_get_consume_state(status) == MPD_CONSUME_ON)
+		printf("on  \n");
+	else if (mpd_status_get_consume_state(status) == MPD_CONSUME_ONESHOT)
+		printf("once\n");
+	else if (mpd_status_get_consume_state(status) == MPD_CONSUME_OFF)
+		printf("off \n");
+#else
 	if (mpd_status_get_consume(status))
 		printf("on \n");
 	else printf("off\n");
+#endif
 
 	if (mpd_status_get_error(status) != NULL)
 		printf("ERROR: %s\n",

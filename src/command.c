@@ -1093,8 +1093,44 @@ cmd_single(int argc, char **argv, struct mpd_connection *conn)
 int
 cmd_consume(int argc, char **argv, struct mpd_connection *conn)
 {
+#if LIBMPDCLIENT_CHECK_VERSION(2,21,0)
+	enum mpd_consume_state mode = MPD_CONSUME_UNKNOWN;
+
+	if (argc == 1) {
+		if (strcasecmp(argv[0], "once") == 0)
+			mode = MPD_CONSUME_ONESHOT;
+		else {
+			int mode_i = get_boolean(argv[0]);
+			if (mode_i < 0)
+				return -1;
+			else if (mode_i)
+				mode = MPD_CONSUME_ON;
+			else
+				mode = MPD_CONSUME_OFF;
+		}
+	} else {
+		struct mpd_status *status;
+		status = getStatus(conn);
+		enum mpd_consume_state cur = mpd_status_get_consume_state(status);
+
+		if (cur == MPD_CONSUME_ONESHOT || cur == MPD_CONSUME_ON)
+			mode = MPD_CONSUME_OFF;
+		else if (cur == MPD_CONSUME_OFF)
+			mode = MPD_CONSUME_ON;
+
+		mpd_status_free(status);
+	}
+
+	if (mode == MPD_CONSUME_UNKNOWN)
+		return -1;
+	else if (!mpd_run_consume_state(conn, mode))
+		printErrorAndExit(conn);
+
+	return 1;
+#else
 	return bool_cmd(argc, argv, conn,
 			mpd_status_get_consume, mpd_run_consume);
+#endif
 }
 
 int

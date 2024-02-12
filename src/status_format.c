@@ -89,11 +89,21 @@ status_value(const struct mpd_status *status, const char *name)
 			return "off";
 		}
 	} else if (strcmp(name, "consume") == 0) {
+#if LIBMPDCLIENT_CHECK_VERSION(2,21,0)
+		if (mpd_status_get_consume_state(status) == MPD_CONSUME_ON) {
+			return "on";
+		} else if (mpd_status_get_consume_state(status) == MPD_CONSUME_ONESHOT) {
+			return "once";
+		} else if (mpd_status_get_consume_state(status) == MPD_CONSUME_OFF) {
+			return "off";
+		}
+#else
 		if (mpd_status_get_consume(status)) {
 		    return "on";
 		} else {
 		    return "off";
 		}
+#endif
 	} else if (strcmp(name, "kbitrate") == 0) {
 		sprintf(buffer, "%u", mpd_status_get_kbit_rate(status));
 	} else if (strcmp(name, "audioformat") == 0) {
