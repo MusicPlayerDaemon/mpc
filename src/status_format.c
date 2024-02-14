@@ -50,6 +50,9 @@ status_value(const struct mpd_status *status, const char *name)
 	} else if (strcmp(name, "length") == 0) {
 		unsigned length = mpd_status_get_queue_length(status);
 		snprintf(buffer, sizeof(buffer), "%i", length);
+	} else if (strcmp(name, "currenttimems") == 0) {
+		unsigned elapsed_ms = mpd_status_get_elapsed_ms(status);
+		snprintf(buffer, sizeof(buffer), "%u", elapsed_ms);
 	} else if (strcmp(name, "currenttime") == 0) {
 		unsigned elasped = mpd_status_get_elapsed_time(status);
 		snprintf(buffer, sizeof(buffer), "%u:%02u",

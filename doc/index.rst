@@ -454,6 +454,7 @@ Other Commands
    ================== ======================================================
    %totaltime%        The total duration of the song.
    %currenttime%      The time that the client is currently at.
+   %currenttimems%    The time that the client is currently at, in milliseconds.
    %percenttime%      The percentage of time elapsed for the current song.
    %songpos%          The position of the current song within the playlist.
    %length%           The number of songs within the playlist
