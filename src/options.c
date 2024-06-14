@@ -40,7 +40,7 @@ struct Options options = {
 static const struct OptionDef option_table[] = {
 	{ 'v', "verbose", NULL, "Give verbose output" },
 	{ 'q', "quiet", NULL, "Suppress status message" },
-	{ 0, "no-status", NULL, "synonym for --quiet" },
+	{ 'q', "no-status", NULL, "synonym for --quiet" },
 	{ 'h', "host", "<host>", "Connect to server on <host>" },
 	{ 'P', "password", "<password>", "Connect to server using password <password>" },
 	{ 'p', "port", "<port>", "Connect to server port <port>" },
