@@ -470,6 +470,7 @@ Other Commands
    %samplerate%       The sample rate in Hz extracted from the current MPD audio format.
    %bits%             The number of significant bits per sample size extracted from the current MPD audio format.
    %channels%         The number of channels extracted from the current MPD audio format.
+   %updateid%         The current MPD update ID. 0 if there is no update in progress.
 
    ================== ======================================================
 

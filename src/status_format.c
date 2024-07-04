@@ -142,6 +142,9 @@ status_value(const struct mpd_status *status, const char *name)
 		} else {
 			return NULL;
 		}
+	} else if (strcmp(name, "updateid") == 0) {
+		unsigned update_id = mpd_status_get_update_id(status);
+		snprintf(buffer, sizeof(buffer), "%i", update_id);
 	}
 	else { return NULL; }
 	return buffer;
