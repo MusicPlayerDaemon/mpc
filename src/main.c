@@ -120,6 +120,7 @@ static const struct command {
 	{"stop",             0,  0, 0, cmd_stop,             "", "Stop playback"},
 	{"subscribe",        1,  1, 0, cmd_subscribe,        "<channel>", "Subscribe to the specified channel and continuously receive messages." },
 	{"tab",              1,  1, 0, cmd_tab,              "<path>", NULL},
+	{"tags",             0,  0, 0, cmd_tags,             "", "Display all MPD tags known by the mpc client" },
 	{"toggle",           0,  0, 0, cmd_toggle,           "", "Toggles Play/Pause, plays if stopped"},
 	{"toggleoutput",     1, -1, 0, cmd_toggle_output,    "<output # or name> [...]", "Toggle output(s)"},
 	{"unmount",          1,  1, 0, cmd_unmount,          "<mount-path>", "Remove a mount." },

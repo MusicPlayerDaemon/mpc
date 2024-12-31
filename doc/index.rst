@@ -312,6 +312,8 @@ Database Commands
 
      mpc list album group artist
 
+:command:`tags` - display all MPD tags known by the mpc client
+
 :command:`stats` - Displays statistics about MPD.
 
 :command:`update [\-\-wait] [<path>]` - Scans for updated files in the

@@ -871,6 +871,21 @@ cmd_load(int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
+cmd_tags(gcc_unused int argc, gcc_unused char **argv, gcc_unused struct mpd_connection *conn)
+{
+	const char *name = NULL;
+
+	for (unsigned i = 0; i < MPD_TAG_COUNT; i++) {
+		name = mpd_tag_name(i);
+		if (name != NULL) {
+			printf("%s\n", name);
+		}
+	}
+	
+	return 0;
+}
+
+int
 cmd_list(int argc, char **argv, struct mpd_connection *conn)
 {
 	const char *name = argv[0];

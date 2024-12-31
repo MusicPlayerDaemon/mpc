@@ -66,4 +66,7 @@ cmd_waitmessage(int argc, char **argv, struct mpd_connection *conn);
 int
 cmd_subscribe(int argc, char **argv, struct mpd_connection *conn);
 
+int
+cmd_tags(int argc, char **argv, struct mpd_connection *conn);
+
 #endif /* COMMAND_H */
