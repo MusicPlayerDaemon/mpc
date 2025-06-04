@@ -3,6 +3,7 @@
 
 #include "sticker.h"
 #include "util.h"
+#include "args.h"
 
 #include <mpd/client.h>
 
@@ -77,7 +78,7 @@ cmd_sticker(int argc, char **argv, struct mpd_connection *conn)
 			fputs("syntax: sticker <dir> find <key>\n", stderr);
 			return 0;
 		}
-
+		strip_trailing_slash(argv[0]);
 		mpd_send_sticker_find(conn, "song", argv[0], argv[2]);
 		recv_print_stickers2(conn);
 		my_finishCommand(conn);
