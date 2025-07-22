@@ -7,6 +7,8 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <locale.h>
+#include <time.h>
 
 static void
 feed_song(struct mpd_song *song, const char *name, const char *value)
@@ -30,6 +32,7 @@ construct_song(const char *file, ...)
 		assert(value != NULL);
 		feed_song(song, name, value);
 	}
+	va_end(ap);
 
 	return song;
 }
@@ -125,6 +128,32 @@ START_TEST(test_escape)
 }
 END_TEST
 
+START_TEST(test_time_fields_empty)
+{
+	struct mpd_song *song = construct_default_song();
+	assert_format(song, "%mtime%", "");
+	assert_format(song, "%mdate%", "");
+	assert_format(song, "%atime%", "");
+	assert_format(song, "%adate%", "");
+	mpd_song_free(song);
+}
+END_TEST
+
+START_TEST(test_time_fields)
+{
+	struct mpd_song *song = construct_song(default_file,
+		"Last-Modified", "2021-01-01T00:00:00Z",
+		"Added",         "2021-02-01T00:00:00Z",
+		NULL);
+
+	assert_format(song, "%mtime%", "Fri Jan  1 00:00:00 2021");
+	assert_format(song, "%atime%", "Mon Feb  1 00:00:00 2021");
+	assert_format(song, "%mdate%", "01/01/21");
+	assert_format(song, "%adate%", "02/01/21");
+	mpd_song_free(song);
+}
+END_TEST
+
 static Suite *
 create_suite(void)
 {
@@ -136,6 +165,8 @@ create_suite(void)
 	tcase_add_test(tc_core, test_fallback);
 	tcase_add_test(tc_core, test_default);
 	tcase_add_test(tc_core, test_escape);
+	tcase_add_test(tc_core, test_time_fields_empty);
+	tcase_add_test(tc_core, test_time_fields);
 	suite_add_tcase(s, tc_core);
 	return s;
 }
@@ -143,6 +174,10 @@ create_suite(void)
 int
 main(void)
 {
+	setlocale(LC_TIME, "C");
+	setenv("TZ", "UTC", 1);
+	tzset();
+
 	Suite *s = create_suite();
 	SRunner *sr = srunner_create(s);
 	srunner_run_all(sr, CK_NORMAL);

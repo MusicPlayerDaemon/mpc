@@ -52,6 +52,8 @@ Options
  %prio%             Priority in the (random) queue.
  %mtime%            Date and time of last file modification
  %mdate%            Date of last file modification
+ %atime%            Date and time the file was added
+ %adate%            Date the file was added
  %audioformat%      The audio format of the song.
  ================== ======================================================
 
