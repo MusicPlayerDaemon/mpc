@@ -125,6 +125,24 @@ START_TEST(test_escape)
 }
 END_TEST
 
+START_TEST(test_multi_artist)
+{
+	struct mpd_song *song = construct_song(default_file,
+			      "Artist", "Foo",
+			      "Artist", "Bar",
+			      "Artist", "Baz",
+			      "Title", "Collab Track",
+			      NULL);
+
+	// Expect multiple artists separated by ", "
+	assert_format(song, "%artist%", "Foo, Bar, Baz");
+	assert_format(song, "%title%", "Collab Track");
+	assert_format(song, "%artist% - %title%", "Foo, Bar, Baz - Collab Track");
+
+	mpd_song_free(song);
+}
+END_TEST
+
 static Suite *
 create_suite(void)
 {
@@ -136,6 +154,7 @@ create_suite(void)
 	tcase_add_test(tc_core, test_fallback);
 	tcase_add_test(tc_core, test_default);
 	tcase_add_test(tc_core, test_escape);
+	tcase_add_test(tc_core, test_multi_artist);
 	suite_add_tcase(s, tc_core);
 	return s;
 }

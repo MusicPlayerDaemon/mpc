@@ -12,6 +12,52 @@
 #include <string.h>
 #include <stdlib.h>
 
+/**
+ * Append all tag entries of a given type into dest buffer.
+ *
+ * @param dest  Pointer to current write position in buffer
+ * @param end   Pointer to the end of buffer (one past last byte)
+ * @param song  MPD song object
+ * @param tag   MPD tag type
+ * @return      Updated dest pointer after writing; If text added, null-terminated.
+ * If no tag of this type fund, returns NULL.
+ */
+static char *
+copy_tags(char *dest, char *end, const struct mpd_song *song, enum mpd_tag_type tag)
+{
+	const char *value = mpd_song_get_tag(song, tag, 0);
+	if (value == NULL)
+		return NULL;
+
+	// Get first tag separately, as it should not have a comma if it is the only entry.
+	int written = snprintf(dest, (size_t)(end - dest), "%s", value);
+	if (written < 0 || written >= (int)(end - dest))
+		return dest + (end - dest - 1); 
+	dest += written;
+
+	/* mpd_song_get_tag can be called repeatedly with different index
+	if tag has multiple entries (e.g. multiple artists)
+	It returns nullptr when it runs out. */
+	for (unsigned i = 1; ; ++i) {
+		value = mpd_song_get_tag(song, tag, i);
+		if (value == NULL)
+			break;
+
+		// need at least room for ", " + \0
+		if ((size_t)(end - dest) <= 2) 
+			break;
+		*dest++ = ',';
+		*dest++ = ' ';
+
+		written = snprintf(dest, (size_t)(end - dest), "%s", value);
+		if (written < 0 || written >= (int)(end - dest))
+			break;
+		dest += written;
+	}
+
+	return dest;
+}
+
 static const char *
 format_mtime(char *buffer, size_t buffer_size,
 	     const struct mpd_song *song, const char *format)
@@ -44,7 +90,9 @@ gcc_pure
 static const char *
 song_value(const struct mpd_song *song, const char *name)
 {
-	static char buffer[40];
+	/* Arbitrary size.
+	Should be large enough to fit multiple artists with long names */
+	static char buffer[256];
 	const char *value;
 
 	if (strcmp(name, "file") == 0)
@@ -85,7 +133,12 @@ song_value(const struct mpd_song *song, const char *name)
 		if (tag_type == MPD_TAG_UNKNOWN)
 			return NULL;
 
-		value = mpd_song_get_tag(song, tag_type, 0);
+		const char *added_text = copy_tags(buffer, buffer + sizeof(buffer), song, tag_type);
+		if (added_text != NULL) {
+			value = buffer;
+		}
+		else
+			value = NULL;
 	}
 
 	if (value != NULL)
