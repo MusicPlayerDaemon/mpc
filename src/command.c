@@ -159,6 +159,20 @@ cmd_toggle(gcc_unused int argc, gcc_unused char **argv,
 }
 
 int
+cmd_toggle_stop(gcc_unused int argc, gcc_unused char **argv,
+                struct mpd_connection *conn)
+{
+	struct mpd_status *status = getStatus(conn);
+
+	if (mpd_status_get_state(status) == MPD_STATE_PLAY) {
+		cmd_stop(0, NULL, conn);
+	} else {
+		cmd_play(0, NULL, conn);
+	}
+	return 1;
+}
+
+int
 cmd_play(int argc, char **argv, struct mpd_connection *conn)
 {
 	assert(argc < 2);

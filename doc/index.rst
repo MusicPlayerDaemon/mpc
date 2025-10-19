@@ -206,6 +206,9 @@ Player Commands
 :command:`toggle` - Toggles between play and pause. If stopped starts
    playing.  Does not support start playing at song number (use play).
 
+:command:`toggle_stop` - Toggles between play and stopped. If stopped
+  starts playing.  Does not support start playing at song number (use play).
+
 
 Queue Commands
 ^^^^^^^^^^^^^^

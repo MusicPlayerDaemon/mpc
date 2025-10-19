@@ -47,6 +47,7 @@ int cmd_version(int argc, char **argv, struct mpd_connection *conn);
 int cmd_stats(int argc, char **argv, struct mpd_connection *conn);
 int cmd_cdprev(int argc, char **argv, struct mpd_connection *conn);
 int cmd_toggle(int argc, char **argv, struct mpd_connection *conn);
+int cmd_toggle_stop(int argc, char **argv, struct mpd_connection *conn);
 int cmd_partitionlist(int argc, char **argv, struct mpd_connection *conn);
 int cmd_partitionmake(int argc, char **argv, struct mpd_connection *conn);
 int cmd_partitiondelete(int argc, char **argv, struct mpd_connection *conn);

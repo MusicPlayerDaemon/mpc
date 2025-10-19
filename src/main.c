@@ -122,6 +122,7 @@ static const struct command {
 	{"tab",              1,  1, 0, cmd_tab,              "<path>", NULL},
 	{"tags",             0,  0, 0, cmd_tags,             "", "Display all MPD tags known by the mpc client" },
 	{"toggle",           0,  0, 0, cmd_toggle,           "", "Toggles Play/Pause, plays if stopped"},
+	{"toggle_stop",      0,  0, 0, cmd_toggle_stop,      "", "Toggles Play/Stopped, plays if stopped"},
 	{"toggleoutput",     1, -1, 0, cmd_toggle_output,    "<output # or name> [...]", "Toggle output(s)"},
 	{"unmount",          1,  1, 0, cmd_unmount,          "<mount-path>", "Remove a mount." },
 	{"update",           0, -1, 2, cmd_update,           "[<path>]", "Scan music directory for updates"},
