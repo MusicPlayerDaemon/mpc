@@ -39,19 +39,21 @@ jobs:
         with:
           key: linux-iconv=${{ matrix.iconv }}
 
-      - name: Meson Build
-        uses: BSFishy/meson-build@v1.0.3
-        with:
-          action: build
-          directory: output
-          setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true -Diconv=${{ matrix.iconv }}
+      - name: Configure
+        run: |
+          meson setup \
+            -Ddocumentation=disabled \
+            -Dtest=true \
+            -Diconv=${{ matrix.iconv }} \
+            --wrap-mode nofallback \
+            ${{ matrix.meson_options }} \
+            output
+
+      - name: Build
+        run: meson compile -C output --verbose
 
       - name: Unit Tests
-        uses: BSFishy/meson-build@v1.0.3
-        with:
-          action: test
-          directory: output
-          setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true -Diconv=${{ matrix.iconv }}
+        run: meson test -C output --print-errorlogs
 
   build-macos:
     runs-on: macos-latest
@@ -73,19 +75,20 @@ jobs:
             libmpdclient \
             check
 
-      - name: Meson Build
-        uses: BSFishy/meson-build@v1.0.3
-        with:
-          action: build
-          directory: output
-          setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true
+      - name: Configure
+        run: |
+          meson setup \
+            -Ddocumentation=disabled \
+            -Dtest=true \
+            --wrap-mode nofallback \
+            ${{ matrix.meson_options }} \
+            output
+
+      - name: Build
+        run: meson compile -C output --verbose
 
       - name: Unit Tests
-        uses: BSFishy/meson-build@v1.0.3
-        with:
-          action: test
-          directory: output
-          setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true
+        run: meson test -C output --print-errorlogs
 
   build-windows:
     runs-on: windows-latest
