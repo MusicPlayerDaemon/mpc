@@ -124,3 +124,48 @@ jobs:
 
       - name: Build
         run: meson compile -C output --verbose
+
+  build-msys2:
+    strategy:
+      matrix:
+        platform: ['MINGW64', 'UCRT64']
+    defaults:
+      run:
+        shell: msys2 {0}
+    runs-on: windows-latest
+    steps:
+      - id: checkout
+        uses: actions/checkout@v5
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{matrix.platform}}
+          install: >-
+            git
+          pacboy: >-
+            cc:p
+            ccache:p
+            check:p
+            jack2:p
+            meson:p
+            ninja:p
+
+      - id: cache-ccache
+        uses: hendrikmuhs/ccache-action@v1.2
+        with:
+          key: ${{ matrix.platform }}
+
+      - name: Configure
+        run: |
+          meson setup \
+            -Ddocumentation=disabled \
+            -Dtest=true \
+            --wrap-mode forcefallback \
+            ${{ matrix.meson_options }} \
+            "${{github.workspace}}/build"
+
+      - name: Build
+        run: meson compile -C "${{github.workspace}}/build" --verbose
+
+      - name: Unit Tests
+        run: meson test -C "${{github.workspace}}/build" --print-errorlogs
