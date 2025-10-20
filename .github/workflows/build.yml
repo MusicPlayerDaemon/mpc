@@ -26,17 +26,18 @@ jobs:
       - id: checkout
         uses: actions/checkout@v5
 
-      - id: cache-ccache
-        uses: hendrikmuhs/ccache-action@v1
-        with:
-          key: linux-iconv=${{ matrix.iconv }}
-
       - name: Install dependencies
         run: |
           sudo apt install -y --no-install-recommends \
             meson \
+            ccache \
             libmpdclient-dev \
             check
+
+      - id: cache-ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: linux-iconv=${{ matrix.iconv }}
 
       - name: Meson Build
         uses: BSFishy/meson-build@v1.0.3
