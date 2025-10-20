@@ -135,13 +135,13 @@ cmd_cdprev(gcc_unused int argc, gcc_unused char **argv,
 	   current track otherwise seek to beginning of current
 	   track */
 	if (mpd_status_get_elapsed_time(status) < 3) {
-		cmd_prev(0, NULL, conn);
+		return cmd_prev(0, NULL, conn);
 	} else {
 		if (!mpd_run_seek_id(conn, mpd_status_get_song_id(status), 0))
 			printErrorAndExit(conn);
-	}
 
-	return 1;
+		return 1;
+	}
 }
 
 int
@@ -151,11 +151,10 @@ cmd_toggle(gcc_unused int argc, gcc_unused char **argv,
 	struct mpd_status *status = getStatus(conn);
 
 	if (mpd_status_get_state(status) == MPD_STATE_PLAY) {
-		cmd_pause(0, NULL, conn);
+		return cmd_pause(0, NULL, conn);
 	} else {
-		cmd_play(0, NULL, conn);
+		return cmd_play(0, NULL, conn);
 	}
-	return 1;
 }
 
 int
@@ -1014,12 +1013,12 @@ cmd_pause_if_playing(gcc_unused int argc, gcc_unused char **argv,
 		     struct mpd_connection *conn)
 {
 	struct mpd_status *status = getStatus(conn);
-	int ret = 1;
+	int ret;
 
 	if (mpd_status_get_state(status) != MPD_STATE_PLAY) {
 		ret = -127;
 	} else {
-		cmd_pause(0, NULL, conn);
+		ret = cmd_pause(0, NULL, conn);
 	}
 
 	mpd_status_free(status);
