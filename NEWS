@@ -1,5 +1,6 @@
 0.36 (not yet released)
 * add command "tags"
+* concatenate multiple tag values
 
 0.35 (2023/12/21)
 * fix null pointer dereference on bad status format
