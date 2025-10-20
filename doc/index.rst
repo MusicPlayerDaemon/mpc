@@ -307,7 +307,7 @@ Database Commands
 
 :command:`list <type> [<type> <query>]... [group <type>]...` - Return
    a list of all tags of given tag ``type``.  Optional search
-   ``type``/``query`` limit results in a way similar to search.
+   ``type``/``query`` limit results in a way similar to ``find``.
    Results can be grouped by one or more tags.  Example::
 
      mpc list album group artist
