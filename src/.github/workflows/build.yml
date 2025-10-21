@@ -1,0 +1,124 @@
+---
+on:
+  workflow_dispatch:
+  push:
+    paths-ignore:
+      - 'build/**'
+      - 'contrib/**'
+      - 'doc/**'
+    branches:
+      - master
+  pull_request:
+    paths-ignore:
+      - 'build/**'
+      - 'contrib/**'
+      - 'doc/**'
+    branches:
+      - master
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        iconv: [enabled, disabled]
+    steps:
+      - id: checkout
+        uses: actions/checkout@v5
+
+      - id: cache-ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: linux-iconv=${{ matrix.iconv }}
+
+      - name: Install dependencies
+        run: |
+          sudo apt install -y --no-install-recommends \
+            meson \
+            libmpdclient-dev \
+            check
+
+      - name: Meson Build
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: build
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true -Diconv=${{ matrix.iconv }}
+
+      - name: Unit Tests
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: test
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true -Diconv=${{ matrix.iconv }}
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - id: checkout
+        uses: actions/checkout@v5
+
+      - id: cache-ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: macos
+
+      - uses: actions/setup-python@v6
+
+      - name: Install dependencies
+        run: |
+          brew install \
+            meson ninja \
+            libmpdclient \
+            check
+
+      - name: Meson Build
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: build
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true
+
+      - name: Unit Tests
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: test
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=nofallback -Dtest=true
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - id: checkout
+        uses: actions/checkout@v5
+
+      - name: Meson Build
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: build
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
+          meson-version: 1.3.0
+
+  build-windows-msvc:
+    runs-on: windows-latest
+    steps:
+      - id: checkout
+        uses: actions/checkout@v5
+
+      - name: Add VisualStudio command line tools into path
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Meson Build
+        uses: BSFishy/meson-build@v1.0.3
+        with:
+          action: build
+          directory: output
+          setup-options: -Ddocumentation=disabled -Dwrap_mode=forcefallback
+          meson-version: 1.3.0
+
+      - name: "Upload mpc.exe"
+        uses: actions/upload-artifact@v4
+        with:
+          name: mpc.exe
+          path: output/mpc.exe
