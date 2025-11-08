@@ -252,6 +252,8 @@ Playlist Commands
 
 :command:`save <file>` - Saves playlist as <file>.
 
+:command:`replace <file>` - Replaces playlist in <file>.
+
 :command:`addplaylist <playlist> <file>` - Adds a song from the music database to the
    playlist. The playlist will be created if it does not exist.
    Can also read input from pipes.

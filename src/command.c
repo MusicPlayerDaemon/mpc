@@ -1376,3 +1376,12 @@ cmd_partitiondelete(int argc, char **argv, struct mpd_connection *conn) {
 	}
 	return 0;
 }
+
+int
+cmd_replace(gcc_unused int argc, char **argv, struct mpd_connection *conn)
+{
+	if (!mpd_send_save_queue(conn, charset_to_utf8(argv[0]), MPD_QUEUE_SAVE_MODE_REPLACE)) {
+		printErrorAndExit(conn);
+	}
+	return 0;
+}
