@@ -24,7 +24,7 @@ jobs:
         iconv: [enabled, disabled]
     steps:
       - id: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install dependencies
         run: |
@@ -59,7 +59,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - id: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - id: cache-ccache
         uses: hendrikmuhs/ccache-action@v1
@@ -94,7 +94,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - id: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install dependencies
         run: |
@@ -110,7 +110,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - id: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Add VisualStudio command line tools into path
         uses: ilammy/msvc-dev-cmd@v1
@@ -135,7 +135,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - id: checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - uses: msys2/setup-msys2@v2
         with:
