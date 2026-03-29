@@ -300,6 +300,9 @@ parse_options(int * argc_p, char ** argv)
 	if (opt && opt->argument)
 		option_error(ERROR_MISSING_ARGUMENT, opt->longopt, opt->argument);
 
+	if (options.host == NULL)
+		options.host = getenv("MPD_HOST");
+
 	/* Parse the password from the host */
 	if (options.host != NULL &&
 	    (tmp = strchr(options.host, '@')) != NULL &&
@@ -315,6 +318,9 @@ parse_options(int * argc_p, char ** argv)
 		options.password = password;
 		options.host = tmp + 1;
 	}
+
+	if (options.port_str == NULL)
+		options.port_str = getenv("MPD_PORT");
 
 	/* Convert port to an integer */
 	if (options.port_str) {
