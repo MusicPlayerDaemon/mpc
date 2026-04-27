@@ -14,7 +14,7 @@ You need:
 - libmpdclient 2.18
 - `Meson 0.47 <http://mesonbuild.com/>`__ and `Ninja <https://ninja-build.org/>`__
 
-Run ``meson``:
+Run ``meson``::
 
  meson . output
 
