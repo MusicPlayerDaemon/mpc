@@ -50,23 +50,12 @@ int cmd_toggle(int argc, char **argv, struct mpd_connection *conn);
 int cmd_partitionlist(int argc, char **argv, struct mpd_connection *conn);
 int cmd_partitionmake(int argc, char **argv, struct mpd_connection *conn);
 int cmd_partitiondelete(int argc, char **argv, struct mpd_connection *conn);
-
-int
-cmd_replaygain(int argc, char **argv, struct mpd_connection *conn);
-
-int
-cmd_channels(int argc, char **argv, struct mpd_connection *conn);
-
-int
-cmd_sendmessage(int argc, char **argv, struct mpd_connection *conn);
-
-int
-cmd_waitmessage(int argc, char **argv, struct mpd_connection *conn);
-
-int
-cmd_subscribe(int argc, char **argv, struct mpd_connection *conn);
-
-int
-cmd_tags(int argc, char **argv, struct mpd_connection *conn);
+int cmd_replaygain(int argc, char **argv, struct mpd_connection *conn);
+int cmd_channels(int argc, char **argv, struct mpd_connection *conn);
+int cmd_sendmessage(int argc, char **argv, struct mpd_connection *conn);
+int cmd_waitmessage(int argc, char **argv, struct mpd_connection *conn);
+int cmd_subscribe(int argc, char **argv, struct mpd_connection *conn);
+int cmd_tags(int argc, char **argv, struct mpd_connection *conn);
+int cmd_playlistlength(int argc, char **argv, struct mpd_connection *conn);
 
 #endif /* COMMAND_H */

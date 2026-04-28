@@ -170,7 +170,6 @@ cmd_search(int argc, char **argv, struct mpd_connection *conn)
 	return do_search(argc, argv, conn, false);
 }
 
-
 int
 cmd_searchadd(int argc, char **argv, struct mpd_connection *conn)
 {
@@ -187,4 +186,32 @@ int
 cmd_findadd(int argc, char **argv, struct mpd_connection *conn)
 {
 	return do_searchadd(argc, argv, conn, true);
+}
+
+int
+cmd_searchplaylist(int argc, char **argv, struct mpd_connection *conn)
+{
+	(void)argc; // silence warning about unused argument
+	const char* playlist = argv[0];
+	const char* expression = argv[1];
+
+	/* ask MPD to omit the tags which are not used by the
+		`--format` to reduce network transfer for tag values we're
+		not going to use anyway */
+	if (!mpd_command_list_begin(conn, false) ||
+		!send_tag_types_for_format(conn, options.custom_format ? options.format : NULL))
+		printErrorAndExit(conn);
+
+	mpd_playlist_search_begin(conn, playlist, expression);
+
+	if (!mpd_playlist_search_commit(conn))
+		printErrorAndExit(conn);
+
+	if (!mpd_command_list_end(conn))
+		printErrorAndExit(conn);
+
+	print_entity_list(conn, MPD_ENTITY_TYPE_SONG, options.custom_format);
+
+	my_finishCommand(conn);
+	return 0;
 }
