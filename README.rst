@@ -40,7 +40,6 @@ contents of mpc-bashrc to your own ``~/.bashrc``.
 Links
 -----
 
-- `Home page and download <http://www.musicpd.org/clients/mpc/>`__
+- `Home page and download <https://www.musicpd.org/clients/mpc/>`__
 - `git repository <https://github.com/MusicPlayerDaemon/mpc/>`__
 - `Bug tracker <https://github.com/MusicPlayerDaemon/mpc/issues>`__
-- `Forum <http://forum.musicpd.org/>`__
