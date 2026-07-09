@@ -28,7 +28,6 @@ SIMPLE_CMD(cmd_prev, mpd_run_previous, 1)
 SIMPLE_CMD(cmd_stop, mpd_run_stop, 1)
 SIMPLE_CMD(cmd_clearerror, mpd_run_clearerror, 1)
 
-SIMPLE_ONEARG_CMD(cmd_save, mpd_run_save, 0)
 SIMPLE_ONEARG_CMD(cmd_rm, mpd_run_rm, 0)
 
 /**
@@ -1373,6 +1372,19 @@ cmd_partitiondelete(int argc, char **argv, struct mpd_connection *conn) {
 
 	if (!mpd_command_list_end(conn) || !mpd_response_finish(conn)) {
 		printErrorAndExit(conn);
+	}
+	return 0;
+}
+
+int
+cmd_save(gcc_unused int argc, char **argv, struct mpd_connection *conn)
+{
+	if (options.force) {
+		if (!mpd_send_save_queue(conn, charset_to_utf8(argv[0]), MPD_QUEUE_SAVE_MODE_REPLACE))
+			printErrorAndExit(conn);
+	} else {
+		if (!mpd_run_save(conn, charset_to_utf8(argv[0])))
+			printErrorAndExit(conn);
 	}
 	return 0;
 }

@@ -48,6 +48,7 @@ static const struct OptionDef option_table[] = {
 	{ 'w', "wait", NULL, "Wait for operation to finish (e.g. database update)" },
 	{ 'r', "range", "[<start>]:[<end>]", "Operate on a range (e.g. when loading a playlist)" },
 	{ 'a', "partition", "<name>", "Operate on partition <name> instead" },
+	{ 'F', "force", NULL, "Force some operations (like saving playlist)" },
 	{ OPTION_WITH_PRIO, "with-prio", NULL, "Show only songs that have a non-zero priority" },
 };
 
@@ -162,6 +163,10 @@ handle_option(int c, const char *arg)
 
 	case 'w':
 		options.wait = true;
+		break;
+
+	case 'F':
+		options.force = true;
 		break;
 
 	case 'r':

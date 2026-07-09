@@ -28,6 +28,7 @@ struct Options {
 
 	int verbosity; // 0 for quiet, 1 for default, 2 for verbose
 	bool wait;
+	bool force;
 
 	bool custom_format;
 

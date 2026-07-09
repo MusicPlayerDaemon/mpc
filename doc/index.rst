@@ -84,6 +84,10 @@ Options
 
  Wait for operation to finish (e.g. database update).
 
+.. option:: -F, --force
+
+ Force certain operations (e.g. overwriting playlist while saving).
+
 .. option:: --range=[START]:[END]
 
  Operate on a range (e.g. when loading a playlist).  START is the
@@ -250,7 +254,8 @@ Playlist Commands
 
 :command:`rm <file>` - Deletes a specific playlist.
 
-:command:`save <file>` - Saves playlist as <file>.
+:command:`save [--force] <file>` - Saves playlist as <file>. With
+   :option:`--force`, overwrites the playlist if it already exists.
 
 :command:`addplaylist <playlist> <file>` - Adds a song from the music database to the
    playlist. The playlist will be created if it does not exist.
