@@ -1,6 +1,10 @@
 0.36 (not yet released)
-* add command "tags"
+* add commands "tags", "playlistlength", "searchplaylist", "stickernames", "stickertypes", "stickernamestypes", "searchsticker"
+* complete command "sticker" API with "playlist" & "tags" entities subcommands (get/set/delete/list/find/inc/dec)
+* fix a bug in "sticker" API "delete" subcommand where "name" parameter is mandatory
+* update documentation
 * concatenate multiple tag values
+* require libmpdclient 2.23 or newer
 
 0.35 (2023/12/21)
 * fix null pointer dereference on bad status format
@@ -9,7 +13,7 @@
 * add commands "lsdirs", "addplaylist", "delplaylist", "moveplaylist", "renplaylist", "clearplaylist"
 * add "playlist" option "--with-prio"
 * bash completion: pass "--" to mpc to allow parameters with dash
-* bash completion: fix filenames with paranetheses
+* bash completion: fix filenames with parentheses
 * bash completion: override $MPC_FORMAT
 
 0.34 (2021/11/30)

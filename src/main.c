@@ -47,7 +47,7 @@ static const struct command {
 	/** NULL means they won't be shown in help */
 	const char *help;
 } mpc_table [] = {
-	/* command,     min, max, pipe, handler,         usage, help */
+	/* command,          min, max, pipe, handler,         usage, help */
 	{"add",              0, -1, 1, cmd_add,              "<uri>", "Add a song to the queue"},
 	{"addplaylist",      2, -1, 3, cmd_addplaylist,      "<file> <uri> ...", "Add a song to the playlist"},
 	{"albumart",         1,  1, 0, cmd_albumart,         "<uri>", "Download album art for the given song and write to stdout." },
@@ -95,6 +95,7 @@ static const struct command {
 	{"pause-if-playing", 0,  0, 0, cmd_pause_if_playing, "", "Pauses the currently playing song; exits with failure if not playing"},
 	{"play",             0,  1, 2, cmd_play,             "[<position>]", "Start playing at <position>"},
 	{"playlist",         0,  1, 0, cmd_playlist,         "[<playlist>]", "Print <playlist>"},
+	{"playlistlength",   1,  1, 0, cmd_playlistlength,   "<file>", "Show the number of songs and their total playtime (seconds) in the playlist"},
 	{"prev",             0,  0, 0, cmd_prev,             "", "Play the previous song in the queue"},
 	{"prio",             2, -1, 2, cmd_prio,             "<prio> <position/range> ...", "Change song priorities in the queue"},
 	{"queued",	         0,  0, 0, cmd_queued,           "", "Show the next queued song"},
@@ -109,6 +110,7 @@ static const struct command {
 	{"search",           1, -1, 0, cmd_search,           "<type> <query>", "Search for a song"},
 	{"searchadd",        1, -1, 0, cmd_searchadd,        "<type> <query>", "Search songs and add them to the queue"},
 	{"searchplay",       1, -1, 0, cmd_searchplay,       "<pattern>", "Find and play a song in the queue"},
+	{"searchplaylist",   2,  2, 0, cmd_searchplaylist,   "<file> <expression>", "Search the playlist for songs matching the expression"},
 	{"seek",             1,  1, 0, cmd_seek,             "[+-][HH:MM:SS]|<0-100>%", "Seeks to the specified position"},
 	{"seekthrough",      1,  1, 0, cmd_seek_through,      "[+-][HH:MM:SS]", "Seeks by an amount of time within the song and playlist"},
 	{"sendmessage",      2,  2, 0, cmd_sendmessage,      "<channel> <message>", "Send a message to the specified channel." },
@@ -116,7 +118,11 @@ static const struct command {
 	{"single",           0,  1, 0, cmd_single,           "<on|once|off>", "Toggle single mode, or specify state"},
 	{"stats",            0, -1, 0, cmd_stats,            "", "Display statistics about MPD"},
 	{"status",           0, -1, 0, cmd_status,           "", NULL}, /* status was added for pedantic reasons */
-	{"sticker",          2, -1, 0, cmd_sticker,          "<uri> <get|set|list|delete|find> [args..]", "Sticker management"},
+	{"sticker",          2, -1, 0, cmd_sticker,          "<uri> <get[-playlist|-tag]|set[-playlist|-tag]|list[-playlist|-tag]|delete[-playlist|-tag]|find[-playlist|-tag]|inc[-playlist|-tag]|dec[-playlist|-tag]> [args..]", "Sticker management"},
+	{"stickernames",     0,  0, 0, cmd_stickernames,     "", "Display the list of unique sticker names"},
+	{"stickertypes",     0,  0, 0, cmd_stickertypes,     "", "Display the list of available sticker types"},
+	{"stickernamestypes",1,  1, 0, cmd_stickernamestypes,"<type>", "Display the list of unique sticker names for this sticker type"},
+	{"searchsticker",    5,  5, 0, cmd_searchsticker,    "<type> <uri> <name> <oper> <value>", "Search for MPD <type> entities having sticker <name> <oper> to <value> set at <uri>"},
 	{"stop",             0,  0, 0, cmd_stop,             "", "Stop playback"},
 	{"subscribe",        1,  1, 0, cmd_subscribe,        "<channel>", "Subscribe to the specified channel and continuously receive messages." },
 	{"tab",              1,  1, 0, cmd_tab,              "<path>", NULL},

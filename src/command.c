@@ -844,6 +844,33 @@ cmd_clearplaylist(int argc, char **argv, struct mpd_connection *conn)
 }
 
 int
+cmd_playlistlength(int argc, char **argv, struct mpd_connection *conn)
+{
+	(void)argc; // silence warning about unused argument
+	const char* playlist = argv[0];
+
+	if (!mpd_send_playlistlength(conn, playlist))
+		return -1;
+
+	struct mpd_pair* pair = mpd_recv_pair_named(conn, "songs");
+	if (pair != NULL) {
+		printf("songs: %s\n", pair->value);
+		mpd_return_pair(conn, pair);
+	}
+
+	pair = mpd_recv_pair_named(conn, "playtime");
+	if (pair != NULL) {
+		printf("playtime: %s\n", pair->value);
+		mpd_return_pair(conn, pair);
+	}
+
+	if (!mpd_response_finish(conn))
+		return -1;
+
+	return 0;
+}
+
+int
 cmd_load(int argc, char **argv, struct mpd_connection *conn)
 {
 	const bool range = options.range.start > 0 ||

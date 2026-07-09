@@ -252,19 +252,19 @@ Playlist Commands
 
 :command:`save <file>` - Saves playlist as <file>.
 
-:command:`addplaylist <playlist> <file>` - Adds a song from the music database to the
-   playlist. The playlist will be created if it does not exist.
-   Can also read input from pipes.
+:command:`addplaylist <playlist> <file>` - Adds a song from the music database to the playlist. The playlist will be created if it does not exist. Can also read input from pipes.
 
-:command:`delplaylist <playlist> <songpos>` - Removes the song at given position from the playlist. Can
-   also read input from pipes.
+:command:`delplaylist <playlist> <songpos>` - Removes the song at given position from the playlist. Can also read input from pipes.
 
-:command:`moveplaylist <playlist> <from> <to>` - Moves the song at given <from> position 
-   to the <to> position in the playlist.
+:command:`moveplaylist <playlist> <from> <to>` - Moves the song at given <from> position to the <to> position in the playlist.
 
-:command:`renplaylist <playlist> <new playlist>` - Rename a playlist.
+:command:`renplaylist <playlist> <new playlist>` - Rename the playlist.
 
-:command:`clearplaylist <playlist>` - Clear the playlist name (i.e. truncate playlist.m3u).
+:command:`clearplaylist <playlist>` - Clear the playlist.
+
+:command:`searchplaylist <playlist> <expression>` - Search the playlist for songs matching the expression.
+
+:command:`playlistlength <playlist>` - Show the number of songs and their total playtime (in seconds) in the playlist.
 
 Database Commands
 ^^^^^^^^^^^^^^^^^
@@ -363,23 +363,90 @@ Mount Commands
 Sticker Commands
 ^^^^^^^^^^^^^^^^^
 
-The :command:`sticker` command allows you to get and set song
-stickers.
+The :command:`sticker` command allows you to get and set stickers on "songs", "playlists" and several MPD "tags".
 
-:command:`sticker <file> set <key> <value>` - Set the value of a song
-   sticker.
+1. "song" API
 
-:command:`sticker <file> get <key>` - Print the value of a song
-   sticker.
+:command:`sticker <file> set <name> <value>` - Set the value of a song sticker.
+
+:command:`sticker <file> get <name>` - Print the value of a song sticker.
 
 :command:`sticker <file> list` - List all stickers of a song.
 
-:command:`sticker <file> delete <key>` - Delete a song sticker.
+:command:`sticker <file> delete <name>` - Delete a song sticker.
 
-:command:`sticker <dir> find <key>` - Search for stickers with the
-   specified name, below the specified directory.
+:command:`sticker <file> inc <name> <value>` - Increment the sticker of the song by the given value.
+
+:command:`sticker <file> dec <name> <value>` - Decrement the sticker of the song by the given value.
+
+:command:`sticker <dir> find <name>` - Search for stickers with the specified name, below the given directory.
+   Search for any values of the ``rated`` stickers under the ``Wolfgang Amadeus Mozart`` MPD folder::
+
+      mpc sticker "Wolfgang Amadeus Mozart" find rated
+
+   Search for any values of the ``rated`` stickers under any MPD folders::
+
+      mpc sticker "" find rated
 
 
+2. "playlist" API
+
+:command:`sticker <playlist> playlist-set <name> <value>` - Set the value of a playlist sticker.
+
+:command:`sticker <playlist> playlist-get <name>` - Print the value of a playlist sticker.
+
+:command:`sticker <playlist> playlist-list` - List all stickers of a playlist.
+
+:command:`sticker <playlist> playlist-delete <name>` - Delete a playlist sticker.
+
+:command:`sticker <playlist> playlist-inc <name> <value>` - Increment the sticker of the playlist by the given value.
+
+   Increments the ``played`` sticker of the ``Christmas Playlist`` playlist by ``1``::
+
+      mpc sticker "Christmas Playlist" playlist-inc played 1
+
+:command:`sticker <playlist> playlist-dec <name> <value>` - Decrement the sticker of the playlist by the given value.
+
+:command:`sticker <dir> playlist-find <name>` - Search for stickers with the specified name, below the given directory.
+
+3. "tags" API
+
+:command:`sticker <uri> tag-set <tag> <name> <value>` - Set the value of a playlist sticker.
+
+:command:`sticker <uri> tag-get <tag> <name>` - Print the value of a tag sticker.
+
+:command:`sticker <uri> tag-list <tag>` - List all stickers of a tag.
+
+:command:`sticker <uri> tag-delete <tag> <name>` - Delete a tag sticker.
+
+:command:`sticker <uri> tag-inc <tag> <name> <value>` - Increment the sticker of the tag by the given value.
+
+   Increments the ``played`` sticker of the ``Kraftwerk`` artist by 1::
+
+      mpc sticker "Kraftwerk" tag-inc Artist played 1
+
+:command:`sticker <uri> tag-dec <tag> <name> <value>` - Decrement the sticker of the tag by the given value.
+
+:command:`sticker <dir> tag-find <tag> <name>` - Search for stickers of the tag with the specified name, below the specified directory.
+
+4. Misc commands
+
+:command:`stickernames` - Display the list of unique sticker names.
+
+:command:`stickertypes` - Display the list of available sticker types.
+
+:command:`stickernamestypes <type>` - Display the list of unique sticker names for this sticker type.
+
+:command:`searchsticker <type> <uri> <name> <oper> <value>` - Search for MPD <type> entities @<uri> having stickers matching the expression "<name> <oper> <value>".
+   Valid <oper> are ``=``, ``>``, ``<``, ``eq``, ``gt``, ``lt``, ``contains``, ``starts_with``
+
+   Search for any songs in the ``Wolfgang Amadeus Mozart`` MPD folder having sticker ``rated`` equals to ``Good``::
+
+      mpc searchsticker song "Wolfgang Amadeus Mozart" rated = Good
+
+   Search for any playlist having sticker ``played`` greater than 100::
+
+      mpc searchsticker playlist "" played gt 100
 
 Output Commands
 ^^^^^^^^^^^^^^^
